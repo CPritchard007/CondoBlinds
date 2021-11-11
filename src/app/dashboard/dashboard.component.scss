@@ -1,0 +1,75 @@
+.hidden {
+    display: none;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.container {
+    padding: 10px;
+}
+
+.small_input {
+    font-size: 12px;
+
+    & mat-form-field {
+        width: calc(50% - 4px);
+        margin: 2px;
+    }
+    
+    span {
+        display: inline-block;
+        width: 80px;
+    }
+}
+
+.of_auto {
+    display: flex;
+    gap: 10px;
+}
+
+.of_2 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.of_3 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.of_4 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+
+
+mat-card {
+    margin-bottom: auto;
+    min-height: 20vh;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+hr + mat-icon {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(75, 75, 75);
+    border-radius: 15px;
+  
+}
+

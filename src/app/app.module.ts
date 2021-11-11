@@ -20,10 +20,14 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { DataFormComponent } from './data-form/data-form.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { HeaderBarComponent } from './header-bar/header-bar.component';
 @NgModule({
   declarations: [
     AppComponent,
-    DataFormComponent
+    DataFormComponent,
+    DashboardComponent,
+    HeaderBarComponent,
   ],
   imports: [
     FormsModule,
