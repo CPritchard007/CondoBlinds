@@ -56,7 +56,9 @@ export class DashboardComponent implements OnInit {
 
     this.resetValues();
     if (this.USE_LOCAL_STORAGE) this.queriesArray = JSON.parse(localStorage.getItem('queries') || '{}') || [];
+    
     console.log(this.queriesArray);
+
 
   }
 
