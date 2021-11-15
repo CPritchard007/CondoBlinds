@@ -1,0 +1,23 @@
+<div class="float-above" [ngClass]="{'active': helpBarIsActive}" (click)="deactivateHelpBar($event)">
+   
+    <mat-card class="help-card">
+        <div class="icon-container" (click)="deactivateHelpBar($event)">
+            <mat-icon class="icon">close</mat-icon>
+        </div>
+        <mat-card-content>
+            
+            <h3>Shortcuts</h3>
+            <h4>
+               holding <span class="keyboardKey"> ctrl </span> while adding to the list allows stops the values from resetting
+            </h4>
+            <h4>
+                holding <span class="keyboardKey"> ctrl </span> while removing from the list overrides the alert
+             </h4>
+            <h4></h4>
+            
+        </mat-card-content>
+    </mat-card>
+</div>
+<div class="icon-container" (click)="activateHelpBar($event)">
+    <mat-icon class="icon">help</mat-icon>
+</div>

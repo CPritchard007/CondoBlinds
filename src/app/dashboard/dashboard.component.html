@@ -1,4 +1,30 @@
-<div class="container of_3">
+<div class="container fill">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                <h1>Constants</h1>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="of_5 small_input" style="font-size: 10px;">
+                <div>
+                  <span>COST OF INSTALLMENT</span>
+                  <mat-form-field appearance="outline">
+                      <input matInput type="number" [(ngModel)]="costOfInstallation">
+                  </mat-form-field>
+                </div>
+                <div>
+                    <span>PROFIT MARGIN</span>
+                    <mat-form-field appearance="outline">
+                        <input matInput type="number" [(ngModel)]="profitMargin">
+                    </mat-form-field>
+                  </div>
+                
+              </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<div class="container of_auto">
     <mat-card>
       <mat-card-header>
         <mat-card-title>
@@ -8,14 +34,18 @@
       <mat-card-content>
         <div class="of_2 small_input">
           <div>
-            <span>Room Type</span>
-            <mat-form-field appearance="outline">
-                <!-- <mat-label>Room Plan</mat-label> -->
+            <span>Room Label</span>
+            <!-- <mat-form-field appearance="outline">
+                <mat-label>Room Plan</mat-label>
                 <mat-select [(ngModel)]="valRoomType">
                   <mat-option *ngFor="let roomType of roomTypes; index as i" [value]="roomType.viewValue">
                     {{roomType.viewValue}}
                   </mat-option>
                 </mat-select>
+            </mat-form-field> -->
+            <mat-form-field appearance="outline">
+                <!-- <mat-label>Room Plan</mat-label> -->
+                  <input matInput [(ngModel)]="roomLabel">
             </mat-form-field>
           </div>
           <div>
@@ -36,19 +66,21 @@
           <div>
             <span>Height</span>
             <mat-form-field appearance="outline">
-              
-              <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()">
+                <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()">
             </mat-form-field>
           </div>
           <div>
-            <span>Sqr.Ft</span>
+            <abbr title="(Width * Height) / 144">
+                <span>Sqr.Ft</span>
+            </abbr>
+
             <mat-form-field appearance="standard">
               <input matInput type="decimal" disabled [ngModel]="sqrFt">
             </mat-form-field>
           </div>
         </div>
         <hr>
-        <mat-icon>add_circle</mat-icon>
+        <mat-icon (click)="addToList()">add_circle</mat-icon>
       </mat-card-content>
       
   
@@ -62,9 +94,11 @@
       <mat-card-content>
         <div class="of_2 small_input">
           <div>
-            <span>Retail Price</span>
-            <mat-form-field appearance="outline">
-              <input matInput type="decimal" [(ngModel)]="retailPrice" (input)="updateInputs()">
+            <abbr title="to be determined">
+                <span>Retail Price</span>
+            </abbr>
+            <mat-form-field appearance="standard">
+              <input matInput type="decimal" [(ngModel)]="retailPrice" (input)="updateInputs()" disabled>
             </mat-form-field>
           </div>
           <div>
@@ -74,27 +108,24 @@
             </mat-form-field>
           </div>
           <div>
-            <span>Quantity Discount (%)</span>
+            <span>Discount 2 (%)</span>
             <mat-form-field appearance="outline">
               <input matInput type="number" [(ngModel)]="discount2" (input)="updateInputs()">
             </mat-form-field>
           </div>
           <div>
-            <span>Cost</span>
+            <abbr title="((RetailPrice * Discount) * QuantityDiscount) * Quantity">
+                <span>Cost</span>
+            </abbr>
             <mat-form-field appearance="standard">
-              <input matInput type="decimal" disabled [ngModel]="valPrice">
+            
+              <input matInput type="text" disabled [(ngModel)]="valCost">
             </mat-form-field>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
-    <mat-card [ngClass]="{'hidden': valRoomType === ''}">
-      <mat-card-header>
-        <mat-card-title>
-          <h4>{{valRoomType}}</h4>
-        </mat-card-title>
-      </mat-card-header>
-    </mat-card>
+    
     <mat-card>
       <mat-card-header>
         <mat-card-title>
@@ -104,12 +135,145 @@
       <mat-card-content>
         <div class="of_2 small_input">
           <div>
-            <span>Total Price</span>
+            <abbr title="">
+                <span>Total Price</span>
+            </abbr>
             <mat-form-field appearance="standard">
-              <input matInput type="decimal" disabled [ngModel]="valPrice">
+              <input matInput type="decimal" disabled [(ngModel)]="valPrice">
+            </mat-form-field>
+          </div>
+          <div>
+            <abbr title="InstallCost * Quantity">
+                <span>Installation Cost</span>
+            </abbr>
+            <mat-form-field appearance="standard">
+              <input matInput type="decimal" disabled [(ngModel)]="installmentCost">
             </mat-form-field>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
+
+    <mat-card [ngClass]="{'hidden': valRoomType === ''}">
+        <mat-card-header>
+          <mat-card-title>
+            <h4>{{valRoomType}}</h4>
+          </mat-card-title>
+        </mat-card-header>
+    </mat-card>
+  </div>
+
+
+  <div class="container">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <h4>Table</h4>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="table">
+                <header>
+                    <div>
+                        <span>Room</span>
+                    </div>
+                    <div>
+                        <span>Quantity</span>
+                    </div>
+                    <div>
+                        <span>Width</span>
+                    </div>
+                    <div>
+                        <span>Height</span>
+                    </div>
+                    <div>
+                        <span>Sqr.Ft</span>
+                    </div>
+                    <div>
+                        <span>Retail Price</span>
+                    </div>
+                    <div>
+                        <span>Discount</span>
+                    </div>
+                    <div>
+                        <span>Discount 2</span>
+                    </div>
+                    <div>
+                        <span>Cost</span>
+                    </div>
+                    <div>
+                        <span>Price</span>
+                    </div>
+                    <div>
+                        <span>Installation Cost</span>
+                    </div>
+                </header>
+                <div class="content">
+                    <div class="row"  *ngFor="let query of queriesArray; index as i">
+                        <div>
+                            <span>{{query.roomLabel}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.quantity}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.width}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.height}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.sqrFt}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.retailPrice}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.discount}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.discount2}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.cost}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.price}}</span>
+                        </div>
+                        <div>
+                            <span>{{query.installmentCost}}</span>
+                        </div>
+                        <mat-icon (click)="removeFromList(i)">remove_circle</mat-icon>
+                    </div>
+                    <div style="position: relative;"><hr><span>Total</span></div>
+                    <div class="total">
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                            <span>{{getFullSum().cost | numericCommas}}</span>
+                        </div>
+                        <div>
+                            <span>{{getFullSum().price | numericCommas}}</span>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+      </mat-card>
   </div>

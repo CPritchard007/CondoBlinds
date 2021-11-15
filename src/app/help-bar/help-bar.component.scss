@@ -1,0 +1,86 @@
+.float-above {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    pointer-events: none;
+    
+    mat-card.help-card {
+        position: relative;
+        top: -100px;
+        left: 50%;
+        transform: translate(-50%);
+        width: 350px;
+        display: none;
+        transition: top 0.3s ease;
+        
+
+        .icon-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: block;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .icon {
+                color: rgba(255, 255, 255, 0.404);
+                transition: color 0.3s ease;
+    
+                &:hover {
+                    color: rgba(255, 255, 255);
+                }
+            }
+        }
+        
+    }
+
+    &.active {
+        mat-card.help-card {
+            display: block;
+            top: 30%;
+            pointer-events: none;
+            user-select: none;
+
+            h4 {
+                font-size: 12px;
+            }
+        }
+        .icon-container {
+            display: none;
+        }
+    }
+
+    
+}
+
+.float-above.active {
+    background-color: rgba(0, 0, 0, 0.527);
+    pointer-events: auto;
+}
+
+.icon-container {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 40px;
+    height: 40px;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+        color: rgba(255, 255, 255, 0.404);
+        transition: color 0.3s ease;
+
+        &:hover {
+            color: rgba(255, 255, 255);
+        }
+    }
+}

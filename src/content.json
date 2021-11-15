@@ -1,0 +1,42 @@
+{
+    "USE_LOCAL_STORAGE" : true,
+    
+    "startingVars": {
+        "roomType": "",
+        "roomLabel": "",
+        "width": 0,
+        "height": 0,
+        "quantity": 1,
+        "discount": 0.5,
+        "discount2": 0.5,
+        "costOfInstallation": 47,
+        "profitMargin": 1.3
+    },
+    "roomType" : [
+        {"value": "accent", "viewValue": "Accent"},
+        {"value": "antique", "viewValue": "Antique"},
+        {"value": "boutique", "viewValue": "Boutique"},
+        {"value": "catwalk", "viewValue": "Catwalk"},
+        {"value": "contemporary", "viewValue": "Contemporary"},
+        {"value": "cosmopolitan", "viewValue": "Cosmopolitan"},
+        {"value": "dapper", "viewValue": "Dapper"},
+        {"value": "dashing", "viewValue": "Dashing"}, 
+        {"value": "designer", "viewValue": "Designer"},
+        {"value": "eligant-", "viewValue": "Eligant"},
+        {"value": "ensemble", "viewValue": "Ensemble"},
+        {"value": "fresh", "viewValue": "Fresh"},
+        {"value": "graceful", "viewValue": "Graceful"},
+        {"value": "icon", "viewValue": "Icon"},
+        {"value": "palette", "viewValue": "Palette"},
+        {"value": "runaway", "viewValue": "Runaway"},
+        {"value": "showcase", "viewValue": "Showcase"},
+        {"value": "signature", "viewValue": "Signature"},
+        {"value": "silhouette", "viewValue": "Silhouette"},
+        {"value": "style", "viewValue": "Style"},
+        {"value": "upscale", "viewValue": "Upscale"},
+        {"value": "urban", "viewValue": "Urban"},
+        {"value": "vibrant", "viewValue": "Vibrant"},
+        {"value": "vintage", "viewValue": "Vintage"},
+        {"value": "vogue", "viewValue": "Vogue"}
+    ]
+}

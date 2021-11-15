@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body, .app-frame { height: 100%; }
+html, body, .app-frame {height: 100%;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 ::-webkit-scrollbar {
@@ -20,4 +20,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+
+  .keyboardKey {
+    border: white solid 2px;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 0 6px;
+    margin: -5px 5px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
   }
