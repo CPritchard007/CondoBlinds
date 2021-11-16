@@ -19,19 +19,23 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     position: relative;
-    & mat-icon {
+    
+    .icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 10px;
+        height: 10px;
         position: absolute;
-        top: 3px;
-        right: -5px;
-        font-size: 17px;
+        top: 5px;
+        right: 5px;
+        border: none;
 
-        & + mat-icon {
-            position: absolute;
-            top: 3px;
-            right: 15px;
-            font-size: 17px;
+        mat-icon {
+            font-size: 15px;
         }
     }
+
     & div {
         padding: 3px 5px;
         border-left: 1px solid #ddd;
@@ -164,13 +168,15 @@ mat-card.calcCard {
         width: 40px;
         height: 40px;
         top: 0;
-        right: 0;
+        right: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 10;
         mat-icon {
             color: rgba(255, 255, 255, 0.452);
+            width: auto;
+            height: auto;
         }
     }
     input {

@@ -179,7 +179,7 @@
             <div class="addTab icon-container" (click)="createTab()">
             <mat-icon>add_circle</mat-icon>
           </div>
-            <mat-tab-group dynamicHeight (selectedTabChange)="tabChange($event)">
+            <mat-tab-group  (selectedTabChange)="tabChange($event)" animationDuration="100ms">
               <mat-tab *ngFor="let queryItem of queriesArray; index as index">
                 <ng-template mat-tab-label>
                   <div class="icon-container closeTab" (click)="closeTab(index)">
@@ -258,7 +258,9 @@
                           <div>
                               <span>{{query.installmentCost}}</span>
                           </div>
-                          <mat-icon (click)="removeFromList(itemIndex)">remove_circle</mat-icon>
+                          <div class="icon-container">
+                            <mat-icon (click)="removeFromList(itemIndex)">remove_circle</mat-icon>
+                          </div>
                       </div>
                       <div style="position: relative;"><hr><span>Total</span></div>
                       <div class="total">
@@ -290,9 +292,7 @@
                   </div>
               </div>
               </mat-tab>
-              <div class="icon-container">
-                
-              </div>
+             
           </mat-tab-group>
         </mat-card-content>
       </mat-card>
