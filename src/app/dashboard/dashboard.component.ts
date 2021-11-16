@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
 interface RoomType {
     value: string;
@@ -18,6 +19,10 @@ interface query {
     discount: number;
     discount2: number;
     installmentCost: number;
+}
+interface tables {
+  name: string;
+  list: query[];
 }
 
 @Component({
@@ -43,27 +48,31 @@ export class DashboardComponent implements OnInit {
   discount = 50.0;
   discount2 = 50.0;
   installmentCost = 0;
-  
+
 
   roomLabel: string = "";
   roomTypes: Array<RoomType> = [];
-  queriesArray: Array<query> = [];
+  queriesArray: Array<tables> = [];
+
+  currentTab = 0;
 
   ngOnInit() {
+    
   }
 
   constructor() {
 
     this.resetValues();
-    if (this.USE_LOCAL_STORAGE) this.queriesArray = JSON.parse(localStorage.getItem('queries') || '{}') || [];
-    
-    console.log(this.queriesArray);
-
-
+    if (this.USE_LOCAL_STORAGE) {
+      this.queriesArray = [{name: "table 1", list: []}];
+      let localStorageData = localStorage.getItem('queries');
+      if (localStorageData) {
+        this.queriesArray = JSON.parse(localStorageData);
+      }
+    }
   }
 
   updateInputs() {
-    console.log(this.valWidth + ' ' + this.valHeight);
     this.sqrFt = ((this.valWidth * this.valHeight) / 144) * this.quantity;
     
     if (this.valWidth >= 97) {
@@ -101,7 +110,7 @@ export class DashboardComponent implements OnInit {
   }
 
   addToList() {
-    this.queriesArray.push({
+    this.queriesArray[this.currentTab].list.push({
       roomLabel: this.roomLabel,
       width: this.valWidth,
       height: this.valHeight,
@@ -109,7 +118,6 @@ export class DashboardComponent implements OnInit {
       cost: this.valCost,
       price: this.valPrice,
       quantity: this.quantity,
-      
       retailPrice: this.retailPrice,
       discount: this.discount,
       discount2: this.discount2,
@@ -126,7 +134,7 @@ export class DashboardComponent implements OnInit {
       let dialogRef = confirm('Are you sure you want to delete this item?');
       if (!dialogRef) return;
 
-      this.queriesArray.splice(i, 1);
+      this.queriesArray[this.currentTab].list.splice(i, 1);
       if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
   }
 
@@ -150,14 +158,46 @@ export class DashboardComponent implements OnInit {
     this.updateInputs();
   }
 
-  getFullSum() {
+  getFullSum(list: query[]) {
     let cost = 0;
     let price = 0;
-    this.queriesArray.forEach(element => {
-      cost += element.cost;
-      price += element.price;
-    });
+    try {
+      list.forEach(element => {
+        cost += element.cost;
+        price += element.price;
+      });
+    } catch (error) {
+      console.log(error);
+      if (error instanceof TypeError) {
+        window.localStorage.removeItem('queries')
+        window.location.reload();
+      }
+    }
+
 
     return {cost: cost , price: price};
+  }
+
+  tabChange(tabChangeEvent: MatTabChangeEvent) {
+    if (tabChangeEvent.index === this.currentTab) return;
+    console.log("HIT");
+    this.currentTab = tabChangeEvent.index;
+  }
+
+  createTab() {
+    this.queriesArray.push({name: "table " + (this.queriesArray.length + 1), list: []});
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+  }
+
+  closeTab(i: number) {
+    this.queriesArray.splice(i, 1);
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+  }
+
+  editName (event: any) {
+    event.stopPropagation();
+    console.log(event.srcElement.parentElement.parentElement);
+    event.srcElement.parentElement.parentElement.childNodes[0].toggleAttribute('disabled');
+    
   }
 }

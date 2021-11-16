@@ -1,3 +1,4 @@
+
 .hidden {
     display: none;
 }
@@ -50,26 +51,28 @@
 
 }
 
-.table header {
+.table {
+    margin-top: 20px;
+    header {
     font-weight: bold;
     border-bottom: 4px solid #ddd;
+    letter-spacing: 1.5px;
 
-    & div {
-        padding-bottom: 4px;
+        & div {
+            padding-bottom: 4px;
+        }
     }
-    
 
-}
-
-.table hr {
-    margin: 12px 0;
-    & + span {
-        position: absolute;
-        top: -8px;
-        left: 50%;
-        padding: 0 10px;
-        transform: translateX(-50%);
-        background-color: #424242;
+    hr {
+        margin: 12px 0;
+        & + span {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            padding: 0 10px;
+            transform: translateX(-50%);
+            background-color: #424242;
+        }
     }
 }
 
@@ -118,9 +121,7 @@
 }
 
 
-mat-toolbar {
-   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-}
+
 
 
 
@@ -139,3 +140,76 @@ hr + mat-icon {
   
 }
 
+::ng-deep.mat-tab-label, ::ng-deep.mat-tab-label-active{
+    min-width: 80px!important;
+    height: 0!important;
+    min-height: 40px;
+    padding: 0 3px !important;
+    margin: 3px 1px !important;
+    text-transform: capitalize;
+    
+    // background-color: rgba(255, 255, 255, 0.186)!important;
+}
+
+::ng-deep.mat-tab-label:hover .icon-container {
+    visibility: visible !important;
+}
+
+
+mat-card.calcCard {
+    padding: 0 5px 5px 5px;
+
+    .icon-container {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        mat-icon {
+            color: rgba(255, 255, 255, 0.452);
+        }
+    }
+    input {
+        border: none;
+        text-align: center;
+        text-transform: capitalize;
+
+        &[disabled] {
+            background-color: transparent;
+            border: none;
+            color: rgba(255, 255, 255);
+            
+        }
+    }
+    
+   
+    .icon-container.closeTab {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        width: 15px;
+        height: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        mat-icon {
+            font-size: 10px;
+            vertical-align: middle;
+            width: auto;
+            height: auto;
+        }
+
+        &:hover {
+            cursor: pointer;
+
+            mat-icon {
+                color: rgba(255, 255, 255);
+            }
+        }
+    }
+}

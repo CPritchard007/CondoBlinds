@@ -173,15 +173,22 @@
 
 
   <div class="container">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            <h4>Table</h4>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <div class="table">
-                <header>
+      <mat-card class="calcCard">
+         
+          <mat-card-content>
+            <div class="addTab icon-container" (click)="createTab()">
+            <mat-icon>add_circle</mat-icon>
+          </div>
+            <mat-tab-group dynamicHeight (selectedTabChange)="tabChange($event)">
+              <mat-tab *ngFor="let queryItem of queriesArray; index as index">
+                <ng-template mat-tab-label>
+                  <div class="icon-container closeTab" (click)="closeTab(index)">
+                    <mat-icon>close</mat-icon>
+                  </div>
+                  {{ queryItem.name }}
+                </ng-template>
+              <div class="table">
+                  <header>
                     <div>
                         <span>Room</span>
                     </div>
@@ -215,73 +222,78 @@
                     <div>
                         <span>Installation Cost</span>
                     </div>
-                </header>
-                <div class="content">
-                    <div class="row"  *ngFor="let query of queriesArray; index as i">
-                        <div>
-                            <span>{{query.roomLabel}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.quantity}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.width}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.height}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.sqrFt}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.retailPrice}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.discount}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.discount2}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.cost}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.price}}</span>
-                        </div>
-                        <div>
-                            <span>{{query.installmentCost}}</span>
-                        </div>
-                        <mat-icon (click)="removeFromList(i)">remove_circle</mat-icon>
-                    </div>
-                    <div style="position: relative;"><hr><span>Total</span></div>
-                    <div class="total">
-                        <div>
-                        </div>
-                        <div>
-                        </div>
-                        <div>
-                        </div>
-                        <div>
-                        </div>
-                        <div>
-                        </div>
-                        <div>
-                        </div>
-                        <div>
-                        </div>
-                        <div>
-                        </div>
-                        <div>
-                            <span>{{getFullSum().cost | numericCommas}}</span>
-                        </div>
-                        <div>
-                            <span>{{getFullSum().price | numericCommas}}</span>
-                        </div>
-                        <div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                  </header>
+                  <div class="content">
+                      <div class="row"  *ngFor="let query of queryItem.list; index as itemIndex">
+                          <div>
+                              <span>{{query.roomLabel}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.quantity}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.width}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.height}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.sqrFt}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.retailPrice}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.discount}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.discount2}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.cost}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.price}}</span>
+                          </div>
+                          <div>
+                              <span>{{query.installmentCost}}</span>
+                          </div>
+                          <mat-icon (click)="removeFromList(itemIndex)">remove_circle</mat-icon>
+                      </div>
+                      <div style="position: relative;"><hr><span>Total</span></div>
+                      <div class="total">
+                          <div>
+                          </div>
+                          <div>
+                          </div>
+                          <div>
+                          </div>
+                          <div>
+                          </div>
+                          <div>
+                          </div>
+                          <div>
+                          </div>
+                          <div>
+                          </div>
+                          <div>
+                          </div>
+                          <div>
+                              <span>{{getFullSum(queryItem.list).cost | numericCommas}}</span>
+                          </div>
+                          <div>
+                              <span>{{getFullSum(queryItem.list).price | numericCommas}}</span>
+                          </div>
+                          <div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              </mat-tab>
+              <div class="icon-container">
+                
+              </div>
+          </mat-tab-group>
         </mat-card-content>
       </mat-card>
   </div>

@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDialogModule} from '@angular/material/dialog';
-
+import {MatTabsModule} from '@angular/material/tabs';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
@@ -43,6 +43,7 @@ import { HelpBarComponent } from './help-bar/help-bar.component';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatTabsModule,
     MatDialogModule,
     MatSidenavModule,
     MatSelectModule,
