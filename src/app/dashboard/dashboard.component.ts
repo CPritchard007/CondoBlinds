@@ -101,7 +101,6 @@ export class DashboardComponent implements OnInit {
       this.retailPrice = 471;
     } else {
       this.retailPrice = 404;
-      console.log('passed');
     }
     
     this.valCost = ((this.retailPrice * (this.discount / 100)) * (this.discount2 / 100)) * this.quantity;
@@ -128,17 +127,19 @@ export class DashboardComponent implements OnInit {
     this.resetValues();
   }
 
-  removeFromList( i :number) {
+  removeFromList( i :number, event: any) {
 
-    //
+    if ( !event.ctrlKey ) {
       let dialogRef = confirm('Are you sure you want to delete this item?');
       if (!dialogRef) return;
-
-      this.queriesArray[this.currentTab].list.splice(i, 1);
-      if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+    }
+    
+    this.queriesArray[this.currentTab].list.splice(i, 1);
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
   }
 
   resetValues() {
+
     this.USE_LOCAL_STORAGE = data.USE_LOCAL_STORAGE;
 
     this.costOfInstallation = data.startingVars.costOfInstallation;
@@ -180,7 +181,6 @@ export class DashboardComponent implements OnInit {
 
   tabChange(tabChangeEvent: MatTabChangeEvent) {
     if (tabChangeEvent.index === this.currentTab) return;
-    console.log("HIT");
     this.currentTab = tabChangeEvent.index;
   }
 
@@ -194,10 +194,24 @@ export class DashboardComponent implements OnInit {
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
   }
 
-  editName (event: any) {
-    event.stopPropagation();
-    console.log(event.srcElement.parentElement.parentElement);
-    event.srcElement.parentElement.parentElement.childNodes[0].toggleAttribute('disabled');
+  openEditPannel (event: any) {
+      let button = event.target;
+      let input = button.parentElement.parentElement.childNodes[1];
+      button.style.display = "none";
+      input.style.display = "flex";
+      
+  }
+
+  updateTabName(event: any) {
+    let button = event.target;
+    let input = button.parentElement.childNodes[0];
+    let tabName = input.value;
+    this.queriesArray[this.currentTab].name = tabName;
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+    console.log(input.value);
+    console.log(this.queriesArray);
+    button.parentElement.style.display = "none";
+    button.parentElement.parentElement.childNodes[0].childNodes[0].style.display = "flex";
     
   }
 }

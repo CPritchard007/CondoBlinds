@@ -187,110 +187,118 @@
                   </div>
                   {{ queryItem.name }}
                 </ng-template>
-              <div class="table">
-                  <header>
-                    <div>
-                        <span>Room</span>
-                    </div>
-                    <div>
-                        <span>Quantity</span>
-                    </div>
-                    <div>
-                        <span>Width</span>
-                    </div>
-                    <div>
-                        <span>Height</span>
-                    </div>
-                    <div>
-                        <span>Sqr.Ft</span>
-                    </div>
-                    <div>
-                        <span>Retail Price</span>
-                    </div>
-                    <div>
-                        <span>Discount</span>
-                    </div>
-                    <div>
-                        <span>Discount 2</span>
-                    </div>
-                    <div>
-                        <span>Cost</span>
-                    </div>
-                    <div>
-                        <span>Price</span>
-                    </div>
-                    <div>
-                        <span>Installation Cost</span>
-                    </div>
-                  </header>
-                  <div class="content">
-                      <div class="row"  *ngFor="let query of queryItem.list; index as itemIndex">
-                          <div>
-                              <span>{{query.roomLabel}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.quantity}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.width}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.height}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.sqrFt}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.retailPrice}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.discount}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.discount2}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.cost}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.price}}</span>
-                          </div>
-                          <div>
-                              <span>{{query.installmentCost}}</span>
-                          </div>
-                          <div class="icon-container">
-                            <mat-icon (click)="removeFromList(itemIndex)">remove_circle</mat-icon>
-                          </div>
-                      </div>
-                      <div style="position: relative;"><hr><span>Total</span></div>
-                      <div class="total">
-                          <div>
-                          </div>
-                          <div>
-                          </div>
-                          <div>
-                          </div>
-                          <div>
-                          </div>
-                          <div>
-                          </div>
-                          <div>
-                          </div>
-                          <div>
-                          </div>
-                          <div>
-                          </div>
-                          <div>
-                              <span>{{getFullSum(queryItem.list).cost | numericCommas}}</span>
-                          </div>
-                          <div>
-                              <span>{{getFullSum(queryItem.list).price | numericCommas}}</span>
-                          </div>
-                          <div>
-                          </div>
-                      </div>
+                <div class="nameContainer">
+    
+                  <a><i class="editName" (click)="openEditPannel($event)">edit tab name</i></a>
+                  <div>
+                    <input [(ngModel)]="queryItem.name" (input)="updateInputs()">
+                    <div class="icon-container checkmark" (click)="updateTabName($event)"><mat-icon>checkmark</mat-icon></div>
                   </div>
-              </div>
+                </div>
+                <div class="table">
+                    <header>
+                      <div>
+                          <span>Room</span>
+                      </div>
+                      <div>
+                          <span>Quantity</span>
+                      </div>
+                      <div>
+                          <span>Width</span>
+                      </div>
+                      <div>
+                          <span>Height</span>
+                      </div>
+                      <div>
+                          <span>Sqr.Ft</span>
+                      </div>
+                      <div>
+                          <span>Retail Price</span>
+                      </div>
+                      <div>
+                          <span>Discount</span>
+                      </div>
+                      <div>
+                          <span>Discount 2</span>
+                      </div>
+                      <div>
+                          <span>Cost</span>
+                      </div>
+                      <div>
+                          <span>Price</span>
+                      </div>
+                      <div>
+                          <span>Installation Cost</span>
+                      </div>
+                    </header>
+                    <div class="content">
+                        <div class="row"  *ngFor="let query of queryItem.list; index as itemIndex">
+                            <div>
+                                <span>{{query.roomLabel}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.quantity}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.width}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.height}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.sqrFt}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.retailPrice}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.discount}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.discount2}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.cost}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.price}}</span>
+                            </div>
+                            <div>
+                                <span>{{query.installmentCost}}</span>
+                            </div>
+                            <div class="icon-container" (click)="removeFromList(itemIndex, $event)">
+                              <mat-icon >remove_circle</mat-icon>
+                            </div>
+                        </div>
+                        <div style="position: relative;"><hr><span>Total</span></div>
+                        <div class="total">
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                                <span>{{getFullSum(queryItem.list).cost | numericCommas}}</span>
+                            </div>
+                            <div>
+                                <span>{{getFullSum(queryItem.list).price | numericCommas}}</span>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
               </mat-tab>
              
           </mat-tab-group>
