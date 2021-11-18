@@ -42,6 +42,12 @@
     }
 }
 
+.of_auto, .of_2, .of_3, .of_4, .of_5 {
+    @media screen and (max-width: 570px) {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 .of_auto {
     display: grid;
     gap: 10px;
