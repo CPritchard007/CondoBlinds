@@ -82,8 +82,6 @@
         <hr>
         <mat-icon (click)="addToList()">add_circle</mat-icon>
       </mat-card-content>
-      
-  
     </mat-card>
     <mat-card>
       <mat-card-header>
@@ -107,12 +105,7 @@
               <input matInput type="number" [(ngModel)]="discount" (input)="updateInputs()">
             </mat-form-field>
           </div>
-          <div>
-            <span>Discount 2 (%)</span>
-            <mat-form-field appearance="outline">
-              <input matInput type="number" [(ngModel)]="discount2" (input)="updateInputs()">
-            </mat-form-field>
-          </div>
+          
           <div>
             <abbr title="((RetailPrice * Discount) * QuantityDiscount) * Quantity">
                 <span>Cost</span>
@@ -120,6 +113,12 @@
             <mat-form-field appearance="standard">
             
               <input matInput type="text" disabled [(ngModel)]="valCost">
+            </mat-form-field>
+          </div>
+          <div>
+            <span>Discount 2 (%)</span>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" [(ngModel)]="discount2" (input)="updateInputs()">
             </mat-form-field>
           </div>
         </div>
@@ -150,14 +149,7 @@
               <input matInput type="decimal" disabled [(ngModel)]="installmentCost">
             </mat-form-field>
           </div>
-          <div>
-            <abbr title="">
-                <span>Total Price</span>
-            </abbr>
-            <mat-form-field appearance="standard">
-              <input matInput type="decimal" disabled [(ngModel)]="valPrice">
-            </mat-form-field>
-          </div>
+          
         </div>
       </mat-card-content>
     </mat-card>
@@ -179,7 +171,7 @@
             <div class="addTab icon-container" (click)="createTab()">
             <mat-icon>add_circle</mat-icon>
           </div>
-            <mat-tab-group  (selectedTabChange)="tabChange($event)" animationDuration="100ms">
+            <mat-tab-group (selectedTabChange)="tabChange($event)" animationDuration="100ms">
               <mat-tab *ngFor="let queryItem of queriesArray; index as index">
                 <ng-template mat-tab-label>
                   <div class="icon-container closeTab" (click)="closeTab(index)">

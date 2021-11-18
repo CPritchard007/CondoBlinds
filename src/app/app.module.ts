@@ -16,6 +16,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTabsModule} from '@angular/material/tabs';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +25,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { NumericCommasPipe } from './numeric-commas.pipe';
 import { HelpBarComponent } from './help-bar/help-bar.component';
+import { RemoveItemDialog } from './Dialog/RemoveItemDialog';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,6 +34,7 @@ import { HelpBarComponent } from './help-bar/help-bar.component';
     HeaderBarComponent,
     NumericCommasPipe,
     HelpBarComponent,
+    RemoveItemDialog
   ],
   imports: [
     FormsModule,
@@ -47,6 +50,7 @@ import { HelpBarComponent } from './help-bar/help-bar.component';
     MatDialogModule,
     MatSidenavModule,
     MatSelectModule,
+    DragDropModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the app is stable

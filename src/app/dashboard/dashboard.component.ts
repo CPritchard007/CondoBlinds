@@ -1,6 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
 interface RoomType {
     value: string;
     viewValue: string;
@@ -60,7 +63,7 @@ export class DashboardComponent implements OnInit {
     
   }
 
-  constructor() {
+  constructor(public dialog: MatDialog) {
 
     this.resetValues();
     if (this.USE_LOCAL_STORAGE) {
@@ -128,14 +131,14 @@ export class DashboardComponent implements OnInit {
   }
 
   removeFromList( i :number, event: any) {
-
-    if ( !event.ctrlKey ) {
-      let dialogRef = confirm('Are you sure you want to delete this item?');
-      if (!dialogRef) return;
+    if (!event.ctrlKey) {
+      const dialogRef = this.dialog.open(RemoveItemDialog);
+      dialogRef.afterClosed().subscribe(result => {
+        if (!result) return;
+        this.queriesArray[this.currentTab].list.splice(i, 1);
+        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+      });
     }
-    
-    this.queriesArray[this.currentTab].list.splice(i, 1);
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
   }
 
   resetValues() {
