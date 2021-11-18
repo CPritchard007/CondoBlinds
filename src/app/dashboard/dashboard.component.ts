@@ -52,6 +52,8 @@ export class DashboardComponent implements OnInit {
   discount2 = 50.0;
   installmentCost = 0;
 
+  totalCost = 0;
+  cleanCost = 0;
 
   roomLabel: string = "";
   roomTypes: Array<RoomType> = [];
@@ -109,6 +111,7 @@ export class DashboardComponent implements OnInit {
     this.valCost = ((this.retailPrice * (this.discount / 100)) * (this.discount2 / 100)) * this.quantity;
     this.installmentCost = this.quantity * this.costOfInstallation;
     this.valPrice = Math.round((this.valCost + this.installmentCost) * this.profitMargin);
+    
   }
 
   addToList() {
@@ -162,7 +165,8 @@ export class DashboardComponent implements OnInit {
     this.updateInputs();
   }
 
-  getFullSum(list: query[]) {
+  getFullSum() {
+    let list = this.queriesArray[this.currentTab].list;
     let cost = 0;
     let price = 0;
     try {
@@ -178,7 +182,7 @@ export class DashboardComponent implements OnInit {
       }
     }
 
-
+    this.totalCost = price;
     return {cost: cost , price: price};
   }
 
@@ -216,5 +220,19 @@ export class DashboardComponent implements OnInit {
     button.parentElement.style.display = "none";
     button.parentElement.parentElement.childNodes[0].childNodes[0].style.display = "flex";
     
+  }
+
+  getCleanPrice() {
+    let value = this.totalCost;
+    let closestValue = value%50;
+    let cleanValue = 0.0;
+    if (closestValue > 25) {
+      cleanValue = value + (50 - closestValue);
+
+    } else {
+      cleanValue = value - closestValue;
+    }
+    this.cleanCost = cleanValue - 0.01;
+    return this.cleanCost;
   }
 }
