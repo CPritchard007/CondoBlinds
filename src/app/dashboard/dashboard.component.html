@@ -175,8 +175,8 @@
          
           <mat-card-content>
             <div class="addTab icon-container" (click)="createTab()">
-            <mat-icon>add_circle</mat-icon>
-          </div>
+              <mat-icon>add_circle</mat-icon>
+            </div>
             <mat-tab-group (selectedTabChange)="tabChange($event)" animationDuration="100ms">
               <mat-tab *ngFor="let queryItem of queriesArray; index as index">
                 <ng-template mat-tab-label>
@@ -274,7 +274,7 @@
                           <div>
                             <span>Total Price</span>
                             <mat-form-field appearance="standard">
-                              <input matInput type="text" disabled [value]="getFullSum().price">
+                              <input matInput type="text" disabled [value]="getFullSum(queryItem.list).price">
                             </mat-form-field>
                           </div>
                           <div>

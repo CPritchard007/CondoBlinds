@@ -157,7 +157,7 @@ mat-card.calcCard {
         }
     
         hr {
-            margin: 12px 0;
+            margin: 12px 0 0 0;
             & + span {
                 position: absolute;
                 top: -8px;
@@ -176,7 +176,7 @@ mat-card.calcCard {
         right: 0;
         top: 0;
         width: 40px;
-        height: 40px;
+        height: 45px;
         
         z-index: 10;
         color: rgba(255, 255, 255, 0.452);
@@ -270,5 +270,15 @@ mat-card.calcCard {
         display: flex;
         justify-content: center;
         align-items: center;
+
+        mat-form-field {
+            width: 100px;
+        }
     }
+
+    
+}
+
+::ng-deep .mat-tab-header {
+    padding-right: 35px !important;
 }

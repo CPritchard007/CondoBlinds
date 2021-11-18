@@ -4,6 +4,7 @@ import data from '../../content.json'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
+import { WarningDialog } from '../Dialog/warningDialog';
 interface RoomType {
     value: string;
     viewValue: string;
@@ -115,19 +116,37 @@ export class DashboardComponent implements OnInit {
   }
 
   addToList() {
-    this.queriesArray[this.currentTab].list.push({
-      roomLabel: this.roomLabel,
-      width: this.valWidth,
-      height: this.valHeight,
-      sqrFt: this.sqrFt,
-      cost: this.valCost,
-      price: this.valPrice,
-      quantity: this.quantity,
-      retailPrice: this.retailPrice,
-      discount: this.discount,
-      discount2: this.discount2,
-      installmentCost: this.installmentCost
-    });
+    try {
+      this.queriesArray[this.currentTab].list.push({
+        roomLabel: this.roomLabel,
+        width: this.valWidth,
+        height: this.valHeight,
+        sqrFt: this.sqrFt,
+        cost: this.valCost,
+        price: this.valPrice,
+        quantity: this.quantity,
+        retailPrice: this.retailPrice,
+        discount: this.discount,
+        discount2: this.discount2,
+        installmentCost: this.installmentCost});
+    } catch (error) {
+      if (error instanceof TypeError) {
+        const timer = 2000;
+        console.log("You Need to have a tab open to add a list item");
+        let dialogRef = this.dialog.open(WarningDialog, {
+          width: '400px',
+          data: {}
+        });
+        dialogRef.afterOpened().subscribe( _ => {
+          setTimeout(() => {
+            dialogRef.close();
+
+          }, timer);
+        });
+
+      }
+    }
+    
 
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
     this.resetValues();
@@ -165,10 +184,10 @@ export class DashboardComponent implements OnInit {
     this.updateInputs();
   }
 
-  getFullSum() {
-    let list = this.queriesArray[this.currentTab].list;
+  getFullSum(list: query[]) {
     let cost = 0;
     let price = 0;
+
     try {
       list.forEach(element => {
         cost += element.cost;
@@ -197,6 +216,8 @@ export class DashboardComponent implements OnInit {
   }
 
   closeTab(i: number) {
+    console.log(i);
+    console.log(this.queriesArray);
     this.queriesArray.splice(i, 1);
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
   }
@@ -232,7 +253,7 @@ export class DashboardComponent implements OnInit {
     } else {
       cleanValue = value - closestValue;
     }
-    this.cleanCost = cleanValue - 0.01;
+    this.cleanCost = Math.max(cleanValue - 0.01,0);
     return this.cleanCost;
   }
 }
