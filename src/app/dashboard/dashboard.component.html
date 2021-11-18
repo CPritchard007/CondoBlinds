@@ -226,7 +226,7 @@
                           <span>Price</span>
                       </div>
                       <div>
-                          <span>Installation Cost</span>
+                          <span>Install Cost</span>
                       </div>
                     </header>
                     <div class="content">
@@ -274,7 +274,7 @@
                           <div>
                             <span>Total Price</span>
                             <mat-form-field appearance="standard">
-                              <input matInput type="text" disabled [value]="getFullSum(queryItem.list).price">
+                              <input matInput type="text" disabled [value]="getFullSum(queryItem.list)">
                             </mat-form-field>
                           </div>
                           <div>
@@ -286,7 +286,7 @@
                           <div>
                             <span>Clean Total Price</span>
                             <mat-form-field appearance="standard">
-                              <input matInput type="decimal" disabled [value]="getCleanPrice()">
+                              <input matInput type="text" disabled [value]="getCleanPrice()">
                             </mat-form-field>
                           </div>
                           <div>

@@ -13,5 +13,4 @@ interface DialogData {
 export class WarningDialog {
     constructor(
         public dialogRef: MatDialogRef<WarningDialog>) { }
-    
 }

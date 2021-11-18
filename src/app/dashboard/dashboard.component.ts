@@ -78,6 +78,12 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+
+  numericCommas(x: number) {
+    let cost = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return "$ " + cost;
+  }
+
   updateInputs() {
     this.sqrFt = ((this.valWidth * this.valHeight) / 144) * this.quantity;
     
@@ -202,7 +208,8 @@ export class DashboardComponent implements OnInit {
     }
 
     this.totalCost = price;
-    return {cost: cost , price: price};
+
+    return this.numericCommas(this.totalCost);
   }
 
   tabChange(tabChangeEvent: MatTabChangeEvent) {
@@ -254,6 +261,6 @@ export class DashboardComponent implements OnInit {
       cleanValue = value - closestValue;
     }
     this.cleanCost = Math.max(cleanValue - 0.01,0);
-    return this.cleanCost;
+    return this.numericCommas(this.cleanCost);
   }
 }

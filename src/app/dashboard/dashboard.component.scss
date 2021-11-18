@@ -106,7 +106,7 @@ hr + mat-icon {
 
 .table header, .table .content .row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
     position: relative;
     
     .icon-container {
@@ -166,6 +166,10 @@ mat-card.calcCard {
                 transform: translateX(-50%);
                 background-color: #424242;
             }
+        }
+
+        .content .row {
+            
         }
     }
 
