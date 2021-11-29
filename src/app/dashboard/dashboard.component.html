@@ -57,17 +57,25 @@
           <div>
             <span>Width</span>
             <mat-form-field appearance="outline">
-              <!-- <mat-label>Width</mat-label> -->
-              <input matInput type="number" [(ngModel)]="valWidth" (input)="updateInputs()">
-              
+              <mat-select [(ngModel)]="valWidth" (selectionChange)="updateInputs()">
+                <mat-option *ngFor="let width of Widths; index as i" [value]="i">
+                  {{width}}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
+            {{valWidth}}
           </div>
           
           <div>
             <span>Height</span>
             <mat-form-field appearance="outline">
-                <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()">
+              <mat-select [(ngModel)]="valHeight" (selectionChange)="updateInputs()">
+                <mat-option *ngFor="let height of Heights; index as i" [value]="i">
+                  {{height}}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
+            {{valHeight}}
           </div>
           <div>
             <abbr title="(Width * Height) / 144">

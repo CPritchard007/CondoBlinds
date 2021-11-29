@@ -29,12 +29,19 @@ interface tables {
   list: query[];
 }
 
+
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  /* Arrays */
+  pricingTables: Array<Array<number>>;
+  Widths: number[];
+  Heights: number[];
+
   /* static variables */
   USE_LOCAL_STORAGE = true;
   costOfInstallation = 47;
@@ -42,8 +49,8 @@ export class DashboardComponent implements OnInit {
 
   /* Variables */
   /* all are linked with inputs, or calculated by the calculator */
-  valWidth = 0; 
-  valHeight = 0;
+  valWidth; 
+  valHeight;
   valRoomType = ""; 
   valCost = 0;
   valPrice = 0;
@@ -67,6 +74,14 @@ export class DashboardComponent implements OnInit {
   ngOnInit() { }
 
   constructor(public dialog: MatDialog) {
+
+    this.Widths = data.Widths;
+    this.Heights = data.Heights;
+
+    this.valWidth = this.Widths[0];
+    this.valHeight = this.Heights[0];
+    this.pricingTables = data.pricingTable; // set the pricing tables
+
     // assure that all values are set to default; as defined by the json file
     this.resetValues();
     // fi the LocalStorage is disabled, then the app will reset once the application is refreshed
@@ -81,6 +96,7 @@ export class DashboardComponent implements OnInit {
     // non reset items, such as our static variables, will not be reset, so they will be added here
     this.profitMargin = data.startingVars.profitMargin; // 
     this.costOfInstallation = data.startingVars.costOfInstallation
+    
   }
 
   // use this to change a number (preferably dollar cents),
@@ -94,36 +110,8 @@ export class DashboardComponent implements OnInit {
   // all the values that are needed
   updateInputs() {
     
-    if (this.valWidth >= 97) {
-      this.retailPrice = 1216;
-    } else if (this.valWidth >= 91) {
-      this.retailPrice = 1149;
-    } else if (this.valWidth >= 85) {
-      this.retailPrice = 1081;
-    } else if (this.valWidth >= 79) {
-      this.retailPrice = 1013;
-    } else if (this.valWidth >= 73) {
-      this.retailPrice = 946;
-    } else if (this.valWidth >= 67) {
-      this.retailPrice = 878;
-    } else if (this.valWidth >= 61) {
-      this.retailPrice = 810;
-    } else if (this.valWidth >= 55) {
-      this.retailPrice = 742;
-    } else if (this.valWidth >= 49) {
-      this.retailPrice = 675;
-    } else if (this.valWidth >= 43) {
-      this.retailPrice = 607;
-    } else if (this.valWidth >= 37) {
-      this.retailPrice = 539;
-    } else if (this.valWidth >= 31) {
-      this.retailPrice = 471;
-    } else {
-      this.retailPrice = 404;
-    }
-
-    // calculations
-    this.sqrFt = ((this.valWidth * this.valHeight) / 144) * this.quantity;
+    this.retailPrice = this.pricingTables[this.valHeight][this.valWidth];
+    this.sqrFt = ((this.Widths[this.valWidth] * this.Heights[this.valHeight]) / 144) * this.quantity;
     this.valCost = ((this.retailPrice * (this.discount / 100)) * (this.discount2 / 100)) * this.quantity;
     this.installmentCost = this.quantity * this.costOfInstallation;
     this.valPrice = Math.round((this.valCost + this.installmentCost) * this.profitMargin);
