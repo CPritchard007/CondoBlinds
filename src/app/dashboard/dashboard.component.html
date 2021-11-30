@@ -54,6 +54,7 @@
               <input matInput type="decimal" [(ngModel)]="quantity" (input)="updateInputs()">
             </mat-form-field>
           </div>
+          <!--
           <div>
             <span>Width</span>
             <mat-form-field appearance="outline">
@@ -68,7 +69,16 @@
               </mat-select>
             </mat-form-field>
           </div>
+          -->
           
+          <div>
+            <span>Width</span>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" [(ngModel)]="valWidth" (input)="updateInputs()" />
+            </mat-form-field>   
+          </div>
+         
+          <!--
           <div>
             <span>Height</span>
             <mat-form-field appearance="outline">
@@ -83,6 +93,15 @@
               </mat-select>
             </mat-form-field>
           </div>
+           -->
+          
+          <div>
+            <span>Height</span>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()" />
+            </mat-form-field>   
+          </div>
+         
           <div>
             <span style="width: auto; padding: 0 15px;">Is This a Fascia?</span>
 

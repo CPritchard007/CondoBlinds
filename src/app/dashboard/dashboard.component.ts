@@ -111,9 +111,27 @@ export class DashboardComponent implements OnInit {
   // this is run after the user enters a new value, every new value, the application will recalculate
   // all the values that are needed
   updateInputs() {
-    
-    this.retailPrice = this.pricingTables[this.valHeight][this.valWidth];
-    this.sqrFt = (((this.Widths[this.valWidth] * this.Heights[this.valHeight]) / 144) * this.quantity).toFixed(2);
+    console.log('updating inputs');
+    let minIterable = -1;
+    let minIndex = -1;
+
+    let newWidth  = 0
+    let newHeight = 0
+    this.Widths.forEach((currentSelectionSize, index) => {
+      let size = Math.abs(currentSelectionSize - this.valWidth);
+      console.log(size);
+      if (size < minIterable || minIterable == -1) {
+        minIterable = size;
+        minIndex = index;
+      }
+    });
+    console.log("HERE",minIterable, minIndex);
+    // this.retailPrice = this.pricingTables[this.valHeight][this.valWidth];
+    // this
+    this.retailPrice = this.pricingTables[this.Heights.indexOf(this.valHeight)][this.Widths.indexOf(this.valWidth)];
+    // this.sqrFt = (((this.Widths[this.valWidth] * this.Heights[this.valHeight]) / 144) * this.quantity).toFixed(2);
+    this.sqrFt = (((this.valWidth * this.valHeight) / 144) * this.quantity).toFixed(2);
+
     this.valCost = ((this.retailPrice * (this.discount / 100)) * (this.discount2 / 100)) * this.quantity;
     this.installmentCost = this.quantity * this.costOfInstallation;
     console.log(this.valCost, this.installmentCost, this.profitMargin);
