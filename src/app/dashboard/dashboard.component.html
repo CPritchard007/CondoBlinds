@@ -84,6 +84,11 @@
             </mat-form-field>
           </div>
           <div>
+            <span style="width: auto; padding: 0 15px;">Is This a Fascia?</span>
+
+            <mat-checkbox ></mat-checkbox>
+          </div>
+          <div>
             <abbr title="(Width * Height) / 144">
                 <span>Sqr.Ft</span>
             </abbr>
@@ -291,24 +296,24 @@
                               <input matInput type="text" disabled [value]="getFullSum(queryItem.list)">
                             </mat-form-field>
                           </div>
-                          <div>
+                          <!-- <div>
                             <span>Fiscal Price</span>
                             <mat-form-field appearance="standard">
                               <input matInput type="text" disabled [value]="'unknown'">
                             </mat-form-field>
-                          </div>
+                          </div> -->
                           <div>
                             <span>Clean Total Price</span>
                             <mat-form-field appearance="standard">
                               <input matInput type="text" disabled [value]="getCleanPrice()">
                             </mat-form-field>
                           </div>
-                          <div>
+                          <!-- <div>
                             <span>Clean Fiscal Price</span>
                             <mat-form-field appearance="standard">
                               <input matInput type="text" disabled [value]="'unknown'">
                             </mat-form-field>
-                          </div>
+                          </div> -->
                         </div>
                     </div>
                 </div>

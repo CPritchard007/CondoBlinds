@@ -51,6 +51,8 @@ export class DashboardComponent implements OnInit {
   /* all are linked with inputs, or calculated by the calculator */
   valWidth; 
   valHeight;
+  isFascia: boolean = false;
+
   valRoomType = ""; 
   valCost = 0;
   valPrice = 0;
