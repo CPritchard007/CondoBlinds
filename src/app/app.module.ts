@@ -28,6 +28,7 @@ import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { NumericCommasPipe } from './numeric-commas.pipe';
 import { HelpBarComponent } from './help-bar/help-bar.component';
 import { RemoveItemDialog } from './Dialog/RemoveItemDialog';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +37,8 @@ import { RemoveItemDialog } from './Dialog/RemoveItemDialog';
     HeaderBarComponent,
     NumericCommasPipe,
     HelpBarComponent,
-    RemoveItemDialog
+    RemoveItemDialog,
+    FileUploadComponent
   ],
   imports: [
     FormsModule,

@@ -10,6 +10,15 @@ interface RoomType {
     viewValue: string;
 }
 
+enum MaterialGroup {
+  GroupC = 'GroupC',
+  GroupD = 'GroupD',
+  GroupE = 'GroupE',
+  GroupF = 'GroupF',
+  GroupG = 'GroupG',
+  GroupH = 'GroupH',
+}
+
 interface query {
     roomLabel: string;
     // roomType: string;
@@ -38,9 +47,11 @@ interface tables {
 })
 export class DashboardComponent implements OnInit {
   /* Arrays */
-  pricingTables: Array<Array<number>>;
-  Widths: number[];
-  Heights: number[];
+  pricingTables: Array<Array<number>> = [];
+  Widths: number[] = [];
+  Heights: number[] = [];
+
+  defaultGroup: MaterialGroup = MaterialGroup.GroupC;
 
   /* static variables */
   USE_LOCAL_STORAGE = true;
@@ -76,13 +87,20 @@ export class DashboardComponent implements OnInit {
   ngOnInit() { }
 
   constructor(public dialog: MatDialog) {
+    try {
+      let tableType = data.tables.find(table => table.tag === this.defaultGroup);
+      
+      this.pricingTables = tableType!.table.calculations;
+      this.Widths = tableType!.table.Widths;
+      this.Heights = tableType!.table.Heights;  
+    } catch (error) {
+      console.log(error);
+    }
 
-    this.Widths = data.Widths;
-    this.Heights = data.Heights;
-
-    this.valWidth = this.Widths[0];
-    this.valHeight = this.Heights[0];
-    this.pricingTables = data.pricingTable; // set the pricing tables
+    console.log();
+    this.valWidth = 0
+    this.valHeight = 0;
+    // this.pricingTables = data.tables[this.defaultGroup]; // set the pricing tables
 
     // assure that all values are set to default; as defined by the json file
     this.resetValues();
@@ -112,24 +130,33 @@ export class DashboardComponent implements OnInit {
   // all the values that are needed
   updateInputs() {
     console.log('updating inputs');
-    let minIterable = -1;
-    let minIndex = -1;
-
-    let newWidth  = 0
-    let newHeight = 0
-    this.Widths.forEach((currentSelectionSize, index) => {
-      let size = Math.abs(currentSelectionSize - this.valWidth);
-      console.log(size);
-      if (size < minIterable || minIterable == -1) {
-        minIterable = size;
-        minIndex = index;
+    
+    let width = 0; 
+    let height = 0;
+    
+    this.Widths.forEach((x, i) => {
+      if (this.valWidth == 0 || this.valWidth == undefined) return;
+      if ( x  >= this.valWidth && ( i-1 <= 0 || this.Widths[i-1] < this.valWidth))  {
+        console.log("width", x);
+        width = x;
       }
     });
-    console.log("HERE",minIterable, minIndex);
-    // this.retailPrice = this.pricingTables[this.valHeight][this.valWidth];
-    // this
-    this.retailPrice = this.pricingTables[this.Heights.indexOf(this.valHeight)][this.Widths.indexOf(this.valWidth)];
-    // this.sqrFt = (((this.Widths[this.valWidth] * this.Heights[this.valHeight]) / 144) * this.quantity).toFixed(2);
+    
+    this.Heights.forEach((x, i) => {
+      if (this.valHeight == 0 || this.valHeight == undefined) return;
+      if ( x  >= this.valWidth && ( i-1 <= 0 || this.Heights[i-1] < this.valHeight)) {
+        console.log("height", x);
+        height = x;
+      }
+    });
+
+    const widthIndex = this.Widths.indexOf(width);
+    const heightIndex = this.Heights.indexOf(height);
+    console.log(width, height, widthIndex, heightIndex);
+
+    this.retailPrice = this.pricingTables[heightIndex][widthIndex];
+
+    this.pricingTables[heightIndex][widthIndex];
     this.sqrFt = (((this.valWidth * this.valHeight) / 144) * this.quantity).toFixed(2);
 
     this.valCost = ((this.retailPrice * (this.discount / 100)) * (this.discount2 / 100)) * this.quantity;
@@ -205,9 +232,7 @@ export class DashboardComponent implements OnInit {
     this.discount2 = data.startingVars.discount2 * 100;
     this.quantity = data.startingVars.quantity;
 
-    data.roomType.forEach((element, i) => {
-      this.roomTypes.push({value: element.value+(i+1), viewValue: element.viewValue});
-    });
+   
     
     this.updateInputs(); // calculate the dynamic variables from the reset values
   }
