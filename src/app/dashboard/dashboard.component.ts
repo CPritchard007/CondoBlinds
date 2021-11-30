@@ -18,7 +18,7 @@ interface query {
     cost: number;
     price: number;
     quantity: number;
-    sqrFt: number;
+    sqrFt: string;
     retailPrice: number;
     discount: number;
     discount2: number;
@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit {
   valCost = 0;
   valPrice = 0;
   quantity = 1;
-  sqrFt = 0;
+  sqrFt = "";
   retailPrice = 0;
   discount = 50.0;
   discount2 = 50.0;
@@ -111,10 +111,11 @@ export class DashboardComponent implements OnInit {
   updateInputs() {
     
     this.retailPrice = this.pricingTables[this.valHeight][this.valWidth];
-    this.sqrFt = ((this.Widths[this.valWidth] * this.Heights[this.valHeight]) / 144) * this.quantity;
+    this.sqrFt = (((this.Widths[this.valWidth] * this.Heights[this.valHeight]) / 144) * this.quantity).toFixed(2);
     this.valCost = ((this.retailPrice * (this.discount / 100)) * (this.discount2 / 100)) * this.quantity;
     this.installmentCost = this.quantity * this.costOfInstallation;
-    this.valPrice = Math.round((this.valCost + this.installmentCost) * this.profitMargin);
+    console.log(this.valCost, this.installmentCost, this.profitMargin);
+    this.valPrice = Math.round((this.valCost + this.installmentCost) * this.profitMargin);  
     
   }
 
