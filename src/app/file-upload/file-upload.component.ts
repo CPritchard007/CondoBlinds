@@ -1,6 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Papa } from 'ngx-papaparse';
 
+
+
+interface FileItem {
+  "Group Id": number,
+  "Group Name": string,
+  "Group Type": string,
+  "Name": string,
+  "quantity": number,
+  "Width": number,
+  "Height": number,
+}
+
 @Component({
   selector: 'file-upload',
   templateUrl: './file-upload.component.html',
@@ -10,7 +22,7 @@ export class FileUploadComponent implements OnInit {
 
   fileName: string = "";
   data: Object = {};
-  dataJson: Object[] = [];
+  dataJson: FileItem[] = [];
   constructor() { }
 
   ngOnInit(): void {
@@ -21,32 +33,31 @@ export class FileUploadComponent implements OnInit {
     if (file) {
       this.fileName = file.name;
       this.data = file;
-      let lines: string[][] = [];
         
       let reader: FileReader = new FileReader();
       reader.readAsText(file);
       reader.onload = (e: any) => {
         let csv: string = reader.result as string;
-        if (csv.match(/[^\r\n]+/g) != null) {
-          
+        let lineArray: string[] = csv.split(/\r\n|\n/);
+        if (lineArray) {
+          for (let line of lineArray) {
+            if (line) {
+              let row: string[] = line.split(',');
+              
+              let json: FileItem = {
+                "Group Id": parseInt(row[0]),
+                "Group Name": row[1],
+                "Group Type": row[2],
+                "Name": row[3],
+                "quantity": parseInt(row[4]),
+                "Width": parseInt(row[5]),
+                "Height": parseInt(row[6]),
+              }
+              this.dataJson.push(json);
+            }
+          }
         }
       }
-
-      console.log(lines, "lines");
-      for (let i = 0; lines.length > i; i++) {
-        let line = lines[i];
-        console.log("to json");
-        this.dataJson.push({
-          "Group Id": line[0],
-          "Group Name": line[1],
-          "Group Type": line[2],
-          "Name": line[3],
-          "quantity": line[4],
-          "Width": line[5],
-          "Height": line[6],
-        })
-      }
-
       console.log(this.dataJson);
     }
   }

@@ -18,7 +18,18 @@
                     <mat-form-field appearance="outline">
                         <input matInput type="number" [(ngModel)]="profitMargin">
                     </mat-form-field>
-                  </div>
+                </div>
+                <div>
+                  <span>GroupName</span>
+                  <mat-form-field appearance="outline" >
+                    <div style="display: flex;">
+                      <input matInput type="text" [(ngModel)]="groupName">
+                      <mat-select style="height: 0;" [(ngModel)]="groupName">
+                        <mat-option *ngFor="let group of groupNames" [value]="group">{{group}}</mat-option>
+                      </mat-select>
+                    </div>
+                  </mat-form-field>
+              </div>
                 
               </div>
         </mat-card-content>
@@ -233,6 +244,7 @@
                 </div>
                 <div class="table">
                     <header>
+
                       <div>
                           <span>Room</span>
                       </div>
@@ -268,43 +280,47 @@
                       </div>
                     </header>
                     <div class="content">
-                        <div class="row"  *ngFor="let query of queryItem.list; index as itemIndex">
-                            <div>
-                                <span>{{query.roomLabel}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.quantity}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.width}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.height}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.sqrFt}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.retailPrice}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.discount}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.discount2}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.cost}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.price}}</span>
-                            </div>
-                            <div>
-                                <span>{{query.installmentCost}}</span>
-                            </div>
-                            <div class="icon-container" (click)="removeFromList(itemIndex, $event)">
-                              <mat-icon >remove_circle</mat-icon>
-                            </div>
+                        <div *ngFor="let group of groupListItems(queryItem.list)" style="border: 3px solid steelblue;border-right: inherit; border-bottom: inherit; margin: 0 0 5px 0;">
+                          <div style="width: 100%; height: 20px;display: flex; justify-content: flex-start; padding: 0 10px; background-color: steelblue;color: black; box-sizing: border-box;">{{group.name}}</div>
+                          <div class="row"  *ngFor="let query of group.value; index as itemIndex">
+                              <div>
+                                  <span>{{query.roomLabel}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.quantity}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.width}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.height}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.sqrFt}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.retailPrice}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.discount}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.discount2}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.cost}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.price}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.installmentCost}}</span>
+                              </div>
+                              <div class="icon-container" (click)="removeFromList(itemIndex, $event)">
+                                <mat-icon >remove_circle</mat-icon>
+                              </div>
+                          </div>
+                          
                         </div>
                         <div style="position: relative;"><hr><span>Total</span></div>
                         

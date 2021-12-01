@@ -130,8 +130,12 @@ hr + mat-icon {
 
     & div {
         padding: 3px 5px;
-        border-left: 1px solid #ddd;
+        
         text-align: center;
+
+        & + div {
+            border-left: 1px solid rgba(243, 243, 243, 0.12);
+        }
     }
 }
 
@@ -291,4 +295,13 @@ mat-card.calcCard {
 
 ::ng-deep .mat-tab-header {
     padding-right: 35px !important;
+}
+::ng-deep .mat-select-value {
+    display: none !important;
+
+    
+
+}
+.mat-select {
+    width: 20px;
 }

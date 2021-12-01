@@ -19,9 +19,15 @@ enum MaterialGroup {
   GroupH = 'GroupH',
 }
 
+interface Group {
+  name: string;
+  value: query[];
+}
+
 interface query {
     roomLabel: string;
     // roomType: string;
+    groupName: string;
     width: number;
     height: number;
     cost: number;
@@ -50,6 +56,7 @@ export class DashboardComponent implements OnInit {
   pricingTables: Array<Array<number>> = [];
   Widths: number[] = [];
   Heights: number[] = [];
+  groupNames: Array<string> = ["Hello", "World"];
 
   defaultGroup: MaterialGroup = MaterialGroup.GroupC;
 
@@ -64,7 +71,9 @@ export class DashboardComponent implements OnInit {
   valHeight;
   isFascia: boolean = false;
 
+
   valRoomType = ""; 
+  groupName: string = "";
   valCost = 0;
   valPrice = 0;
   quantity = 1;
@@ -141,7 +150,7 @@ export class DashboardComponent implements OnInit {
         width = x;
       }
     });
-    
+
     this.Heights.forEach((x, i) => {
       if (this.valHeight == 0 || this.valHeight == undefined) return;
       if ( x  >= this.valWidth && ( i-1 <= 0 || this.Heights[i-1] < this.valHeight)) {
@@ -174,6 +183,7 @@ export class DashboardComponent implements OnInit {
       /* try to push the new item to the table */
       this.queriesArray[this.currentTab].list.push({
         roomLabel: this.roomLabel,
+        groupName: this.groupName,
         width: this.valWidth,
         height: this.valHeight,
         sqrFt: this.sqrFt,
@@ -205,6 +215,9 @@ export class DashboardComponent implements OnInit {
     
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray)); // check if you can add to LocalStorage
     this.resetValues(); // reset values
+    if (!this.groupNames.includes(this.groupName)) {
+      this.groupNames.push(this.groupName);
+    }
   }
 
   removeFromList( i :number, event: any) {
@@ -313,5 +326,31 @@ export class DashboardComponent implements OnInit {
     }
     this.cleanCost = Math.max(cleanValue - 0.01,0);
     return this.numericCommas(this.cleanCost);
+  }
+
+  groupListItems(list: query[]) {
+    let listGroups: Group[] = [];
+    list.forEach( (li, index) => {
+      if (listGroups.length === 0) {
+        listGroups.push({name: li.groupName, value: [li]});
+      } else {
+        let found = false;
+        listGroups.forEach( (group, i) => {
+          if (group.name === li.groupName) {
+            group.value.push(li);
+            found = true;
+          }
+        });
+        if (!found) {
+          listGroups.push({name: li.groupName, value: [li]});
+        }
+      }
+    });
+    console.log(listGroups);
+    let sortedList = listGroups.sort((a,b) => {
+      if (a.name == '') return 1;
+      return a.name > b.name ? -1 : 1;
+    });
+    return sortedList;
   }
 }
