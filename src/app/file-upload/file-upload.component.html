@@ -1,13 +1,13 @@
 <div class="widget">
     
     <label>
-        <input type="file">
+        <input type="file" (change)="fileSelected($event)">
         <div class="iconContainer">
-            <mat-icon>home</mat-icon>
+            <mat-icon>file_upload</mat-icon>
         </div>
     </label>
     <span>
-        {{fileName || "no files seelcted"}}
+        {{fileName || ""}}
     </span>
 </div>
 
