@@ -1,3 +1,4 @@
+$app-primary: #7b1fa2;
 
 .hidden {
     display: none;
@@ -178,8 +179,29 @@ mat-card.calcCard {
             }
         }
 
-        .content .row {
-            
+        .content {
+            .group {
+                
+                border-width: 0 0 0 1px;
+                border-style: solid;
+                border-color: $app-primary;
+                margin: 0 0 5px 0;
+                border-radius: 15px 15px 0 0;
+                
+
+                .groupHeader {
+                    width: 100%;
+                    height: 20px;
+                    display: flex;
+                    justify-content: flex-start;
+                    padding: 0 10px;
+                    background-color: $app-primary;
+                    color: white;
+                    box-sizing: border-box;
+                    border-radius: 5px 5px 0 0;
+                }
+                
+            }
         }
     }
 
