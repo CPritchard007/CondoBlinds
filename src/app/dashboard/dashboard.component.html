@@ -278,11 +278,26 @@
                       <div>
                           <span>Install Cost</span>
                       </div>
+                      <div>
+                        <span>Fascia Retail</span>
+                      </div>
+                      <div>
+                        <span>Fascia Cost</span>
+                      </div>
+                      <div>
+                        <span>Daniels Motor Cost</span>
+                      </div>
                     </header>
                     <div class="content">
                         <div class="group" *ngFor="let group of groupListItems(queryItem.list)">
-                          <div class="groupHeader">{{group.name}}</div>
-                          <div class="row"  *ngFor="let query of group.value; index as itemIndex">
+                          <div class="groupHeader">
+                            <span>{{group.name || "Default"}}</span>
+                              
+                            <select matInput style="margin-left: 16px;">
+                              <option *ngFor="let mat of MaterialGroups; index as i" [value]="mat.name">{{mat.name}}</option>                          
+                            </select>
+                          </div>
+                          <div class="row" *ngFor="let query of group.value; index as itemIndex">
                               <div>
                                   <span>{{query.roomLabel}}</span>
                               </div>
@@ -316,33 +331,43 @@
                               <div>
                                   <span>{{query.installmentCost}}</span>
                               </div>
-                              <div class="icon-container" (click)="removeFromList(itemIndex, $event)">
-                                <mat-icon >remove_circle</mat-icon>
+                              <div>
+                                  <span>{{query.fasciaRetail}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.fasciaCost}}</span>
+                              </div>
+                              <div>
+                                  <span>{{query.danielsMotorPrice}}</span>
+                              </div>
+                                <div class="icon-container" (click)="removeFromList(itemIndex, $event)">
+                                  <mat-icon >remove_circle</mat-icon>
                               </div>
                           </div>
                           <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
                           
                         
-                          <div class=" of_4">
+                          <div class=" of_4" style="border-width: 1px 0; border-style: solid; border-color: white">
                             <div>
                               <span>Total Price</span>
-                              <mat-form-field appearance="standard">
-                                <input matInput type="text" disabled [value]="getFullSum(group.value)">
-                              </mat-form-field>
+                              <div style="margin-left: 10px;">{{getFullSum(group.value)}}</div>
                             </div>
 
                             <div>
                               <span>Clean Total Price</span>
+                              <div style="margin-left: 10px;">{{getCleanPrice()}}</div>
+                            </div>
+                            <div>
+                              <span>Roll Over Price</span>
                               <mat-form-field appearance="standard">
-                                <input matInput type="text" disabled [value]="getCleanPrice()">
+                                <input matInput type="text">
                               </mat-form-field>
                             </div>
-
                           </div>   
                         </div>
-                        <div style="position: relative;"><hr><span>Total</span></div>
+                        <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
                         
-                        <div class=" of_4">
+                        <!-- <div class=" of_4">
                           <div>
                             <span>Total Price</span>
                             <mat-form-field appearance="standard">
@@ -357,7 +382,7 @@
                             </mat-form-field>
                           </div>
                        
-                        </div>
+                        </div> -->
         
                     </div>
                 </div>

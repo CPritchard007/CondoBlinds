@@ -10,14 +10,7 @@ interface RoomType {
     viewValue: string;
 }
 
-enum MaterialGroup {
-  GroupC = 'GroupC',
-  GroupD = 'GroupD',
-  GroupE = 'GroupE',
-  GroupF = 'GroupF',
-  GroupG = 'GroupG',
-  GroupH = 'GroupH',
-}
+
 
 interface Group {
   name: string;
@@ -38,6 +31,9 @@ interface query {
     discount: number;
     discount2: number;
     installmentCost: number;
+    fasciaRetail: number;
+    fasciaCost: number;
+    danielsMotorPrice: number;
 }
 
 interface QueryStore {
@@ -59,6 +55,11 @@ interface StorageTables {
   list: QueryStore[];
 }
 
+interface MaterialGroup {
+  tag: string;
+  name: string;
+}
+
 
 
 @Component({
@@ -72,8 +73,33 @@ export class DashboardComponent implements OnInit {
   Widths: number[] = [];
   Heights: number[] = [];
   groupNames: Array<string> = [];
-
-  defaultGroup: MaterialGroup = MaterialGroup.GroupC;
+  MaterialGroups: Array<MaterialGroup> = [
+    {
+      tag: "GroupC",
+      name: "Group C",
+    },
+    {
+      tag: "GroupD",
+      name: "Group D",
+    },
+    {
+      tag: "GroupE",
+      name: "Group E",
+    },
+    {
+      tag: "GroupF",
+      name: "Group F",
+    },
+    {
+      tag: "GroupG",
+      name: "Group G",
+    },
+    {
+      tag: "GroupH",
+      name: "Group H",
+    }
+  ];
+  defaultGroup: string = this.MaterialGroups[0].tag;
 
   /* static variables */
   USE_LOCAL_STORAGE = true;
@@ -112,11 +138,13 @@ export class DashboardComponent implements OnInit {
 
   constructor(public dialog: MatDialog) {
     try {
+      console.log(this.defaultGroup);
       let tableType = data.tables.find(table => table.tag === this.defaultGroup);
-      
       this.pricingTables = tableType!.table.calculations;
-      this.Widths = tableType!.table.Widths;
-      this.Heights = tableType!.table.Heights;  
+      if (tableType) {
+        this.Widths = tableType.table.Widths;
+        this.Heights = tableType.table.Heights;  
+      }
     } catch (error) {
       console.log(error);
     }
@@ -150,15 +178,22 @@ export class DashboardComponent implements OnInit {
     this.groupSort();
 
   }
+
+  //TODO: not saving data
   convertToLocalFormat(storageItems: Array<StorageTables>): Tables[] {
     let polishedItems: Tables[] = storageItems.map(tab => {
       
       let polishedTab: query[] = tab.list.map(item => {
-        
         let sqrFt = this.calculateSqrFt(item.width, item.height, item.quantity);
         let retailPrice = this.calculateRetailPrice(item.width, item.height);
         let cost = this.calculateCost(retailPrice, this.discount, this.discount2, item.quantity);
         let price = this.calculatePrice(cost);
+        let installmentCost = this.calculateInstallmentCost(item.quantity);
+        console.log(this.groupNames);
+        let fasciaRetail = this.calculateFasciaRetail(item.width, item.groupType);
+        let fasciaCost = this.calculateFasciaCost(fasciaRetail, this.discount, this.discount2, item.quantity);
+        let danielsMotorPrice = this.calculateDanielsMotorPrice(item.quantity);
+
          return {
           roomLabel: item.roomLabel,
           groupName: item.groupName,
@@ -169,16 +204,48 @@ export class DashboardComponent implements OnInit {
           retailPrice: retailPrice,
           cost: cost,
           quantity: item.quantity,
-          price: 0,
-          discount: .5,
-          discount2: .5,
-          installmentCost: 0,
+          price: price,
+          discount: this.discount,
+          discount2: this.discount2,
+          installmentCost: installmentCost,
+          fasciaRetail: 0,
+          fasciaCost: 0,
+          danielsMotorPrice: danielsMotorPrice
         }
       });
       return {name: tab.name, list: polishedTab};
     });
 
     return polishedItems;
+  }
+  calculateDanielsMotorPrice(quantity: number) {
+    return (350 * quantity);
+  }
+  calculateDanielsFasciaCost() {
+    throw new Error('Method not implemented.');
+  }
+  calculateFasciaCost(fasciaRetail: number, discount: number, discount2: number, quantity: number) {
+    return ((fasciaRetail * (discount / 100)) * (discount2 / 100)) * quantity;
+  }
+  calculateFasciaRetail(valWidth: number, groupType: string) {
+    let width = 0; 
+    
+    this.Widths.forEach((x, i) => {
+      if ( valWidth == 0 || valWidth == undefined) return;
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
+        
+        width = x;
+      }
+    });
+
+    const widthIndex = this.Widths.indexOf(width);
+    const fasciaTable: Array<number> = data.tables[0].table.fascia;
+    return fasciaTable[widthIndex];
+  }
+
+  calculateInstallmentCost(quantity: number) {
+    
+    return this.installmentCost * quantity;
   }
   calculatePrice(cost: number) {
     return Math.round((cost + this.installmentCost) * this.profitMargin);  
@@ -223,7 +290,7 @@ export class DashboardComponent implements OnInit {
     let height = 0;
     
     this.Widths.forEach((x, i) => {
-      if ( valWidth == 0 || this.valWidth == undefined) return;
+      if ( valWidth == 0 || valWidth == undefined) return;
       if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
         
         width = x;
@@ -232,7 +299,7 @@ export class DashboardComponent implements OnInit {
 
     this.Heights.forEach((x, i) => {
       if ( valHeight == 0 || valHeight == undefined) return;
-      if ( x  >= valWidth && ( i-1 <= 0 || this.Heights[i-1] < this.valHeight)) {
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Heights[i-1] < valHeight)) {
         
         height = x;
       }
@@ -241,7 +308,8 @@ export class DashboardComponent implements OnInit {
     const widthIndex = this.Widths.indexOf(width);
     const heightIndex = this.Heights.indexOf(height);
 
-    return this.pricingTables[heightIndex][widthIndex];
+     console.log("Widths", this.Widths, "Heights", this.Heights, "valWidth", valWidth, "valHeight", valHeight, "width", width, "height", height, "widthIndex", widthIndex, "heightIndex", heightIndex);
+    return 0;
 
   }
   calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number {
@@ -255,20 +323,32 @@ export class DashboardComponent implements OnInit {
 
       /* try to push the new item to the table */
       console.log(this.queriesArray);
+      let retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight);
+      let cost = this.calculateCost(retailPrice, this.discount, this.discount2, this.quantity);
+      let price = this.calculatePrice(cost);
+      let sqrFt = this.calculateSqrFt(this.valWidth, this.valHeight, this.quantity)
+      let installmentCost = this.calculateInstallmentCost(this.quantity);
+      let fasciaRetail = this.calculateFasciaRetail(this.valWidth, this.defaultGroup);
+      let fasciaCost = this.calculateFasciaCost(fasciaRetail, this.discount, this.discount2, this.quantity);
+      let danielsMotorPrice = this.calculateDanielsMotorPrice(this.quantity);
       this.queriesArray[this.currentTab].list.push({
         roomLabel: this.roomLabel,
         groupName: this.groupName,
         groupType: this.defaultGroup,
         width: this.valWidth,
         height: this.valHeight,
-        sqrFt: this.sqrFt,
-        cost: this.valCost,
-        price: this.valPrice,
-        quantity: this.quantity,
-        retailPrice: this.retailPrice,
         discount: this.discount,
         discount2: this.discount2,
-        installmentCost: this.installmentCost});
+        quantity: this.quantity,
+        sqrFt: sqrFt,
+        cost: cost,
+        price: price,
+        retailPrice: retailPrice,
+        installmentCost: installmentCost,
+        fasciaRetail: fasciaRetail,
+        fasciaCost: fasciaCost,
+        danielsMotorPrice: danielsMotorPrice
+      });
     } catch (error) {
       if (error instanceof TypeError) { // if the current tab does not exist
         const timer = 2000; // number of ms before the modal closes
@@ -323,6 +403,9 @@ export class DashboardComponent implements OnInit {
       const dialogRef = this.dialog.open(RemoveItemDialog); // open dialog
       dialogRef.afterClosed().subscribe(result => { // get data that was entered
         if (!result) return;
+
+        console.log(this.queriesArray[this.currentTab].list);
+
         this.queriesArray[this.currentTab].list.splice(i, 1);
         if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
       });
@@ -361,6 +444,7 @@ export class DashboardComponent implements OnInit {
     /* if there is no items in the array, than the query is out of date, and will be automatically reset */
     try { 
       list.forEach(element => {
+        
         price += element.price;
       });
     } catch (error) {
@@ -414,8 +498,7 @@ export class DashboardComponent implements OnInit {
     let tabName = input.value;
     this.queriesArray[this.currentTab].name = tabName;
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
-    console.log(input.value);
-    console.log(this.queriesArray);
+
     button.parentElement.style.display = "none";
     button.parentElement.parentElement.childNodes[0].childNodes[0].style.display = "flex";
     
@@ -453,7 +536,6 @@ export class DashboardComponent implements OnInit {
         }
       }
     });
-    console.log(listGroups);
     let sortedList = listGroups.sort((a,b) => {
       if (a.name == '') return 1;
       return a.name > b.name ? -1 : 1;
@@ -461,5 +543,3 @@ export class DashboardComponent implements OnInit {
     return sortedList;
   }
 }
-
-
