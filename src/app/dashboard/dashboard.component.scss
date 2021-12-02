@@ -1,21 +1,7 @@
-$app-primary: #7b1fa2;
-
-.hidden {
-    display: none;
-}
-
-.align-right {
-    text-align: right;
-}
-
-.spacer {
-    flex: 1 1 auto;
-}
-
-.container {
-    padding: 10px;
-}
-
+.hidden {display: none;}
+.align-right {text-align: right;}
+.spacer {flex: 1 1 auto;}
+.container {padding: 10px;}
 
 .icon-container {
     display: flex;
@@ -41,42 +27,6 @@ $app-primary: #7b1fa2;
         display: inline-block;
         width: 80px;
     }
-}
-
-.of_auto, .of_2, .of_3, .of_4, .of_5 {
-    @media screen and (max-width: 570px) {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-.of_auto {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(450px,auto));
-}
-
-.of_2 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.of_3 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(3, 1fr);
-}
-
-.of_4 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.of_5 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(5, 1fr);
 }
 
 input::-webkit-outer-spin-button,
@@ -140,53 +90,30 @@ hr + mat-icon {
     }
 }
 
-
-.table .content {position: relative;}
-.table .content .total {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    
-    & div {
-        padding: 3px 5px;
-        text-align: center;
-    }
-}
-
 mat-card.calcCard {
     
     .table {
         margin-top: 30px;
-        
+
         header {
-        font-weight: bold;
-        border-bottom: 4px solid #ddd;
-        letter-spacing: 1.5px;
+            font-weight: bold;
+            border-bottom: 4px solid #ddd;
+            letter-spacing: 1.5px;
     
             & div {
                 padding-bottom: 4px;
             }
         }
-    
-        hr {
-            margin: 12px 0 0 0;
-            & + span {
-                position: absolute;
-                top: -8px;
-                left: 50%;
-                padding: 0 10px;
-                transform: translateX(-50%);
-                background-color: #424242;
-            }
-        }
 
         .content {
+            position: relative;
+            
             .group {
                 
                 border-width: 0 0 0 1px;
                 border-style: solid;
-                border-color: $app-primary;
+                border-color: #7b1fa2;
                 margin: 0 0 5px 0;
-                border-radius: 15px 15px 0 0;
                 
 
                 .groupHeader {
@@ -195,17 +122,36 @@ mat-card.calcCard {
                     display: flex;
                     justify-content: flex-start;
                     padding: 0 10px;
-                    background-color: $app-primary;
+                    background-color: #7b1fa2;
                     color: white;
                     box-sizing: border-box;
-                    border-radius: 5px 5px 0 0;
                 }
                 
             }
+
+            hr {
+                margin: 12px 0 0 0;
+                & + span {
+                    position: absolute;
+                    top: -8px;
+                    left: 50%;
+                    padding: 0 10px;
+                    transform: translateX(-50%);
+                    background-color: #424242;
+                }
+            }
+
+            .total {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    
+                & div {
+                    padding: 3px 5px;
+                    text-align: center;
+                }
+            }
         }
     }
-
-    padding: 0 5px 5px 5px;
 
     .icon-container.addTab {
         position: absolute;
@@ -263,7 +209,6 @@ mat-card.calcCard {
         }
     }
 
-    
     input {
         border: none;
         text-align: center;
@@ -320,9 +265,6 @@ mat-card.calcCard {
 }
 ::ng-deep .mat-select-value {
     display: none !important;
-
-    
-
 }
 .mat-select {
     width: 20px;

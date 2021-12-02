@@ -22,7 +22,6 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
-import { DataFormComponent } from './data-form/data-form.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { NumericCommasPipe } from './numeric-commas.pipe';
@@ -32,7 +31,6 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 @NgModule({
   declarations: [
     AppComponent,
-    DataFormComponent,
     DashboardComponent,
     HeaderBarComponent,
     NumericCommasPipe,

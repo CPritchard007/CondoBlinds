@@ -320,7 +320,25 @@
                                 <mat-icon >remove_circle</mat-icon>
                               </div>
                           </div>
+                          <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
                           
+                        
+                          <div class=" of_4">
+                            <div>
+                              <span>Total Price</span>
+                              <mat-form-field appearance="standard">
+                                <input matInput type="text" disabled [value]="getFullSum(group.value)">
+                              </mat-form-field>
+                            </div>
+
+                            <div>
+                              <span>Clean Total Price</span>
+                              <mat-form-field appearance="standard">
+                                <input matInput type="text" disabled [value]="getCleanPrice()">
+                              </mat-form-field>
+                            </div>
+
+                          </div>   
                         </div>
                         <div style="position: relative;"><hr><span>Total</span></div>
                         
@@ -331,25 +349,16 @@
                               <input matInput type="text" disabled [value]="getFullSum(queryItem.list)">
                             </mat-form-field>
                           </div>
-                          <!-- <div>
-                            <span>Fiscal Price</span>
-                            <mat-form-field appearance="standard">
-                              <input matInput type="text" disabled [value]="'unknown'">
-                            </mat-form-field>
-                          </div> -->
+                         
                           <div>
                             <span>Clean Total Price</span>
                             <mat-form-field appearance="standard">
                               <input matInput type="text" disabled [value]="getCleanPrice()">
                             </mat-form-field>
                           </div>
-                          <!-- <div>
-                            <span>Clean Fiscal Price</span>
-                            <mat-form-field appearance="standard">
-                              <input matInput type="text" disabled [value]="'unknown'">
-                            </mat-form-field>
-                          </div> -->
+                       
                         </div>
+        
                     </div>
                 </div>
               </mat-tab>

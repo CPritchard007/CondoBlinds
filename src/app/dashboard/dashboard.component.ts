@@ -26,8 +26,8 @@ interface Group {
 
 interface query {
     roomLabel: string;
-    // roomType: string;
     groupName: string;
+    groupType: string;
     width: number;
     height: number;
     cost: number;
@@ -39,9 +39,24 @@ interface query {
     discount2: number;
     installmentCost: number;
 }
-interface tables {
+
+interface QueryStore {
+    groupName: string;
+    groupType: string;
+    roomLabel: string;
+    quantity: number;
+    width: number;
+    height: number;
+}
+
+interface Tables {
   name: string;
   list: query[];
+}
+
+interface StorageTables {
+  name: string;
+  list: QueryStore[];
 }
 
 
@@ -56,7 +71,7 @@ export class DashboardComponent implements OnInit {
   pricingTables: Array<Array<number>> = [];
   Widths: number[] = [];
   Heights: number[] = [];
-  groupNames: Array<string> = ["Hello", "World"];
+  groupNames: Array<string> = [];
 
   defaultGroup: MaterialGroup = MaterialGroup.GroupC;
 
@@ -88,7 +103,7 @@ export class DashboardComponent implements OnInit {
 
   roomLabel: string = "";
   roomTypes: Array<RoomType> = [];
-  queriesArray: Array<tables> = []; //=> contains data from localstorage, as well as to be used to
+  queriesArray: Array<Tables> = []; //=> contains data from localstorage, as well as to be used to
                                     // calculate sums of multiple rows
 
   currentTab = 0; //=> keeps the current tab stored to be requested later
@@ -106,7 +121,7 @@ export class DashboardComponent implements OnInit {
       console.log(error);
     }
 
-    console.log();
+    
     this.valWidth = 0
     this.valHeight = 0;
     // this.pricingTables = data.tables[this.defaultGroup]; // set the pricing tables
@@ -118,14 +133,67 @@ export class DashboardComponent implements OnInit {
       this.queriesArray = [{name: "table 1", list: []}]; //set default data for application
       let localStorageData = localStorage.getItem('queries'); // get data from localStorage
       if (localStorageData) { // if there is data stored before, pull it...
-        this.queriesArray = JSON.parse(localStorageData); // scrape the data for the objects we
-                              // already have, and add them to the queryArray
+        
+        this.queriesArray = this.convertToLocalFormat(JSON.parse(localStorageData));
       }
     }
+    /* TODO: create retail price, sqrFt, fascia price, clean price */
+
     // non reset items, such as our static variables, will not be reset, so they will be added here
     this.profitMargin = data.startingVars.profitMargin; // 
     this.costOfInstallation = data.startingVars.costOfInstallation
     
+    this.groupNames =[]
+    
+    this.getGroupNames();
+
+    this.groupSort();
+
+  }
+  convertToLocalFormat(storageItems: Array<StorageTables>): Tables[] {
+    let polishedItems: Tables[] = storageItems.map(tab => {
+      
+      let polishedTab: query[] = tab.list.map(item => {
+        
+        let sqrFt = this.calculateSqrFt(item.width, item.height, item.quantity);
+        let retailPrice = this.calculateRetailPrice(item.width, item.height);
+        let cost = this.calculateCost(retailPrice, this.discount, this.discount2, item.quantity);
+        let price = this.calculatePrice(cost);
+         return {
+          roomLabel: item.roomLabel,
+          groupName: item.groupName,
+          groupType: item.groupType,
+          width: item.width,
+          height: item.height,
+          sqrFt: sqrFt,
+          retailPrice: retailPrice,
+          cost: cost,
+          quantity: item.quantity,
+          price: 0,
+          discount: .5,
+          discount2: .5,
+          installmentCost: 0,
+        }
+      });
+      return {name: tab.name, list: polishedTab};
+    });
+
+    return polishedItems;
+  }
+  calculatePrice(cost: number) {
+    return Math.round((cost + this.installmentCost) * this.profitMargin);  
+  }
+  calculateSqrFt(width: number, height: number, quantity: number) {
+    return (((width * height) / 144) * quantity).toFixed(2);
+  }
+
+  getGroupNames() {
+    this.queriesArray[this.currentTab].list.forEach((element, index) => {
+      if (index === 0) { this.groupName = element.groupName; }
+      if (!this.groupNames.includes(element.groupName)) {
+        this.groupNames.push(element.groupName);
+      }
+    });
   }
 
   // use this to change a number (preferably dollar cents),
@@ -138,41 +206,46 @@ export class DashboardComponent implements OnInit {
   // this is run after the user enters a new value, every new value, the application will recalculate
   // all the values that are needed
   updateInputs() {
-    console.log('updating inputs');
     
+    
+    this.retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight);
+    
+    this.sqrFt = this.calculateSqrFt(this.valWidth, this.valHeight, this.quantity);
+
+    this.valCost = this.calculateCost(this.retailPrice, this.discount, this.discount2, this.quantity);
+    this.installmentCost = this.quantity * this.costOfInstallation;
+    
+    this.valPrice = this.calculatePrice(this.valCost);
+    
+  }
+  calculateRetailPrice(valWidth: number, valHeight: number): number {
     let width = 0; 
     let height = 0;
     
     this.Widths.forEach((x, i) => {
-      if (this.valWidth == 0 || this.valWidth == undefined) return;
-      if ( x  >= this.valWidth && ( i-1 <= 0 || this.Widths[i-1] < this.valWidth))  {
-        console.log("width", x);
+      if ( valWidth == 0 || this.valWidth == undefined) return;
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
+        
         width = x;
       }
     });
 
     this.Heights.forEach((x, i) => {
-      if (this.valHeight == 0 || this.valHeight == undefined) return;
-      if ( x  >= this.valWidth && ( i-1 <= 0 || this.Heights[i-1] < this.valHeight)) {
-        console.log("height", x);
+      if ( valHeight == 0 || valHeight == undefined) return;
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Heights[i-1] < this.valHeight)) {
+        
         height = x;
       }
     });
 
     const widthIndex = this.Widths.indexOf(width);
     const heightIndex = this.Heights.indexOf(height);
-    console.log(width, height, widthIndex, heightIndex);
 
-    this.retailPrice = this.pricingTables[heightIndex][widthIndex];
+    return this.pricingTables[heightIndex][widthIndex];
 
-    this.pricingTables[heightIndex][widthIndex];
-    this.sqrFt = (((this.valWidth * this.valHeight) / 144) * this.quantity).toFixed(2);
-
-    this.valCost = ((this.retailPrice * (this.discount / 100)) * (this.discount2 / 100)) * this.quantity;
-    this.installmentCost = this.quantity * this.costOfInstallation;
-    console.log(this.valCost, this.installmentCost, this.profitMargin);
-    this.valPrice = Math.round((this.valCost + this.installmentCost) * this.profitMargin);  
-    
+  }
+  calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number {
+    return ((retailPrice * (discount / 100)) * (discount2 / 100)) * quantity;
   }
 
   addToList() {
@@ -181,9 +254,11 @@ export class DashboardComponent implements OnInit {
             a modal to warn the user (timed for 1 second)*/
 
       /* try to push the new item to the table */
+      console.log(this.queriesArray);
       this.queriesArray[this.currentTab].list.push({
         roomLabel: this.roomLabel,
         groupName: this.groupName,
+        groupType: this.defaultGroup,
         width: this.valWidth,
         height: this.valHeight,
         sqrFt: this.sqrFt,
@@ -213,11 +288,34 @@ export class DashboardComponent implements OnInit {
       }
     }
     
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray)); // check if you can add to LocalStorage
+    
+
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
     this.resetValues(); // reset values
     if (!this.groupNames.includes(this.groupName)) {
       this.groupNames.push(this.groupName);
     }
+
+    this.groupSort();
+  }
+
+  convertToStorageFormat() {
+    let storageTypeItems = this.queriesArray.map(x => {
+      return {
+        name: x.name,
+        list: x.list.map(listItem => {
+          return {
+            "groupName": listItem.groupName,
+            "groupType": listItem.groupType,
+            "roomLabel": listItem.roomLabel,
+            "quantity": listItem.quantity,
+            "width": listItem.width,
+            "height": listItem.height,
+          }
+        })
+      }
+    });
+    return storageTypeItems;
   }
 
   removeFromList( i :number, event: any) {
@@ -226,9 +324,18 @@ export class DashboardComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => { // get data that was entered
         if (!result) return;
         this.queriesArray[this.currentTab].list.splice(i, 1);
-        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
       });
     }
+  }
+
+  groupSort () {
+    let sortGroups = this.groupNames.sort((a, b) => {
+      if (a == '') return 1;
+      return a > b ? -1 : 1; 
+     });
+ 
+     this.groupNames = sortGroups;
   }
 
   resetValues() {
@@ -244,9 +351,7 @@ export class DashboardComponent implements OnInit {
     this.discount = data.startingVars.discount * 100;
     this.discount2 = data.startingVars.discount2 * 100;
     this.quantity = data.startingVars.quantity;
-
-   
-    
+  
     this.updateInputs(); // calculate the dynamic variables from the reset values
   }
   /* calculate the sum of each item in the array */
@@ -276,19 +381,21 @@ export class DashboardComponent implements OnInit {
   tabChange(tabChangeEvent: MatTabChangeEvent) {
     if (tabChangeEvent.index === this.currentTab) return;
     this.currentTab = tabChangeEvent.index;
+
+    this.groupName = "";
+    this.groupNames = [];
+    this.getGroupNames();
   }
     /* allow the user to add new tabs, the naming format is default */
   createTab() {
     this.queriesArray.push({name: "table " + (this.queriesArray.length + 1), list: []});
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
   }
     /* remove tab from list */
     /** TODO: add dialog */
   closeTab(i: number) {
-    console.log(i);
-    console.log(this.queriesArray);
     this.queriesArray.splice(i, 1);
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
   }
 
   /* once the user clicks on the edit button, hide the button and show the input that contains changes the tab name */
@@ -306,7 +413,7 @@ export class DashboardComponent implements OnInit {
     let input = button.parentElement.childNodes[0];
     let tabName = input.value;
     this.queriesArray[this.currentTab].name = tabName;
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.queriesArray));
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
     console.log(input.value);
     console.log(this.queriesArray);
     button.parentElement.style.display = "none";
@@ -354,3 +461,5 @@ export class DashboardComponent implements OnInit {
     return sortedList;
   }
 }
+
+

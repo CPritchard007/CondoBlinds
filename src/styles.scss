@@ -33,3 +33,44 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-weight: bold;
     letter-spacing: 1.5px;
   }
+
+  :root {
+    --primary-color: #7b1fa2;
+    --secondary-color: #f1f1f1;
+  }
+
+  .of_auto, .of_2, .of_3, .of_4, .of_5 {
+    @media screen and (max-width: 570px) {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.of_auto {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(450px,auto));
+}
+
+.of_2 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.of_3 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.of_4 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.of_5 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+}
