@@ -1,394 +1,332 @@
 <div class="container fill">
-    <mat-card>
-        <mat-card-header>
-            <mat-card-title>
-                <h1>Constants</h1>
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <div class="of_5 small_input" style="font-size: 10px;">
-                <div>
-                  <span>COST OF INSTALLMENT</span>
-                  <mat-form-field appearance="outline">
-                      <input matInput type="number" [(ngModel)]="costOfInstallation">
-                  </mat-form-field>
-                </div>
-                <div>
-                    <span>PROFIT MARGIN</span>
-                    <mat-form-field appearance="outline">
-                        <input matInput type="number" [(ngModel)]="profitMargin">
-                    </mat-form-field>
-                </div>
-                <div>
-                  <span>GroupName</span>
-                  <mat-form-field appearance="outline" >
-                    <div style="display: flex;">
-                      <input matInput type="text" [(ngModel)]="groupName">
-                      <mat-select style="height: 0;" [(ngModel)]="groupName">
-                        <mat-option *ngFor="let group of groupNames" [value]="group">{{group}}</mat-option>
-                      </mat-select>
-                    </div>
-                  </mat-form-field>
-              </div>
-                
-              </div>
-        </mat-card-content>
-    </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h1>Constants</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="of_5 small_input" style="font-size: 10px;">
+        <div>
+          <span>COST OF INSTALLMENT</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="number" [(ngModel)]="costOfInstallation">
+          </mat-form-field>
+        </div>
+        <div>
+          <span>PROFIT MARGIN</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="number" [(ngModel)]="profitMargin">
+          </mat-form-field>
+        </div>
+        <div>
+          <span>Group Name</span>
+          <mat-form-field appearance="outline">
+            <div class="groupName" style="display: flex;">
+              <input matInput type="text" [(ngModel)]="groupName">
+              <mat-select style="height: 0;" [(ngModel)]="groupName">
+                <mat-option *ngFor="let group of groupNames" [value]="group">{{group || "default"}}</mat-option>
+              </mat-select>
+            </div>
+          </mat-form-field>
+        </div>
+        <div>
+          <span>Group Type</span>
+          <mat-form-field appearance="outline">
+            <div>
+              <mat-select [(ngModel)]="groupType">
+                <mat-option *ngFor="let mat of MaterialGroups" [value]="mat.tag">{{mat.name}}</mat-option>
+              </mat-select>
+            </div>
+          </mat-form-field>
+        </div>
+
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
 <div class="container of_auto">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <h4>Enter Variables</h4>
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="of_2 small_input">
-          <div>
-            <span>Room Label</span>
-            <!-- <mat-form-field appearance="outline">
-                <mat-label>Room Plan</mat-label>
-                <mat-select [(ngModel)]="valRoomType">
-                  <mat-option *ngFor="let roomType of roomTypes; index as i" [value]="roomType.viewValue">
-                    {{roomType.viewValue}}
-                  </mat-option>
-                </mat-select>
-            </mat-form-field> -->
-            <mat-form-field appearance="outline">
-                <!-- <mat-label>Room Plan</mat-label> -->
-                  <input matInput [(ngModel)]="roomLabel">
-            </mat-form-field>
-          </div>
-          <div>
-            <span>Quantity</span>
-            <mat-form-field appearance="outline">
-              <input matInput type="decimal" [(ngModel)]="quantity" (input)="updateInputs()">
-            </mat-form-field>
-          </div>
-          <!--
-          <div>
-            <span>Width</span>
-            <mat-form-field appearance="outline">
-              <mat-select [(ngModel)]="valWidth" (selectionChange)="updateInputs()">
-                <mat-option *ngFor="let width of Widths; index as i" [value]="i">
-                  {{
-                    i > 0 ? 
-                    (Widths[i-1] + 1) + " - " + Widths[i] :
-                    Widths[i]
-                  }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-          -->
-          
-          <div>
-            <span>Width</span>
-            <mat-form-field appearance="outline">
-              <input matInput type="number" [(ngModel)]="valWidth" (input)="updateInputs()" />
-            </mat-form-field>   
-          </div>
-         
-          <!--
-          <div>
-            <span>Height</span>
-            <mat-form-field appearance="outline">
-              <mat-select [(ngModel)]="valHeight" (selectionChange)="updateInputs()">
-                <mat-option *ngFor="let height of Heights; index as i" [value]="i">
-                  {{
-                    i > 1 ? 
-                    (Heights[i-1] + 1) + " - " + Heights[i] :
-                    Heights[i]
-                  }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-           -->
-          
-          <div>
-            <span>Height</span>
-            <mat-form-field appearance="outline">
-              <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()" />
-            </mat-form-field>   
-          </div>
-         
-          <div>
-            <span style="width: auto; padding: 0 15px;">Is This a Fascia?</span>
-
-            <mat-checkbox ></mat-checkbox>
-          </div>
-          <div>
-            <abbr title="(Width * Height) / 144">
-                <span>Sqr.Ft</span>
-            </abbr>
-
-            <mat-form-field appearance="standard">
-              <input matInput type="decimal" disabled [ngModel]="sqrFt">
-            </mat-form-field>
-          </div>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h4>Enter Variables</h4>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="of_2 small_input">
+        <div>
+          <span>Room Label</span>
+          <mat-form-field appearance="outline">
+            <input matInput [(ngModel)]="roomLabel">
+          </mat-form-field>
         </div>
-        <hr>
-        <mat-icon (click)="addToList()">add_circle</mat-icon>
-      </mat-card-content>
-    </mat-card>
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <h4>Pricing</h4>
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="of_2 small_input">
-          <div>
-            <abbr title="to be determined">
-                <span>Retail Price</span>
-            </abbr>
-            <mat-form-field appearance="standard">
-              <input matInput type="decimal" [(ngModel)]="retailPrice" (input)="updateInputs()" disabled>
-            </mat-form-field>
-          </div>
-          <div>
-            <span>Discount (%)</span>
-            <mat-form-field appearance="outline">
-              <input matInput type="number" [(ngModel)]="discount" (input)="updateInputs()">
-            </mat-form-field>
-          </div>
-          
-          <div>
-            <abbr title="((RetailPrice * Discount) * QuantityDiscount) * Quantity">
-                <span>Cost</span>
-            </abbr>
-            <mat-form-field appearance="standard">
-            
-              <input matInput type="text" disabled [(ngModel)]="valCost">
-            </mat-form-field>
-          </div>
-          <div>
-            <span>Discount 2 (%)</span>
-            <mat-form-field appearance="outline">
-              <input matInput type="number" [(ngModel)]="discount2" (input)="updateInputs()">
-            </mat-form-field>
-          </div>
+        <div>
+          <span>Quantity</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="decimal" [(ngModel)]="quantity" (input)="updateInputs()">
+          </mat-form-field>
         </div>
-      </mat-card-content>
-    </mat-card>
-    
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <h4>Automated Values</h4>
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="of_2 small_input">
-          <div>
-            <abbr title="">
-                <span>Total Price</span>
-            </abbr>
-            <mat-form-field appearance="standard">
-              <input matInput type="decimal" disabled [(ngModel)]="valPrice">
-            </mat-form-field>
-          </div>
-          <div>
-            <abbr title="InstallCost * Quantity">
-                <span>Installation Cost</span>
-            </abbr>
-            <mat-form-field appearance="standard">
-              <input matInput type="decimal" disabled [(ngModel)]="installmentCost">
-            </mat-form-field>
-          </div>
-          <div>
-            <span>Clean Total</span>
-            <mat-form-field appearance="standard">
-              <input matInput type="decimal" disabled [(ngModel)]="installmentCost">
-            </mat-form-field>
-          </div>
-          
+        <div>
+          <span>Width</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="number" [(ngModel)]="valWidth" (input)="updateInputs()" />
+          </mat-form-field>
         </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card [ngClass]="{'hidden': valRoomType === ''}">
-        <mat-card-header>
-          <mat-card-title>
-            <h4>{{valRoomType}}</h4>
-          </mat-card-title>
-        </mat-card-header>
-    </mat-card>
-  </div>
+        <div>
+          <span>Height</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()" />
+          </mat-form-field>
+        </div>
 
 
-  <div class="container">
-      <mat-card class="calcCard">
-         
-          <mat-card-content>
-            <div class="addTab icon-container" (click)="createTab()">
-              <mat-icon>add_circle</mat-icon>
+        <div>
+          <abbr title="(Width * Height) / 144">
+            <span>Sqr.Ft</span>
+          </abbr>
+
+          <mat-form-field appearance="standard">
+            <input matInput type="decimal" disabled [ngModel]="sqrFt">
+          </mat-form-field>
+        </div>
+      </div>
+      <hr>
+      <mat-icon (click)="addToList()">add_circle</mat-icon>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h4>Pricing</h4>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="of_2 small_input">
+        <div>
+          <abbr title="to be determined">
+            <span>Retail Price</span>
+          </abbr>
+          <mat-form-field appearance="standard">
+            <input matInput type="decimal" [(ngModel)]="retailPrice" (input)="updateInputs()" disabled>
+          </mat-form-field>
+        </div>
+        <div>
+          <span>Discount (%)</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="number" [(ngModel)]="discount" (input)="updateInputs()">
+          </mat-form-field>
+        </div>
+
+        <div>
+          <abbr title="((RetailPrice * Discount) * QuantityDiscount) * Quantity">
+            <span>Cost</span>
+          </abbr>
+          <mat-form-field appearance="standard">
+            <input matInput type="text" disabled [(ngModel)]="valCost">
+          </mat-form-field>
+        </div>
+        <div>
+          <span>Discount 2 (%)</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="number" [(ngModel)]="discount2" (input)="updateInputs()">
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h4>Automated Values</h4>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="of_2 small_input">
+        <div>
+          <abbr title="">
+            <span>Total Price</span>
+          </abbr>
+          <mat-form-field appearance="standard">
+            <input matInput type="decimal" disabled [(ngModel)]="valPrice">
+          </mat-form-field>
+        </div>
+        <div>
+          <abbr title="InstallCost * Quantity">
+            <span>Installation Cost</span>
+          </abbr>
+          <mat-form-field appearance="standard">
+            <input matInput type="decimal" disabled [(ngModel)]="installmentCost">
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card [ngClass]="{'hidden': valRoomType === ''}">
+    <mat-card-header>
+      <mat-card-title>
+        <h4>{{valRoomType}}</h4>
+      </mat-card-title>
+    </mat-card-header>
+  </mat-card>
+</div>
+
+
+<div class="container">
+  <mat-card class="calcCard">
+
+    <mat-card-content>
+      <div class="addTab icon-container" (click)="createTab()">
+        <mat-icon>add_circle</mat-icon>
+      </div>
+      <mat-tab-group (selectedTabChange)="tabChange($event)" animationDuration="100ms">
+        <mat-tab *ngFor="let queryItem of queriesArray; index as index">
+          <ng-template mat-tab-label>
+            <div class="icon-container closeTab" (click)="closeTab(index)">
+              <mat-icon>close</mat-icon>
             </div>
-            <mat-tab-group (selectedTabChange)="tabChange($event)" animationDuration="100ms">
-              <mat-tab *ngFor="let queryItem of queriesArray; index as index">
-                <ng-template mat-tab-label>
-                  <div class="icon-container closeTab" (click)="closeTab(index)">
-                    <mat-icon>close</mat-icon>
-                  </div>
-                  {{ queryItem.name }}
-                </ng-template>
-                <div class="nameContainer">
-    
-                  <a><i class="editName" (click)="openEditPannel($event)">edit tab name</i></a>
+            {{ queryItem.name }}
+          </ng-template>
+          <div class="nameContainer">
+
+            <a><i class="editName" (click)="openEditPannel($event)">edit tab name</i></a>
+            <div>
+              <input [(ngModel)]="queryItem.name" (input)="updateInputs()">
+              <div class="icon-container checkmark" (click)="updateTabName($event)">
+                <mat-icon>checkmark</mat-icon>
+              </div>
+            </div>
+          </div>
+          <div class="table">
+            <header>
+
+              <div>
+                <span>Room</span>
+              </div>
+              <div>
+                <span>Group Type</span>
+              </div>
+              <div>
+                <span>Quantity</span>
+              </div>
+              <div>
+                <span>Width</span>
+              </div>
+              <div>
+                <span>Height</span>
+              </div>
+              <div>
+                <span>Sqr.Ft</span>
+              </div>
+              <div>
+                <span>Retail Price</span>
+              </div>
+              <div>
+                <span>Discount</span>
+              </div>
+              <div>
+                <span>Discount 2</span>
+              </div>
+              <div>
+                <span>Cost</span>
+              </div>
+              <div>
+                <span>Install Cost</span>
+              </div>
+              <div>
+                <span>Fascia Retail</span>
+              </div>
+              <div>
+                <span>Fascia Cost</span>
+              </div>
+              <div>
+                <span>Motor Cost</span>
+              </div>
+              <div>
+                <span>Price</span>
+              </div>
+            </header>
+            <div class="content">
+              <div class="group" *ngFor="let group of groupListItems(queryItem.list); index as groupIndex">
+                <div class="groupHeader">
+                  <span>{{group.name || "Default"}}</span>
+
+                  <select style="margin-left: 16px;" (change)="groupTypeChange(groupIndex, $event)">
+                    <option *ngFor="let mat of MaterialGroups; index as i" [value]="mat.tag">{{mat.name}}</option>
+                  </select>
+                </div>
+                <div class="row" *ngFor="let query of group.value; index as itemIndex">
                   <div>
-                    <input [(ngModel)]="queryItem.name" (input)="updateInputs()">
-                    <div class="icon-container checkmark" (click)="updateTabName($event)"><mat-icon>checkmark</mat-icon></div>
+                    <span>{{query.roomLabel}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.groupType}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.quantity}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.width}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.height}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.sqrFt}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.retailPrice}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.discount}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.discount2}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.cost}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.installmentCost}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.fasciaRetail}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.fasciaCost}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.danielsMotorPrice}}</span>
+                  </div>
+                  <div>
+                    <span>{{query.price}}</span>
+                  </div>
+                  <div class="icon-container" (click)="removeFromList(query.id, $event)">
+                    <mat-icon>remove_circle</mat-icon>
                   </div>
                 </div>
-                <div class="table">
-                    <header>
+                <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
 
-                      <div>
-                          <span>Room</span>
-                      </div>
-                      <div>
-                          <span>Quantity</span>
-                      </div>
-                      <div>
-                          <span>Width</span>
-                      </div>
-                      <div>
-                          <span>Height</span>
-                      </div>
-                      <div>
-                          <span>Sqr.Ft</span>
-                      </div>
-                      <div>
-                          <span>Retail Price</span>
-                      </div>
-                      <div>
-                          <span>Discount</span>
-                      </div>
-                      <div>
-                          <span>Discount 2</span>
-                      </div>
-                      <div>
-                          <span>Cost</span>
-                      </div>
-                      <div>
-                          <span>Price</span>
-                      </div>
-                      <div>
-                          <span>Install Cost</span>
-                      </div>
-                      <div>
-                        <span>Fascia Retail</span>
-                      </div>
-                      <div>
-                        <span>Fascia Cost</span>
-                      </div>
-                      <div>
-                        <span>Daniels Motor Cost</span>
-                      </div>
-                    </header>
-                    <div class="content">
-                        <div class="group" *ngFor="let group of groupListItems(queryItem.list)">
-                          <div class="groupHeader">
-                            <span>{{group.name || "Default"}}</span>
-                              
-                            <select matInput style="margin-left: 16px;">
-                              <option *ngFor="let mat of MaterialGroups; index as i" [value]="mat.name">{{mat.name}}</option>                          
-                            </select>
-                          </div>
-                          <div class="row" *ngFor="let query of group.value; index as itemIndex">
-                              <div>
-                                  <span>{{query.roomLabel}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.quantity}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.width}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.height}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.sqrFt}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.retailPrice}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.discount}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.discount2}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.cost}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.price}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.installmentCost}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.fasciaRetail}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.fasciaCost}}</span>
-                              </div>
-                              <div>
-                                  <span>{{query.danielsMotorPrice}}</span>
-                              </div>
-                                <div class="icon-container" (click)="removeFromList(itemIndex, $event)">
-                                  <mat-icon >remove_circle</mat-icon>
-                              </div>
-                          </div>
-                          <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
-                          
-                        
-                          <div class=" of_4" style="border-width: 1px 0; border-style: solid; border-color: white">
-                            <div>
-                              <span>Total Price</span>
-                              <div style="margin-left: 10px;">{{getFullSum(group.value)}}</div>
-                            </div>
 
-                            <div>
-                              <span>Clean Total Price</span>
-                              <div style="margin-left: 10px;">{{getCleanPrice()}}</div>
-                            </div>
-                            <div>
-                              <span>Roll Over Price</span>
-                              <mat-form-field appearance="standard">
-                                <input matInput type="text">
-                              </mat-form-field>
-                            </div>
-                          </div>   
-                        </div>
-                        <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
-                        
-                        <!-- <div class=" of_4">
-                          <div>
-                            <span>Total Price</span>
-                            <mat-form-field appearance="standard">
-                              <input matInput type="text" disabled [value]="getFullSum(queryItem.list)">
-                            </mat-form-field>
-                          </div>
-                         
-                          <div>
-                            <span>Clean Total Price</span>
-                            <mat-form-field appearance="standard">
-                              <input matInput type="text" disabled [value]="getCleanPrice()">
-                            </mat-form-field>
-                          </div>
-                       
-                        </div> -->
-        
-                    </div>
+                <div class=" of_4" style="border-width: 1px 0; border-style: solid; border-color: white">
+                  <div>
+                    <span>Total Price</span>
+                    <div style="margin-left: 10px;">{{getFullSum(group.value)}}</div>
+                  </div>
+
+                  <div>
+                    <span>Roll Over Price</span>
+                    <mat-form-field>
+                      <input matInput type="decimal" [value]=getCleanPrice()>
+                    </mat-form-field>
+                  </div>
+
                 </div>
-              </mat-tab>
-             
-          </mat-tab-group>
-        </mat-card-content>
-      </mat-card>
-  </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>
