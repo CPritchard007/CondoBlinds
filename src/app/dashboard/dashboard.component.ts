@@ -593,13 +593,22 @@ export class DashboardComponent implements OnInit {
    let value = event.target.value;
    let sortedArray = this.groupListItems(this.queriesArray[this.currentTab].list);
    let idArray = sortedArray[groupIndex].value.map(x => x.id);
-   this.queriesArray[this.currentTab].list.forEach( (item) => {
+   let polishedItems = this.queriesArray[this.currentTab].list.map((item) => {
       if (idArray.includes(item.id)) {
         console.log(idArray);
         item.groupType = value;
-        this.updatePricing(item, null);
+        return this.updatePricing({
+          groupType: value,
+          groupName: item.groupName,
+          width: item.width,
+          height: item.height,
+          roomLabel: item.roomLabel,
+        } as QueryStore, null);
       }
-   });
-
+      return [];
+    });
+    console.log("groupTypeChange => ",polishedItems);
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
   }
+  
 }

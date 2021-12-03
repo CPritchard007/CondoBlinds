@@ -28,6 +28,8 @@ import { NumericCommasPipe } from './numeric-commas.pipe';
 import { HelpBarComponent } from './help-bar/help-bar.component';
 import { RemoveItemDialog } from './Dialog/RemoveItemDialog';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { FileExportComponent } from './file-export/file-export.component';
+import { RefreshStorageComponent } from './refresh-storage/refresh-storage.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +38,9 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     NumericCommasPipe,
     HelpBarComponent,
     RemoveItemDialog,
-    FileUploadComponent
+    FileUploadComponent,
+    FileExportComponent,
+    RefreshStorageComponent
   ],
   imports: [
     FormsModule,
