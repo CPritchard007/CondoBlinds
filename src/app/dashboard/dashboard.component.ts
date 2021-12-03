@@ -603,12 +603,14 @@ export class DashboardComponent implements OnInit {
           width: item.width,
           height: item.height,
           roomLabel: item.roomLabel,
+          quantity: item.quantity,
         } as QueryStore, null);
       }
-      return [];
+      return item;
     });
     console.log("groupTypeChange => ",polishedItems);
+    if (polishedItems) this.queriesArray[this.currentTab].list = polishedItems;
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
+    
   }
-  
 }

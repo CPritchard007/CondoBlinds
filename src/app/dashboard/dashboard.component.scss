@@ -3,6 +3,14 @@
 .spacer {flex: 1 1 auto;}
 .container {padding: 10px;}
 
+.constants {
+    @media screen and (max-width: 1000px) {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    @media screen and (max-width: 900px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
 .icon-container {
     display: flex;
     align-items: center;
@@ -125,6 +133,10 @@ mat-card.calcCard {
                     background-color: #7b1fa2;
                     color: white;
                     box-sizing: border-box;
+
+                    span {
+                        min-width: 70px;
+                    }
 
                 }
                 

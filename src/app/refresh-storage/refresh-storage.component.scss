@@ -1,13 +1,13 @@
 @keyframes rotator {
     0% {
-        transform-origin: 80% 80%;
+        transform-origin: 75% 75%;
             
         transform: translate(-25%, -25%) rotate(0deg);
 
         
     }
     100% {
-        transform-origin: 80% 80%;
+        transform-origin: 75% 75%;
             
         transform: translate(-25%, -25%) rotate(360deg);
 
