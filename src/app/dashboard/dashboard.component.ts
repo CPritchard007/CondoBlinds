@@ -161,11 +161,9 @@ export class DashboardComponent implements OnInit {
     this.resetValues();
     // fi the LocalStorage is disabled, then the app will reset once the application is refreshed
     if (this.USE_LOCAL_STORAGE) {
-      console.log('using local storage: true');
       this.queriesArray = [{name: "table 1", list: []}]; //set default data for application
       let localStorageData = localStorage.getItem('queries'); // get data from localStorage
       if (localStorageData) { // if there is data stored before, pull it...
-        console.log("localStorageData", localStorageData);
         this.queriesArray = this.convertToLocalFormat(JSON.parse(localStorageData));
       }
     }
@@ -179,22 +177,18 @@ export class DashboardComponent implements OnInit {
     
     this.getGroupNames();
     this.groupSort();
-    console.log("Hello World", this.groupNames);
     this.groupName = this.groupNames[0]
 
   }
   //TODO: not saving data
   convertToLocalFormat(storageItems: Array<StorageTables>): Tables[] {
     console.log("convertToLocalFormat");
-    console.log("storageItems", storageItems);
     let polishedTab = []
     let polishedItems: Tables[] = storageItems.map((tab) => {
-      console.log("tab", tab);
       polishedTab = this.updateTable(tab.list);
       
       return {name: tab.name, list: polishedTab};
     });
-    console.log("convert to local => polishedItems", polishedItems);
     return polishedItems;
   }
 
@@ -219,7 +213,7 @@ export class DashboardComponent implements OnInit {
 
 
   updateTable(tabList: QueryStore[] | null): query[] {
-    console.log("updateTable", tabList);
+    console.log("updateTable");
     let updatedTabList: query[] = [];
     if (tabList) {
       updatedTabList = tabList.map((item, itemIndex )=> {
@@ -264,9 +258,7 @@ export class DashboardComponent implements OnInit {
   calculateDanielsMotorPrice(quantity: number) {
     return (350 * quantity);
   }
-  calculateDanielsFasciaCost() {
-    throw new Error('Method not implemented.');
-  }
+
   calculateFasciaCost(fasciaRetail: number, discount: number, discount2: number, quantity: number) {
     return ((fasciaRetail * (discount / 100)) * (discount2 / 100)) * quantity;
   }
@@ -296,6 +288,56 @@ export class DashboardComponent implements OnInit {
   calculateSqrFt(width: number, height: number, quantity: number) {
     return (((width * height) / 144) * quantity).toFixed(2);
   }
+
+  calculateRetailPrice(valWidth: number, valHeight: number, groupType: string): number {
+    let width = 0; 
+    let height = 0;
+    
+    this.Widths.forEach((x, i) => {
+      if ( valWidth == 0 || valWidth == undefined) return;
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
+        
+        width = x;
+      } else if (valWidth > this.Widths[this.Widths.length - 1]) {
+        width = this.Widths[this.Widths.length - 1];
+        console.log("width", width);
+        
+      }
+    });
+
+    this.Heights.forEach((x, i) => {
+      if ( valHeight == 0 || valHeight == undefined) return;
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Heights[i-1] < valHeight)) {
+        
+        height = x;
+      } else if (valHeight > this.Heights[this.Heights.length - 1]) {
+        height = this.Heights[this.Heights.length - 1];
+        console.log("height", height);
+        
+      }
+    });
+
+    const widthIndex = this.Widths.indexOf(width);
+    const heightIndex = this.Heights.indexOf(height);
+
+    // console.log("Widths", this.Widths, "Heights", this.Heights, "valWidth", valWidth, "valHeight", valHeight, "width", width, "height", height, "widthIndex", widthIndex, "heightIndex", heightIndex, "tables", this.pricingTables);
+    let table = data.tables.find((item) => {
+      // console.log("item.tag ", item.tag, "groupType", groupType, "res", item.tag === groupType);
+      return item.tag === groupType;
+    });
+    // console.log("table", table);
+
+    if (table) {
+      return table.table.calculations[heightIndex][widthIndex];
+    } else {
+      throw new Error("No table found");
+    }
+  }
+
+  calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number {
+    return ((retailPrice * (discount / 100)) * (discount2 / 100)) * quantity;
+  }
+
 
   getGroupNames() {
     this.queriesArray[this.currentTab].list.forEach((element, index) => {
@@ -329,48 +371,6 @@ export class DashboardComponent implements OnInit {
     
   }
 
-  calculateRetailPrice(valWidth: number, valHeight: number, groupType: string): number {
-    console.log("calculateRetailPrice", valWidth, valHeight, groupType);
-    let width = 0; 
-    let height = 0;
-    
-    this.Widths.forEach((x, i) => {
-      if ( valWidth == 0 || valWidth == undefined) return;
-      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
-        
-        width = x;
-      }
-    });
-
-    this.Heights.forEach((x, i) => {
-      if ( valHeight == 0 || valHeight == undefined) return;
-      if ( x  >= valWidth && ( i-1 <= 0 || this.Heights[i-1] < valHeight)) {
-        
-        height = x;
-      }
-    });
-
-    const widthIndex = this.Widths.indexOf(width);
-    const heightIndex = this.Heights.indexOf(height);
-
-    // console.log("Widths", this.Widths, "Heights", this.Heights, "valWidth", valWidth, "valHeight", valHeight, "width", width, "height", height, "widthIndex", widthIndex, "heightIndex", heightIndex, "tables", this.pricingTables);
-    let table = data.tables.find((item) => {
-      // console.log("item.tag ", item.tag, "groupType", groupType, "res", item.tag === groupType);
-      return item.tag === groupType;
-    });
-    // console.log("table", table);
-
-    if (table) {
-      return table.table.calculations[heightIndex][widthIndex];
-    } else {
-      throw new Error("No table found");
-    }
-  }
-
-  calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number {
-    return ((retailPrice * (discount / 100)) * (discount2 / 100)) * quantity;
-  }
-
   addToList() {
     console.log("addToList");
     try { 
@@ -386,35 +386,6 @@ export class DashboardComponent implements OnInit {
 
       this.queriesArray[this.currentTab].list.push(item);
       if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
-      console.log("addToList", this.queriesArray);
-      // let retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight, this.groupType);
-      // let cost = this.calculateCost(retailPrice, this.discount, this.discount2, this.quantity);
-      // let price = this.calculatePrice(cost);
-      // let sqrFt = this.calculateSqrFt(this.valWidth, this.valHeight, this.quantity)
-      // let installmentCost = this.calculateInstallmentCost(this.quantity);
-      // let fasciaRetail = this.calculateFasciaRetail(this.valWidth, this.defaultGroup);
-      // let fasciaCost = this.calculateFasciaCost(fasciaRetail, this.discount, this.discount2, this.quantity);
-      // let danielsMotorPrice = this.calculateDanielsMotorPrice(this.quantity);
-
-      // this.queriesArray[this.currentTab].list.push({
-      //   id: Date.now() + "",
-      //   roomLabel: this.roomLabel,
-      //   groupName: this.groupName,
-      //   groupType: this.defaultGroup,
-      //   width: this.valWidth,
-      //   height: this.valHeight,
-      //   discount: this.discount,
-      //   discount2: this.discount2,
-      //   quantity: this.quantity,
-      //   sqrFt: sqrFt,
-      //   cost: cost,
-      //   price: price,
-      //   retailPrice: retailPrice,
-      //   installmentCost: installmentCost,
-      //   fasciaRetail: fasciaRetail,
-      //   fasciaCost: fasciaCost,
-      //   danielsMotorPrice: danielsMotorPrice
-      // });
       
     } catch (error) {
       console.log("error", error);
@@ -595,7 +566,6 @@ export class DashboardComponent implements OnInit {
    let idArray = sortedArray[groupIndex].value.map(x => x.id);
    let polishedItems = this.queriesArray[this.currentTab].list.map((item) => {
       if (idArray.includes(item.id)) {
-        console.log(idArray);
         item.groupType = value;
         return this.updatePricing({
           groupType: value,
@@ -608,7 +578,6 @@ export class DashboardComponent implements OnInit {
       }
       return item;
     });
-    console.log("groupTypeChange => ",polishedItems);
     if (polishedItems) this.queriesArray[this.currentTab].list = polishedItems;
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
     
