@@ -1,7 +1,4 @@
-.hidden {display: none;}
-.align-right {text-align: right;}
-.spacer {flex: 1 1 auto;}
-.container {padding: 10px;}
+
 
 .constants {
     @media screen and (max-width: 1000px) {
@@ -11,26 +8,13 @@
         grid-template-columns: 1fr 1fr;
     }
 }
-.icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    mat-icon {
-        width: auto;
-        height: auto;
-        pointer-events: none;
-    }
-}
 
 .small_input {
     font-size: 12px;
-
     & mat-form-field {
         width: calc(50% - 4px);
         margin: 2px;
     }
-    
     span {
         display: inline-block;
         width: 80px;
@@ -49,7 +33,6 @@ hr + mat-icon {
     transform: translateX(-50%);
     background-color: rgb(75, 75, 75);
     border-radius: 15px;
-  
 }
 
 ::ng-deep.mat-tab-label, ::ng-deep.mat-tab-label-active{
@@ -58,22 +41,18 @@ hr + mat-icon {
     min-height: 40px;
     padding: 0 3px !important;
     margin: 3px 1px !important;
-    text-transform: capitalize;
-    
-    // background-color: rgba(255, 255, 255, 0.186)!important;
+    text-transform: capitalize;    
 }
 
 ::ng-deep.mat-tab-label:hover .icon-container {
     visibility: visible !important;
 }
 
-
-
 .table header, .table .content .row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
     position: relative;
-    
+   
     .icon-container {
         width: 10px;
         height: 10px;
@@ -137,9 +116,7 @@ mat-card.calcCard {
                     span {
                         min-width: 70px;
                     }
-
-                }
-                
+                }        
             }
 
             hr {
@@ -194,7 +171,6 @@ mat-card.calcCard {
                 text-decoration: underline;
             }
         }
-        
         div {
            display: none;
            height: 20px;
@@ -206,7 +182,6 @@ mat-card.calcCard {
                 border-radius: 2px;
                 border: 1px solid #ddd;
                 box-sizing: border-box;
-
                 
                 mat-icon {
                     font-size: 10px;
@@ -235,15 +210,13 @@ mat-card.calcCard {
         }
     }
     
-   
     .icon-container.closeTab {
         position: absolute;
         right: 0px;
         top: 0px;
         width: 15px;
         height: 15px;
-        
-        
+             
         mat-icon {
             font-size: 10px;
             vertical-align: middle;
@@ -269,8 +242,6 @@ mat-card.calcCard {
             width: 100px;
         }
     }
-
-    
 }
 
 .groupName ::ng-deep .mat-tab-header {

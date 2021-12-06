@@ -1,9 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-
-
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 interface FileItem {
-  "Group Id": number,
   "Group Name": string,
   "Group Type": string,
   "Name": string,
@@ -19,9 +16,11 @@ interface FileItem {
 })
 export class FileUploadComponent implements OnInit {
 
+  @Output() onFinalData = new EventEmitter<FileItem[]>();
   fileName: string = "";
   data: Object = {};
   dataJson: FileItem[] = [];
+  
   constructor() { }
 
   ngOnInit(): void {
@@ -44,20 +43,20 @@ export class FileUploadComponent implements OnInit {
               let row: string[] = line.split(',');
               
               let json: FileItem = {
-                "Group Id": parseInt(row[0]),
-                "Group Name": row[1],
-                "Group Type": row[2],
-                "Name": row[3],
-                "quantity": parseInt(row[4]),
-                "Width": parseInt(row[5]),
-                "Height": parseInt(row[6]),
+                "Group Name": row[0],
+                "Group Type": row[1],
+                "Name": row[2],
+                "quantity": parseInt(row[3]),
+                "Width": parseInt(row[4]),
+                "Height": parseInt(row[5]),
               }
               this.dataJson.push(json);
             }
           }
         }
       }
-      console.log(this.dataJson);
+      console.log('HEY THERE',this.dataJson);
+      this.onFinalData.emit(this.dataJson);
     }
   }
 }

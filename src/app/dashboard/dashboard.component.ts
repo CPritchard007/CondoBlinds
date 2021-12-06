@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -46,6 +46,13 @@ interface QueryStore {
     height: number;
 }
 
+// "Group Name": string,
+// "Group Type": string,
+// "Name": string,
+// "quantity": number,
+// "Width": number,
+// "Height": number,
+
 interface Tables {
   name: string;
   list: query[];
@@ -69,6 +76,14 @@ interface MaterialGroup {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  @Input() onFinalDataInport: Array<QueryStore> = [];
+
+  ngOnChanges(changes: SimpleChanges) {
+    let items: QueryStore[] = this.onFinalDataInport ?? []
+    console.log("ngOnChanges", items);
+    
+  }
+  
   /* Arrays */
   pricingTables: Array<Array<number>> = [];
   Widths: number[] = [];
