@@ -5,16 +5,15 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
 import { WarningDialog } from '../Dialog/warningDialog';
 /* Interfaces */
-interface RoomType {
-    value: string;
-    viewValue: string;
-}
 
+
+
+// items seperated into different groups labeled by room name
 interface Group {
   name: string;
   value: query[];
 }
-
+// items pulled from storage with caluclated values
 interface query {
     id: string;
     roomLabel: string;
@@ -34,7 +33,7 @@ interface query {
     fasciaCost: number;
     danielsMotorPrice: number;
 }
-
+// itens pulled from storage without caluclated values
 interface QueryStore {
     groupName: string;
     groupType: string;
@@ -45,23 +44,23 @@ interface QueryStore {
 }
 
 
-
+// get items that are contained in certain tab
 interface Tables {
   name: string;
   list: query[];
 }
 
+// get tabs related to queries without calculated values
 interface StorageTables {
   name: string;
   list: QueryStore[];
 }
 
+// used for GroupType selector
 interface MaterialGroup {
   tag: string;
   name: string;
 }
-
-
 
 @Component({
   selector: 'app-dashboard',
@@ -69,13 +68,15 @@ interface MaterialGroup {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  @Input() onFinalDataInport: Array<QueryStore> = [];
-  @Input() fileSize: number = 0;
+  @Input() onFinalDataInport: Array<QueryStore> = []; // import data from other components, allowing the user to upload a CSV file
+  
   /* Arrays */
-  pricingTables: Array<Array<number>> = [];
-  Widths: number[] = [];
-  Heights: number[] = [];
-  groupNames: Array<string> = [];
+  pricingTables: Array<Array<number>> = []; // get tables that are linked to each groupType (C, D, E, F, G, H)
+  Widths: number[] = [];  // widths defined by the tables
+  Heights: number[] = []; // heights defined by the tables
+  groupNames: Array<string> = [];  // names of each row group in the table (groups items together to get total calculations).
+
+  // allow for itteration through the groupTypes for selector
   MaterialGroups: Array<MaterialGroup> = [
     {
       tag: "GroupC",
@@ -102,7 +103,8 @@ export class DashboardComponent implements OnInit {
       name: "Elite 2016 Group H",
     }
   ];
-  defaultGroup: string = this.MaterialGroups[0].tag;
+
+  
 
   /* static variables */
   USE_LOCAL_STORAGE = true;
@@ -110,12 +112,10 @@ export class DashboardComponent implements OnInit {
   profitMargin = 1.35;
 
   /* Variables */
-  /* all are linked with inputs, or calculated by the calculator */
-  valWidth; 
-  valHeight;
+  /* ngModels */
+  valWidth = 0; 
+  valHeight = 0;
   isFascia: boolean = false;
-
-
   valRoomType = ""; 
   groupName: string = "";
   groupType: string = this.MaterialGroups[0].tag;
@@ -127,45 +127,47 @@ export class DashboardComponent implements OnInit {
   discount = 50.0;
   discount2 = 50.0;
   installmentCost = 0;
-
   totalCost = 0;
+  roomLabel: string = "";
+  currentTab = 0; // unlike other models, this one is updated with a function, allowing for the switching of tabs
+
+  // this value is specifically used to pass a value through the table, do not change
   cleanCost = 0;
 
-  roomLabel: string = "";
-  roomTypes: Array<RoomType> = [];
-  queriesArray: Array<Tables> = []; //=> contains data from localstorage, as well as to be used to
-                                    // calculate sums of multiple rows
+  queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
 
-  currentTab = 0; //=> keeps the current tab stored to be requested later
+  
 
-  ngOnInit() { }
+  ngOnInit() { }  // is required but is never used
 
+  // when the user uploads a CSV file, this function is called to update the table
   ngOnChanges(changes: SimpleChanges) {
-    console.log("ngOnChanges", this.fileSize);
-    setTimeout(() => {
-      console.log("ngOnChanges", this.fileSize);
-      if (this.onFinalDataInport) {
-        let items = this.onFinalDataInport ?? [];
-        items.shift();
-        console.log(items);
+    
+    setTimeout(() => { // since this only shows that the file is being uploaded, it is necessary to wait for the file to be uploaded
+      //(there is no calculation for the time to wait, so one second is needed at the moment) TODO: find a better way to do this
+    
+      if (this.onFinalDataInport) { // only on file change can enter
+        let items = this.onFinalDataInport ?? []; // if the file is empty, the array will be undefined, so this will prevent that
+        items.shift(); // remove the first item, which is the header
             
-        let itemsArray: query[] = this.onFinalDataInport.map((x, i) => {
+        let itemsArray: query[] = this.onFinalDataInport.map((x, i) => { // convert the array from localStorage to a format that has all calculated values
           return this.updatePricing(x, i);
         })
-        console.log("ngOnChanges", itemsArray);
-        this.queriesArray[this.currentTab].list.push(...itemsArray)
-        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
+        
+        this.queriesArray[this.currentTab].list.push(...itemsArray) // add the new items to the current tab
+        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // update local storage
       }
     }, 1000);
   }
 
   constructor(public dialog: MatDialog) {
     console.log("constructor");
+
     try {
-      // console.log(this.defaultGroup);
-      let tableType = data.tables.find(table => table.tag === this.defaultGroup);
-      this.pricingTables = tableType!.table.calculations;
-      if (tableType) {
+      let tableType = data.tables.find(table => table.tag === "GroupC"); // set tableTyle to its default value. TODO: make this a variable, and add to constants page
+      
+      if (tableType) {  // if tabletype can be found, then set the tables to the tables in the data file
+        this.pricingTables = tableType.table.calculations;  
         this.Widths = tableType.table.Widths;
         this.Heights = tableType.table.Heights;  
       }
@@ -173,9 +175,6 @@ export class DashboardComponent implements OnInit {
       console.log(error);
     }
 
-    
-    this.valWidth = 0
-    this.valHeight = 0;
     // this.pricingTables = data.tables[this.defaultGroup]; // set the pricing tables
 
     // assure that all values are set to default; as defined by the json file
@@ -379,7 +378,7 @@ export class DashboardComponent implements OnInit {
   // this is run after the user enters a new value, every new value, the application will recalculate
   // all the values that are needed
   updateInputs() {
-    console.log("updateInputs");
+    console.log("updateInputs", this.valWidth, this.valHeight, this.groupType);
     
     this.retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight, this.groupType);
     

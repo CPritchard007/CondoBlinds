@@ -7,7 +7,7 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      
+
       <div class="constants of_5 small_input" style="font-size: 10px;">
         <div>
           <span>COST OF INSTALLMENT</span>
@@ -36,7 +36,7 @@
           <span>Group Type</span>
           <mat-form-field appearance="outline">
             <div>
-              <mat-select [(ngModel)]="groupType">
+              <mat-select [(ngModel)]="groupType" (selectionChange)="updateInputs()">
                 <mat-option *ngFor="let mat of MaterialGroups" [value]="mat.tag">{{mat.name}}</mat-option>
               </mat-select>
             </div>
@@ -84,7 +84,7 @@
             <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()" />
           </mat-form-field>
           <br>
-          <i [ngClass]="{hidden: valHeight > 0 && valHeight !== null}">Width Must Be Filled</i>
+          <i [ngClass]="{hidden: valHeight > 0 && valHeight !== null}">Height Must Be Filled</i>
         </div>
 
 
@@ -174,7 +174,7 @@
       </div>
     </mat-card-content>
   </mat-card>
-  
+
 </div>
 
 
@@ -257,7 +257,8 @@
                   <span>{{group.name || "Default"}}</span>
 
                   <select style="margin-left: 16px;" (change)="groupTypeChange(groupIndex, $event)">
-                    <option *ngFor="let mat of MaterialGroups; index as i" [selected]="mat.tag == group.value[0].groupType" [value]="mat.tag">{{mat.name}}</option>
+                    <option *ngFor="let mat of MaterialGroups; index as i"
+                      [selected]="mat.tag == group.value[0].groupType" [value]="mat.tag">{{mat.name}}</option>
                   </select>
                 </div>
                 <div class="row" *ngFor="let query of group.value; index as itemIndex">
@@ -285,8 +286,7 @@
                   <div>
                     <span>{{query.discount}}</span>
                   </div>
-                  <div>
-                    <span>{{query.discount2}}</span>
+                  <div> <span>{{query.discount2}}</span>
                   </div>
                   <div>
                     <span>{{query.cost}}</span>
@@ -310,6 +310,7 @@
                     <mat-icon>remove_circle</mat-icon>
                   </div>
                 </div>
+
                 <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
 
 
