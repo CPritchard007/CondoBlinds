@@ -155,7 +155,7 @@ export class DashboardComponent implements OnInit {
         })
         
         this.queriesArray[this.currentTab].list.push(...itemsArray) // add the new items to the current tab
-        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // update local storage
+        this.uploadToStorage() // update local storage
       }
     }, 1000);
   }
@@ -408,7 +408,7 @@ export class DashboardComponent implements OnInit {
       } as QueryStore, null);
 
       this.queriesArray[this.currentTab].list.push(item);
-      if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
+      this.uploadToStorage() // check if you can add to LocalStorage
       
     } catch (error) {
       console.log("error", error);
@@ -431,7 +431,7 @@ export class DashboardComponent implements OnInit {
     
     
 
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
+    this.uploadToStorage() // check if you can add to LocalStorage
     this.resetValues(); // reset values
     if (!this.groupNames.includes(this.groupName)) {
       this.groupNames.push(this.groupName);
@@ -447,7 +447,7 @@ export class DashboardComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => { // get data that was entered
         if (!result) return;
         this.queriesArray[this.currentTab].list = this.queriesArray[this.currentTab].list.filter(x => x.id != id); // remove item from list
-        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
+        this.uploadToStorage()
       });
     }
   }
@@ -513,13 +513,13 @@ export class DashboardComponent implements OnInit {
     /* allow the user to add new tabs, the naming format is default */
   createTab() {
     this.queriesArray.push({name: "table " + (this.queriesArray.length + 1), list: []});
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
+    this.uploadToStorage()
   }
     /* remove tab from list */
     /** TODO: add dialog */
   closeTab(i: number) {
     this.queriesArray.splice(i, 1);
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
+    this.uploadToStorage()
   }
 
   /* once the user clicks on the edit button, hide the button and show the input that contains changes the tab name */
@@ -537,7 +537,8 @@ export class DashboardComponent implements OnInit {
     let input = button.parentElement.childNodes[0];
     let tabName = input.value;
     this.queriesArray[this.currentTab].name = tabName;
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
+    
+    this.uploadToStorage()
 
     button.parentElement.style.display = "none";
     button.parentElement.parentElement.childNodes[0].childNodes[0].style.display = "flex";
@@ -602,7 +603,11 @@ export class DashboardComponent implements OnInit {
       return item;
     });
     if (polishedItems) this.queriesArray[this.currentTab].list = polishedItems;
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); // check if you can add to LocalStorage
+    this.uploadToStorage() // check if you can add to LocalStorage
     
+  }
+
+  uploadToStorage() {
+    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
   }
 }
