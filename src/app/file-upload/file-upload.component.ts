@@ -1,12 +1,12 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 interface FileItem {
-  "Group Name": string,
-  "Group Type": string,
-  "Name": string,
-  "quantity": number,
-  "Width": number,
-  "Height": number,
+  groupName: string;
+  groupType: string;
+  roomLabel: string;
+  quantity: number;
+  width: number;
+  height: number;
 }
 
 @Component({
@@ -43,19 +43,18 @@ export class FileUploadComponent implements OnInit {
               let row: string[] = line.split(',');
               
               let json: FileItem = {
-                "Group Name": row[0],
-                "Group Type": row[1],
-                "Name": row[2],
-                "quantity": parseInt(row[3]),
-                "Width": parseInt(row[4]),
-                "Height": parseInt(row[5]),
+                groupName: row[0],
+                groupType: row[1],
+                roomLabel: row[2],
+                quantity: parseInt(row[3]),
+                width: parseInt(row[4]),
+                height: parseInt(row[5]),
               }
               this.dataJson.push(json);
             }
           }
         }
       }
-      console.log('HEY THERE',this.dataJson);
       this.onFinalData.emit(this.dataJson);
     }
   }

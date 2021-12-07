@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -9,7 +9,6 @@ interface RoomType {
     value: string;
     viewValue: string;
 }
-
 
 
 interface Group {
@@ -46,12 +45,7 @@ interface QueryStore {
     height: number;
 }
 
-// "Group Name": string,
-// "Group Type": string,
-// "Name": string,
-// "quantity": number,
-// "Width": number,
-// "Height": number,
+
 
 interface Tables {
   name: string;
@@ -78,12 +72,6 @@ interface MaterialGroup {
 export class DashboardComponent implements OnInit {
   @Input() onFinalDataInport: Array<QueryStore> = [];
 
-  ngOnChanges(changes: SimpleChanges) {
-    let items: QueryStore[] = this.onFinalDataInport ?? []
-    console.log("ngOnChanges", items);
-    
-  }
-  
   /* Arrays */
   pricingTables: Array<Array<number>> = [];
   Widths: number[] = [];
@@ -152,6 +140,23 @@ export class DashboardComponent implements OnInit {
   currentTab = 0; //=> keeps the current tab stored to be requested later
 
   ngOnInit() { }
+
+  ngOnChanges(changes: SimpleChanges) {
+    setTimeout(() => {
+      if (this.onFinalDataInport) {
+        let items = this.onFinalDataInport ?? [];
+        items.shift();
+        console.log(items);
+          
+        let itemsArray: query[] = this.onFinalDataInport.map((x, i) => {
+          return this.updatePricing(x, i)
+        })
+        console.log("ngOnChanges", itemsArray);
+        this.queriesArray[this.currentTab].list.push(...itemsArray)
+        if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
+      }
+    }, 1000);
+  }
 
   constructor(public dialog: MatDialog) {
     console.log("constructor");
@@ -239,7 +244,7 @@ export class DashboardComponent implements OnInit {
   }
 
   updatePricing(item:QueryStore, index: number | null): query {
-    console.log("updatePricing");
+    console.log("updatePricing", item, item.width);
       let sqrFt = this.calculateSqrFt(item.width, item.height, item.quantity);
       let retailPrice = this.calculateRetailPrice(item.width, item.height, item.groupType);
       let cost = this.calculateCost(retailPrice, this.discount, this.discount2, item.quantity);
@@ -305,14 +310,15 @@ export class DashboardComponent implements OnInit {
   }
 
   calculateRetailPrice(valWidth: number, valHeight: number, groupType: string): number {
+    console.log("calculateRetailPrice", valWidth, valHeight, groupType);
     let width = 0; 
     let height = 0;
     
     this.Widths.forEach((x, i) => {
       if ( valWidth == 0 || valWidth == undefined) return;
       if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
-        
         width = x;
+
       } else if (valWidth > this.Widths[this.Widths.length - 1]) {
         width = this.Widths[this.Widths.length - 1];
         console.log("width", width);
@@ -323,8 +329,8 @@ export class DashboardComponent implements OnInit {
     this.Heights.forEach((x, i) => {
       if ( valHeight == 0 || valHeight == undefined) return;
       if ( x  >= valWidth && ( i-1 <= 0 || this.Heights[i-1] < valHeight)) {
-        
         height = x;
+
       } else if (valHeight > this.Heights[this.Heights.length - 1]) {
         height = this.Heights[this.Heights.length - 1];
         console.log("height", height);
@@ -341,7 +347,7 @@ export class DashboardComponent implements OnInit {
       return item.tag === groupType;
     });
     // console.log("table", table);
-
+    console.log("table", table, "groupType", groupType);
     if (table) {
       return table.table.calculations[heightIndex][widthIndex];
     } else {
