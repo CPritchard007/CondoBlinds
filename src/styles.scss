@@ -7,6 +7,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .align-right {text-align: right;}
 .spacer {flex: 1 1 auto;}
 .container {padding: 10px;}
+mat-form-field + i {
+  color: lightcoral;
+  text-align: right;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: -20px;
+}
+
 
 .icon-container {
   display: flex;

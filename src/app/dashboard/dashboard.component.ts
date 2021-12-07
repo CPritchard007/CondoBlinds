@@ -142,14 +142,15 @@ export class DashboardComponent implements OnInit {
   ngOnInit() { }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log("ngOnChanges");
     setTimeout(() => {
       if (this.onFinalDataInport) {
         let items = this.onFinalDataInport ?? [];
         items.shift();
         console.log(items);
-          
+            
         let itemsArray: query[] = this.onFinalDataInport.map((x, i) => {
-          return this.updatePricing(x, i)
+          return this.updatePricing(x, i);
         })
         console.log("ngOnChanges", itemsArray);
         this.queriesArray[this.currentTab].list.push(...itemsArray)
@@ -393,6 +394,9 @@ export class DashboardComponent implements OnInit {
   }
 
   addToList() {
+    if ((this.valWidth <= 0 || this.valWidth == null) ||
+        (this.valHeight <= 0 || this.valHeight == null) ||
+        (this.quantity <= 0 || this.quantity == null)) return;
     console.log("addToList");
     try { 
       let item = this.updatePricing({

@@ -64,19 +64,23 @@
           <span>Quantity</span>
           <mat-form-field appearance="outline">
             <input matInput type="decimal" [(ngModel)]="quantity" (input)="updateInputs()">
+            
           </mat-form-field>
+          <i [ngClass]="{hidden: quantity > 0 && quantity !== null}">insiffucuent value: {{quantity}}</i>
         </div>
         <div>
           <span>Width</span>
           <mat-form-field appearance="outline">
             <input matInput type="number" [(ngModel)]="valWidth" (input)="updateInputs()" />
           </mat-form-field>
+          <i [ngClass]="{hidden: valWidth > 0 && valWidth !== null}">Width Must Be Filled</i>
         </div>
         <div>
           <span>Height</span>
           <mat-form-field appearance="outline">
             <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()" />
           </mat-form-field>
+          <i [ngClass]="{hidden: valHeight > 0 && valHeight !== null}">Width Must Be Filled</i>
         </div>
 
 
@@ -246,7 +250,7 @@
                   <span>{{group.name || "Default"}}</span>
 
                   <select style="margin-left: 16px;" (change)="groupTypeChange(groupIndex, $event)">
-                    <option *ngFor="let mat of MaterialGroups; index as i" [value]="mat.tag">{{mat.name}}</option>
+                    <option *ngFor="let mat of MaterialGroups; index as i" [selected]="mat.tag == group.value[0].groupType" [value]="mat.tag">{{mat.name}}</option>
                   </select>
                 </div>
                 <div class="row" *ngFor="let query of group.value; index as itemIndex">

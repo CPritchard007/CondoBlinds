@@ -12,4 +12,8 @@ export class RefreshStorageComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  refreshStorage() {
+    localStorage.setItem('queries', '')
+    location.reload()
+  }
 }
