@@ -17,7 +17,6 @@ export interface Task {
 export class AppComponent {
   title = 'calculatorApp';
   items!: any[];
-  fileSize!: number;
  
 
   itemIsAvailable(value: any[]) {
@@ -25,8 +24,6 @@ export class AppComponent {
     this.items = value ?? [];
     
   }
-  saveFileSize(value: number) {
-    this.fileSize = value;
-  }
+
 }
 
