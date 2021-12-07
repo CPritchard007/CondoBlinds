@@ -10,7 +10,6 @@ interface RoomType {
     viewValue: string;
 }
 
-
 interface Group {
   name: string;
   value: query[];
@@ -71,7 +70,7 @@ interface MaterialGroup {
 })
 export class DashboardComponent implements OnInit {
   @Input() onFinalDataInport: Array<QueryStore> = [];
-
+  @Input() fileSize: number = 0;
   /* Arrays */
   pricingTables: Array<Array<number>> = [];
   Widths: number[] = [];
@@ -142,8 +141,9 @@ export class DashboardComponent implements OnInit {
   ngOnInit() { }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("ngOnChanges");
+    console.log("ngOnChanges", this.fileSize);
     setTimeout(() => {
+      console.log("ngOnChanges", this.fileSize);
       if (this.onFinalDataInport) {
         let items = this.onFinalDataInport ?? [];
         items.shift();
@@ -245,7 +245,6 @@ export class DashboardComponent implements OnInit {
   }
 
   updatePricing(item:QueryStore, index: number | null): query {
-    console.log("updatePricing", item, item.width);
       let sqrFt = this.calculateSqrFt(item.width, item.height, item.quantity);
       let retailPrice = this.calculateRetailPrice(item.width, item.height, item.groupType);
       let cost = this.calculateCost(retailPrice, this.discount, this.discount2, item.quantity);
@@ -271,8 +270,8 @@ export class DashboardComponent implements OnInit {
         discount: this.discount,
         discount2: this.discount2,
         installmentCost: installmentCost,
-        fasciaRetail: 0,
-        fasciaCost: 0,
+        fasciaRetail: fasciaRetail, 
+        fasciaCost: fasciaCost,
         danielsMotorPrice: danielsMotorPrice
       }
   }

@@ -17,6 +17,8 @@ interface FileItem {
 export class FileUploadComponent implements OnInit {
 
   @Output() onFinalData = new EventEmitter<FileItem[]>();
+  @Output() fileSize = new EventEmitter<number>();
+
   fileName: string = "";
   data: Object = {};
   dataJson: FileItem[] = [];
@@ -56,6 +58,8 @@ export class FileUploadComponent implements OnInit {
         }
       }
       this.onFinalData.emit(this.dataJson);
+      this.fileSize.emit(this.dataJson.length);
+
     }
   }
 }

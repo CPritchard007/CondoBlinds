@@ -17,12 +17,16 @@ export interface Task {
 export class AppComponent {
   title = 'calculatorApp';
   items!: any[];
+  fileSize!: number;
  
 
   itemIsAvailable(value: any[]) {
 
     this.items = value ?? [];
     
+  }
+  saveFileSize(value: number) {
+    this.fileSize = value;
   }
 }
 
