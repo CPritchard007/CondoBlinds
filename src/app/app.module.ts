@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -57,6 +57,7 @@ import { RefreshStorageComponent } from './refresh-storage/refresh-storage.compo
     MatDialogModule,
     MatSidenavModule,
     MatSelectModule,
+    MatPaginatorModule,
     DragDropModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,

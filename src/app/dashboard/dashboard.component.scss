@@ -48,6 +48,10 @@ hr + mat-icon {
     visibility: visible !important;
 }
 
+::ng-deep .mat-paginator-page-size {
+    display: none !important;
+}
+
 .table header, .table .content .row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
@@ -253,3 +257,5 @@ mat-card.calcCard {
 .groupName .mat-select {
     width: 20px;
 }
+
+

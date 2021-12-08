@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, Output, SimpleChanges, EventEmitter, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
 import { WarningDialog } from '../Dialog/warningDialog';
+import { MatPaginator } from '@angular/material/paginator';
 /* Interfaces */
 
 
@@ -69,6 +70,7 @@ interface MaterialGroup {
 })
 export class DashboardComponent implements OnInit {
   @Input() onFinalDataInport: Array<QueryStore> = []; // import data from other components, allowing the user to upload a CSV file
+
   
   /* Arrays */
   pricingTables: Array<Array<number>> = []; // get tables that are linked to each groupType (C, D, E, F, G, H)
@@ -135,7 +137,8 @@ export class DashboardComponent implements OnInit {
   cleanCost = 0;
 
   queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
-
+  currentPagination = 0;
+  numOfPages = 0;
   
 
   ngOnInit() { }  // is required but is never used
@@ -160,9 +163,13 @@ export class DashboardComponent implements OnInit {
     }, 1000);
   }
 
+  ngAfterViewInit() {
+   
+  }
+
   constructor(public dialog: MatDialog) {
     console.log("constructor");
-
+    
     try {
       let tableType = data.tables.find(table => table.tag === "GroupC"); // set tableTyle to its default value. TODO: make this a variable, and add to constants page
       
@@ -199,6 +206,8 @@ export class DashboardComponent implements OnInit {
     this.groupSort();
     this.groupName = this.groupNames[0]
 
+    // console.log(this.queriesArray[this.currentTab].list)
+    console.log(this.determineShortenedList())
   }
   //TODO: not saving data
   convertToLocalFormat(storageItems: Array<StorageTables>): Tables[] {
@@ -309,7 +318,7 @@ export class DashboardComponent implements OnInit {
   }
 
   calculateRetailPrice(valWidth: number, valHeight: number, groupType: string): number {
-    console.log("calculateRetailPrice", valWidth, valHeight, groupType);
+    // console.log("calculateRetailPrice", valWidth, valHeight, groupType);
     let width = 0; 
     let height = 0;
     
@@ -346,7 +355,7 @@ export class DashboardComponent implements OnInit {
       return item.tag === groupType;
     });
     // console.log("table", table);
-    console.log("table", table, "groupType", groupType);
+    // console.log("table", table, "groupType", groupType);
     if (table) {
       return table.table.calculations[heightIndex][widthIndex];
     } else {
@@ -609,5 +618,50 @@ export class DashboardComponent implements OnInit {
 
   uploadToStorage() {
     if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
+  }
+
+  queriesArraySum() {
+    return this.queriesArray[this.currentTab].list.length
+  }
+
+  determineShortenedList() {
+    const maxOnScreen = 50;
+
+    let sortedList = this.groupListItems(this.queriesArray[this.currentTab].list);
+    let itemCount: number[] = sortedList.map(item => {
+      return item.value.length;
+    });
+    console.log("determinedShortendList", sortedList, "itemCount", itemCount);
+    let simpleShortenedList: Array<Array<Group>> = [[]];
+    
+    let currentCount = 0;
+    let currentIndex = 0;
+
+    for (let i = 0; i < itemCount.length; i++) {
+      console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
+      if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && currentCount === 0)) {
+        console.log("fits within maxOnScreen or is greater by iteself");
+        currentCount += itemCount[i];
+        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
+        simpleShortenedList[currentIndex].push(sortedList[i]);
+      } else {
+        console.log("currentCount is too large")
+        currentIndex ++;
+        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
+        simpleShortenedList[currentIndex].push(sortedList[i]);
+        currentCount = 0;
+      }
+    }
+    this.numOfPages = simpleShortenedList.length;
+    return simpleShortenedList;
+  }
+
+  nextPage() {
+    this.currentPagination++;
+    if (this.currentPagination >= this.numOfPages) this.currentPagination = 0;
+  }
+  lastPage() {
+    this.currentPagination--;
+    if (this.currentPagination < 0) this.currentPagination = this.numOfPages;
   }
 }

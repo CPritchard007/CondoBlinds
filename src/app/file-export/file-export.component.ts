@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'file-export',
@@ -7,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FileExportComponent implements OnInit {
 
-  constructor() { }
-
+  constructor(private sanitizer: DomSanitizer) {}
   ngOnInit(): void {
   }
+
 
 }

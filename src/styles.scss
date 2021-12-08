@@ -100,3 +100,26 @@ mat-form-field + br + i {
     gap: 10px;
     grid-template-columns: repeat(5, 1fr);
 }
+
+.pagination {
+  height: 25px;
+  background-color: black;
+  position: relative;
+  display: flex;
+
+  .left, .right {
+    padding: 0 20px;
+
+    &:hover {
+      cursor: pointer;
+      background-color: rgb(46, 46, 46);
+    }
+  }
+  .left {
+    margin-left: auto;
+
+  }
+  .right {
+
+  }
+}
