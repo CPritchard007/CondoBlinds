@@ -587,8 +587,9 @@ export class DashboardComponent implements OnInit {
       }
     });
     let sortedList = listGroups.sort((a,b) => {
-      if (a.name == '') return 1;
-      return a.name > b.name ? -1 : 1;
+      if (a.name == '') return '_' > b.name? 1: -1;
+      if (b.name == '') return a.name > '_'? 1: -1;
+      return a.name > b.name ? 1 : -1;
     });
     return sortedList;
   }
@@ -662,6 +663,6 @@ export class DashboardComponent implements OnInit {
   }
   lastPage() {
     this.currentPagination--;
-    if (this.currentPagination < 0) this.currentPagination = this.numOfPages;
+    if (this.currentPagination < 0) this.currentPagination = this.numOfPages-1;
   }
 }
