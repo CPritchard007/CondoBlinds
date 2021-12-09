@@ -69,7 +69,7 @@ interface MaterialGroup {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  @Input() onFinalDataInport: Array<QueryStore> = []; // import data from other components, allowing the user to upload a CSV file
+  @Input() onFinalDataInport: any = []; // import data from other components, allowing the user to upload a CSV file
 
   
   /* Arrays */
@@ -169,15 +169,40 @@ export class DashboardComponent implements OnInit {
       //(there is no calculation for the time to wait, so one second is needed at the moment) TODO: find a better way to do this
     
       if (this.onFinalDataInport) { // only on file change can enter
-        let items = this.onFinalDataInport ?? []; // if the file is empty, the array will be undefined, so this will prevent that
-        items.shift(); // remove the first item, which is the header
-            
-        let itemsArray: query[] = this.onFinalDataInport.map((x, i) => { // convert the array from localStorage to a format that has all calculated values
-          return this.updatePricing(x, i);
-        })
-        
-        this.queriesArray[this.currentTab].list.push(...itemsArray) // add the new items to the current tab
+        if(this.onFinalDataInport.type == "csv") {
+          let items: QueryStore[] = this.onFinalDataInport.data ?? []; // if the file is empty, the array will be undefined, so this will prevent that
+          
+          items.shift(); // remove the first item, which is the header
+              
+          let itemsArray: query[] = items.map((x, i) => {
+            return this.updatePricing(x,i);
+          })
+          
+          this.queriesArray[this.currentTab].list.push(...itemsArray) // add the new items to the current tab
+
+        } else if (this.onFinalDataInport.type == "json") {
+          let tables = JSON.parse(this.onFinalDataInport.data);
+          for (let tableIndex in tables) {
+            let table = tables[tableIndex];
+            let isCurrentTable = this.queriesArray.findIndex(x => x.name == table.name);
+            let items: query[] = (table.list as QueryStore[]).map((x, i) => {
+              return this.updatePricing(x,i);
+            });
+            if (isCurrentTable == -1) {
+              this.queriesArray.push({
+                name: table.name,
+                list: items
+              })
+            } else {
+              
+              this.queriesArray[isCurrentTable].list.push(...items);
+            }
+          }
+        }
+
         this.uploadToStorage() // update local storage
+
+        console.log(this.queriesArray, JSON.parse(localStorage.getItem("queries") ?? "[]"));
       }
     }, 1000);
   }
@@ -222,8 +247,34 @@ export class DashboardComponent implements OnInit {
     this.groupName = this.groupNames[0]
 
     // console.log(this.queriesArray[this.currentTab].list)
-    console.log(this.determineShortenedList())
+    // console.log(this.determineShortenedList())
   }
+
+
+    /* this is triggered when the tab is changed, this will assure the user cannot change to the same tab */
+  tabChange(tabChangeEvent: MatTabChangeEvent) {
+    if (tabChangeEvent.index === this.currentTab) return;
+    this.currentTab = tabChangeEvent.index;
+    this.groupName = "";
+    this.groupNames = [];
+    this.getGroupNames();
+  }
+    /* allow the user to add new tabs, the naming format is default */
+  createTab() {
+    this.queriesArray.push({name: "table " + (this.queriesArray.length + 1), list: []});
+    this.uploadToStorage()
+  }
+    /* remove tab from list */
+    /** TODO: add dialog */
+  closeTab(i: number) {
+    // this.queriesArray.splice(i, 1);
+    console.log(this.queriesArray, i);
+    if (this.currentTab == i ) { this.currentTab = 0; }
+    this.queriesArray.splice(i, 1);
+
+    this.uploadToStorage()
+  }
+
   //TODO: not saving data
   convertToLocalFormat(storageItems: Array<StorageTables>): Tables[] {
     console.log("convertToLocalFormat");
@@ -298,9 +349,7 @@ export class DashboardComponent implements OnInit {
         danielsMotorPrice: danielsMotorPrice
       }
   }
-  calculateDanielsMotorPrice(quantity: number) {
-    return (350 * quantity);
-  }
+  calculateDanielsMotorPrice(quantity: number) { return (350 * quantity); }
 
   calculateFasciaCost(fasciaRetail: number, discount: number, discount2: number, quantity: number) {
     return ((fasciaRetail * (discount / 100)) * (discount2 / 100)) * quantity;
@@ -321,16 +370,9 @@ export class DashboardComponent implements OnInit {
     return fasciaTable[widthIndex];
   }
 
-  calculateInstallmentCost(quantity: number) {
-    
-    return this.installmentCost * quantity;
-  }
-  calculatePrice(cost: number) {
-    return Math.round((cost + this.installmentCost) * this.profitMargin);  
-  }
-  calculateSqrFt(width: number, height: number, quantity: number) {
-    return (((width * height) / 144) * quantity).toFixed(2);
-  }
+  calculateInstallmentCost(quantity: number) { return this.installmentCost * quantity; }
+  calculatePrice(cost: number) { return Math.round((cost + this.installmentCost) * this.profitMargin); }
+  calculateSqrFt(width: number, height: number, quantity: number) { return (((width * height) / 144) * quantity).toFixed(2); }
 
   calculateRetailPrice(valWidth: number, valHeight: number, groupType: string): number {
     // console.log("calculateRetailPrice", valWidth, valHeight, groupType);
@@ -344,7 +386,7 @@ export class DashboardComponent implements OnInit {
 
       } else if (valWidth > this.Widths[this.Widths.length - 1]) {
         width = this.Widths[this.Widths.length - 1];
-        console.log("width", width);
+        // console.log("width", width);
         
       }
     });
@@ -356,7 +398,7 @@ export class DashboardComponent implements OnInit {
 
       } else if (valHeight > this.Heights[this.Heights.length - 1]) {
         height = this.Heights[this.Heights.length - 1];
-        console.log("height", height);
+        // console.log("height", height);
         
       }
     });
@@ -378,9 +420,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number {
-    return ((retailPrice * (discount / 100)) * (discount2 / 100)) * quantity;
-  }
+  calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number { return ((retailPrice * (discount / 100)) * (discount2 / 100)) * quantity; }
 
 
   getGroupNames() {
@@ -402,7 +442,7 @@ export class DashboardComponent implements OnInit {
   // this is run after the user enters a new value, every new value, the application will recalculate
   // all the values that are needed
   updateInputs() {
-    console.log("updateInputs", this.valWidth, this.valHeight, this.groupType);
+    // console.log("updateInputs", this.valWidth, this.valHeight, this.groupType);
     
     this.retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight, this.groupType);
     
@@ -525,26 +565,6 @@ export class DashboardComponent implements OnInit {
     return this.numericCommas(this.totalCost);
   }
 
-    /* this is triggered when the tab is changed, this will assure the user cannot change to the same tab */
-  tabChange(tabChangeEvent: MatTabChangeEvent) {
-    if (tabChangeEvent.index === this.currentTab) return;
-    this.currentTab = tabChangeEvent.index;
-
-    this.groupName = "";
-    this.groupNames = [];
-    this.getGroupNames();
-  }
-    /* allow the user to add new tabs, the naming format is default */
-  createTab() {
-    this.queriesArray.push({name: "table " + (this.queriesArray.length + 1), list: []});
-    this.uploadToStorage()
-  }
-    /* remove tab from list */
-    /** TODO: add dialog */
-  closeTab(i: number) {
-    this.queriesArray.splice(i, 1);
-    this.uploadToStorage()
-  }
 
   /* once the user clicks on the edit button, hide the button and show the input that contains changes the tab name */
   openEditPannel (event: any) {
@@ -647,21 +667,20 @@ export class DashboardComponent implements OnInit {
     let itemCount: number[] = sortedList.map(item => {
       return item.value.length;
     });
-    console.log("determinedShortendList", sortedList, "itemCount", itemCount);
+    // console.log("determinedShortendList", sortedList, "itemCount", itemCount);
     let simpleShortenedList: Array<Array<Group>> = [[]];
     
     let currentCount = 0;
     let currentIndex = 0;
 
     for (let i = 0; i < itemCount.length; i++) {
-      console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
+      // console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
       if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
-        console.log("fits within maxOnScreen or is greater by iteself");
+        // console.log("fits within maxOnScreen or is greater by iteself");
         currentCount += itemCount[i];
         if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
         simpleShortenedList[currentIndex].push(sortedList[i]);
       } else {
-        console.log("currentCount is too large")
         currentIndex ++;
         if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
         simpleShortenedList[currentIndex].push(sortedList[i]);

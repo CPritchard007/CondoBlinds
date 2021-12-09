@@ -25,15 +25,9 @@ export class AppComponent {
   
   constructor(updates: SwUpdate, private sanitizer: DomSanitizer) {}
 
-  itemIsAvailable(value: any[]) {
-    this.items = value ?? [];
-    
+  itemIsAvailable(value: any) {
+    this.items = value ?? '{}';
   }
-
-  readyForExport(files: any){
-    let json = JSON.stringify(files);
-    let uri = this.sanitizer.bypassSecurityTrustHtml('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
-    this.fileHref = uri;
-  }
+  
 }
 

@@ -16,7 +16,7 @@ interface FileItem {
 })
 export class FileUploadComponent implements OnInit {
 
-  @Output() onFinalData = new EventEmitter<FileItem[]>();
+  @Output() onFinalData = new EventEmitter<object>();
 
   fileName: string = "";
   data: Object = {};
@@ -32,32 +32,43 @@ export class FileUploadComponent implements OnInit {
     if (file) {
       this.fileName = file.name;
       this.data = file;
-        
       let reader: FileReader = new FileReader();
-      reader.readAsText(file);
-      reader.onload = (e: any) => {
-        let csv: string = reader.result as string;
-        let lineArray: string[] = csv.split(/\r\n|\n/);
-        if (lineArray) {
-          for (let line of lineArray) {
-            if (line) {
-              let row: string[] = line.split(',');
-              
-              let json: FileItem = {
-                groupName: row[0],
-                groupType: row[1],
-                roomLabel: row[2],
-                quantity: parseInt(row[3]),
-                width: parseInt(row[4]),
-                height: parseInt(row[5]),
+      
+      if (file.type === 'text/csv') {
+        
+        reader.readAsText(file);
+        reader.onload = (e: any) => {
+          let csv: string = reader.result as string;
+          let lineArray: string[] = csv.split(/\r\n|\n/);
+          if (lineArray) {
+            for (let line of lineArray) {
+              if (line) {
+                let row: string[] = line.split(',');
+                
+                let json: FileItem = {
+                  groupName: row[0],
+                  groupType: row[1],
+                  roomLabel: row[2],
+                  quantity: parseInt(row[3]),
+                  width: parseInt(row[4]),
+                  height: parseInt(row[5]),
+                }
+                this.dataJson.push(json);
               }
-              this.dataJson.push(json);
             }
           }
         }
+        this.onFinalData.emit({type: "csv", data: this.dataJson});
       }
-      this.onFinalData.emit(this.dataJson);
 
+      if (file.type == "application/json") {
+        reader.readAsText(file);
+        reader.onload = (e: any) => {
+          let json: string = reader.result as string;
+          this.dataJson = JSON.parse(json);
+          this.onFinalData.emit({type: "json", data: this.dataJson});
+        }
+      }
     }
   }
 }
