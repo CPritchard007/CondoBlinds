@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, SimpleChanges, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, Output, SimpleChanges, EventEmitter, ViewChild, NgZone } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -105,6 +105,24 @@ export class DashboardComponent implements OnInit {
       name: "Elite 2016 Group H",
     }
   ];
+  paginationOptions = [
+    25,
+    50,
+    75,
+    100,
+    125,
+    150,
+    177,
+    200,
+    225,
+    250,
+    275,
+    300,
+    325,
+    350,
+    375,
+    400,
+  ]
 
   
 
@@ -139,6 +157,7 @@ export class DashboardComponent implements OnInit {
   queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
   currentPagination = 0;
   numOfPages = 0;
+  maxItemsInList = 100;
   
 
   ngOnInit() { }  // is required but is never used
@@ -161,10 +180,6 @@ export class DashboardComponent implements OnInit {
         this.uploadToStorage() // update local storage
       }
     }, 1000);
-  }
-
-  ngAfterViewInit() {
-   
   }
 
   constructor(public dialog: MatDialog) {
@@ -625,8 +640,8 @@ export class DashboardComponent implements OnInit {
     return this.queriesArray[this.currentTab].list.length
   }
 
-  determineShortenedList() {
-    const maxOnScreen = 50;
+  determineShortenedList(max?: number) {
+    const maxOnScreen = max ?? 50;
 
     let sortedList = this.groupListItems(this.queriesArray[this.currentTab].list);
     let itemCount: number[] = sortedList.map(item => {
@@ -640,7 +655,7 @@ export class DashboardComponent implements OnInit {
 
     for (let i = 0; i < itemCount.length; i++) {
       console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
-      if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && currentCount === 0)) {
+      if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
         console.log("fits within maxOnScreen or is greater by iteself");
         currentCount += itemCount[i];
         if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];

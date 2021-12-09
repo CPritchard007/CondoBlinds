@@ -252,8 +252,10 @@
               </div>
             </header>
             <div class="content">
-              <div class="pagination"><span>Page {{currentPagination + 1}}/{{numOfPages}}</span><div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div></div>
-              <div class="group" *ngFor="let group of determineShortenedList()[currentPagination]; index as groupIndex">
+              <div class="pagination" >
+                <div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div>
+              </div>
+              <div class="group" *ngFor="let group of determineShortenedList(maxItemsInList)[currentPagination]; index as groupIndex">
                 <div class="groupHeader">
                   <span>{{group.name || "Default"}}</span>
 
@@ -329,7 +331,7 @@
                   </div>
                 </div>
               </div>
-              <div class="pagination"><span>Page {{currentPagination + 1}}/{{numOfPages}}</span><div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div></div>
+              <div class="pagination"><span *ngIf="numOfPages > 1">Page {{currentPagination + 1}}/{{numOfPages}}</span><div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div></div>
             </div>
           </div>
         </mat-tab>
