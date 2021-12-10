@@ -1,40 +1,4 @@
 
-
-.constants {
-    @media screen and (max-width: 1000px) {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
-    @media screen and (max-width: 900px) {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-.small_input {
-    font-size: 12px;
-    & mat-form-field {
-        width: calc(50% - 4px);
-        margin: 2px;
-    }
-    span {
-        display: inline-block;
-        width: 80px;
-    }
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-hr + mat-icon {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgb(75, 75, 75);
-    border-radius: 15px;
-}
-
 ::ng-deep.mat-tab-label, ::ng-deep.mat-tab-label-active{
     min-width: 80px!important;
     height: 0!important;
@@ -265,44 +229,4 @@ mat-card.calcCard {
 }
 .groupName .mat-select {
     width: 20px;
-}
-
-
-
-div.editElement {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: none;
-    background-color: steelblue;   
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    padding: 0!important;
-    z-index: 999;
-
-    div {
-        padding: 3px;
-        width: 100%;
-        box-sizing: border-box;
-        input, select {
-            width: 100%;
-            box-sizing: border-box;
-        }
-    }
-
-    .icon-container {
-        width: 20px;
-        height: 20px;
-        display: flex;
-        background-color: seagreen;
-        border-radius: 2px;
-        border: 1px solid #ddd;
-        box-sizing: border-box;
-        margin: 0 0 0 auto;
-        
-        mat-icon {
-
-
-        }
-    }
 }

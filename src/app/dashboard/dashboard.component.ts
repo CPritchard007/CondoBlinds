@@ -80,6 +80,7 @@ export class DashboardComponent implements OnInit {
   groupNames: Array<string> = [];  // names of each row group in the table (groups items together to get total calculations).
   queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
 
+  
 
   // allow for itteration through the groupTypes for selector
   MaterialGroups: Array<MaterialGroup> = [
@@ -444,19 +445,24 @@ export class DashboardComponent implements OnInit {
     this.editorItems_Height = this.queriesArray[this.currentTab].list[currentItem].height;
     this.editorItems_Quantity = this.queriesArray[this.currentTab].list[currentItem].quantity;
     
-    if (currentItem == -1) return;
+    if (currentItem == -1) {
+      console.error("editFromList", "item not found");  
+      return;
+    }
     
     let elm = this.editor;
     let item = this.tableItems.toArray()[currentItem];
     console.log("item", item);
 
     let itemRect = item.nativeElement.getBoundingClientRect();
+    
     console.log("itemRect", itemRect, item);
     this.renderer.setStyle(elm.nativeElement, 'top', itemRect.top + 'px');
     this.renderer.setStyle(elm.nativeElement, 'left', itemRect.left + 'px');
     this.renderer.setStyle(elm.nativeElement, 'width', itemRect.width + 'px');
     this.renderer.setStyle(elm.nativeElement, 'height', itemRect.height + 'px');
     this.renderer.setStyle(elm.nativeElement, 'display', "grid");
+    
   }
 
   confirmEditFromList() {
