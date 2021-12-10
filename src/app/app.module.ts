@@ -27,6 +27,7 @@ import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { NumericCommasPipe } from './numeric-commas.pipe';
 import { HelpBarComponent } from './help-bar/help-bar.component';
 import { RemoveItemDialog } from './Dialog/RemoveItemDialog';
+import { EditItemDialog } from './Dialog/EditItemDialog';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { FileExportComponent } from './file-export/file-export.component';
 import { RefreshStorageComponent } from './refresh-storage/refresh-storage.component';
@@ -38,6 +39,7 @@ import { RefreshStorageComponent } from './refresh-storage/refresh-storage.compo
     NumericCommasPipe,
     HelpBarComponent,
     RemoveItemDialog,
+    EditItemDialog,
     FileUploadComponent,
     FileExportComponent,
     RefreshStorageComponent

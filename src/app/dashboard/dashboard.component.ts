@@ -1,10 +1,12 @@
-import { Component, Input, OnInit, Output, SimpleChanges, EventEmitter, ViewChild, NgZone } from '@angular/core';
+import { Component, Input, OnInit, Output, SimpleChanges, EventEmitter, ViewChild, NgZone, ElementRef, Directive, QueryList, ViewChildren, Renderer2 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
 import { WarningDialog } from '../Dialog/warningDialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { EditItemDialog } from '../Dialog/EditItemDialog';
+
 /* Interfaces */
 
 
@@ -43,8 +45,6 @@ interface QueryStore {
     width: number;
     height: number;
 }
-
-
 // get items that are contained in certain tab
 interface Tables {
   name: string;
@@ -70,13 +70,16 @@ interface MaterialGroup {
 })
 export class DashboardComponent implements OnInit {
   @Input() onFinalDataInport: any = []; // import data from other components, allowing the user to upload a CSV file
+  @ViewChild('editElement') editor!: ElementRef;
+  @ViewChildren('tableItems') tableItems!: QueryList<ElementRef>;
 
-  
   /* Arrays */
   pricingTables: Array<Array<number>> = []; // get tables that are linked to each groupType (C, D, E, F, G, H)
   Widths: number[] = [];  // widths defined by the tables
   Heights: number[] = []; // heights defined by the tables
   groupNames: Array<string> = [];  // names of each row group in the table (groups items together to get total calculations).
+  queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
+
 
   // allow for itteration through the groupTypes for selector
   MaterialGroups: Array<MaterialGroup> = [
@@ -123,8 +126,10 @@ export class DashboardComponent implements OnInit {
     375,
     400,
   ]
+  currentPagination = 0;
+  numOfPages = 0;
+  maxItemsInList = 100;
 
-  
 
   /* static variables */
   USE_LOCAL_STORAGE = true;
@@ -153,21 +158,24 @@ export class DashboardComponent implements OnInit {
 
   // this value is specifically used to pass a value through the table, do not change
   cleanCost = 0;
-
-  queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
-  currentPagination = 0;
-  numOfPages = 0;
-  maxItemsInList = 100;
   
+  editItem: string = '';
+  editorItems_ID: string = '';
+  editorItems_GroupName: string = "";
+  editorItems_GroupType: string = "";
+  editorItems_RoomLabel: string = "";
+  editorItems_Width: number = 0;
+  editorItems_Height: number = 0;
+  editorItems_Quantity: number = 0;
+
 
   ngOnInit() { }  // is required but is never used
 
   // when the user uploads a CSV file, this function is called to update the table
   ngOnChanges(changes: SimpleChanges) {
-    
+    console.log("change");
     setTimeout(() => { // since this only shows that the file is being uploaded, it is necessary to wait for the file to be uploaded
       //(there is no calculation for the time to wait, so one second is needed at the moment) TODO: find a better way to do this
-    
       if (this.onFinalDataInport) { // only on file change can enter
         if(this.onFinalDataInport.type == "csv") {
           let items: QueryStore[] = this.onFinalDataInport.data ?? []; // if the file is empty, the array will be undefined, so this will prevent that
@@ -207,7 +215,7 @@ export class DashboardComponent implements OnInit {
     }, 1000);
   }
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private renderer: Renderer2) {
     console.log("constructor");
     
     try {
@@ -249,8 +257,6 @@ export class DashboardComponent implements OnInit {
     // console.log(this.queriesArray[this.currentTab].list)
     // console.log(this.determineShortenedList())
   }
-
-
     /* this is triggered when the tab is changed, this will assure the user cannot change to the same tab */
   tabChange(tabChangeEvent: MatTabChangeEvent) {
     if (tabChangeEvent.index === this.currentTab) return;
@@ -274,8 +280,19 @@ export class DashboardComponent implements OnInit {
 
     this.uploadToStorage()
   }
+    // once the user clicks on the checkmark, the tabs name is then changed, and added to the localstorage
+  updateTabName(event: any) {
+    let button = event.target;
+    let input = button.parentElement.childNodes[0];
+    let tabName = input.value;
+    this.queriesArray[this.currentTab].name = tabName;
+      
+    this.uploadToStorage()
+  
+    button.parentElement.style.display = "none";
+    button.parentElement.parentElement.childNodes[0].childNodes[0].style.display = "flex";    
+  }
 
-  //TODO: not saving data
   convertToLocalFormat(storageItems: Array<StorageTables>): Tables[] {
     console.log("convertToLocalFormat");
     let polishedTab = []
@@ -305,7 +322,6 @@ export class DashboardComponent implements OnInit {
     });
     return storageTypeItems;
   }
-
 
   updateTable(tabList: QueryStore[] | null): query[] {
     console.log("updateTable");
@@ -349,31 +365,158 @@ export class DashboardComponent implements OnInit {
         danielsMotorPrice: danielsMotorPrice
       }
   }
-  calculateDanielsMotorPrice(quantity: number) { return (350 * quantity); }
 
-  calculateFasciaCost(fasciaRetail: number, discount: number, discount2: number, quantity: number) {
-    return ((fasciaRetail * (discount / 100)) * (discount2 / 100)) * quantity;
-  }
-  calculateFasciaRetail(valWidth: number, groupType: string) {
-    let width = 0; 
+  uploadToStorage() { if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); }
+
+  updateInputs() {
+    // console.log("updateInputs", this.valWidth, this.valHeight, this.groupType);
     
-    this.Widths.forEach((x, i) => {
-      if ( valWidth == 0 || valWidth == undefined) return;
-      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
-        
-        width = x;
-      }
-    });
+    this.retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight, this.groupType);
+    
+    this.sqrFt = this.calculateSqrFt(this.valWidth, this.valHeight, this.quantity);
 
-    const widthIndex = this.Widths.indexOf(width);
-    const fasciaTable: Array<number> = data.tables[0].table.fascia;
-    return fasciaTable[widthIndex];
+    this.valCost = this.calculateCost(this.retailPrice, this.discount, this.discount2, this.quantity);
+    this.installmentCost = this.quantity * this.costOfInstallation;
+    
+    this.valPrice = this.calculatePrice(this.valCost);
+    
   }
 
+  
+  addToList() {
+    if ((this.valWidth <= 0 || this.valWidth == null) ||
+        (this.valHeight <= 0 || this.valHeight == null) ||
+        (this.quantity <= 0 || this.quantity == null)) return;
+    console.log("addToList");
+    try { 
+      let item = this.updatePricing({
+        roomLabel: this.roomLabel,
+        groupName: this.groupName,
+        groupType: this.groupType,
+        width: this.valWidth,
+        height: this.valHeight,
+        quantity: this.quantity,
+        
+      } as QueryStore, null);
+
+      this.queriesArray[this.currentTab].list.push(item);
+      this.uploadToStorage() // check if you can add to LocalStorage
+      
+    } catch (error) {
+      console.log("error", error);
+      if (error instanceof TypeError) { // if the current tab does not exist
+        const timer = 2000; // number of ms before the modal closes
+        let dialogRef = this.dialog.open(WarningDialog, { // create a new modal dialog with the instance of Warning Dialog
+                                                      // which can be found in the dialog folder. this will just warn the user.
+          width: '50%', // width of the modal
+          data: {}
+        });
+        dialogRef.afterOpened().subscribe( _ => {
+          setTimeout(() => {
+            dialogRef.close();
+
+          }, timer); /* once the modal is opened, the app starts a timer, which will count down to 0.
+                      this is where the app will eventually closr the modal*/
+        });
+      }
+    }
+    
+    this.uploadToStorage() // check if you can add to LocalStorage
+    this.resetValues(); // reset values
+    if (!this.groupNames.includes(this.groupName)) {
+      this.groupNames.push(this.groupName);
+    }
+
+    this.groupSort();
+  }
+
+  editFromList( id :string, event: any) {
+  
+    let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == id);
+    console.log("editFromList", currentItem);
+    this.editItem = id;
+
+    this.editorItems_ID = id;
+    this.editorItems_GroupType = this.queriesArray[this.currentTab].list[currentItem].groupType;
+    this.editorItems_GroupName = this.queriesArray[this.currentTab].list[currentItem].groupName;
+    this.editorItems_RoomLabel = this.queriesArray[this.currentTab].list[currentItem].roomLabel;
+    this.editorItems_Width = this.queriesArray[this.currentTab].list[currentItem].width;
+    this.editorItems_Height = this.queriesArray[this.currentTab].list[currentItem].height;
+    this.editorItems_Quantity = this.queriesArray[this.currentTab].list[currentItem].quantity;
+    
+    if (currentItem == -1) return;
+    
+    let elm = this.editor;
+    let item = this.tableItems.toArray()[currentItem];
+    console.log("item", item);
+
+    let itemRect = item.nativeElement.getBoundingClientRect();
+    console.log("itemRect", itemRect, item);
+    this.renderer.setStyle(elm.nativeElement, 'top', itemRect.top + 'px');
+    this.renderer.setStyle(elm.nativeElement, 'left', itemRect.left + 'px');
+    this.renderer.setStyle(elm.nativeElement, 'width', itemRect.width + 'px');
+    this.renderer.setStyle(elm.nativeElement, 'height', itemRect.height + 'px');
+    this.renderer.setStyle(elm.nativeElement, 'display', "grid");
+  }
+
+  confirmEditFromList() {
+    this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
+    let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == this.editorItems_ID);
+    let item = this.queriesArray[this.currentTab].list[currentItem];
+    console.log("confirmEditFromList", currentItem, item);
+    let newPrice = this.updatePricing({
+      roomLabel: this.editorItems_RoomLabel,
+      groupName: this.editorItems_GroupName,
+      groupType: this.editorItems_GroupType,
+      width: this.editorItems_Width,
+      height: this.editorItems_Height,
+      quantity: this.editorItems_Quantity,
+    } as QueryStore, null);
+    newPrice.id = this.editorItems_ID;
+    this.queriesArray[this.currentTab].list[currentItem] = newPrice;
+    
+  }
+
+  determineShortenedList(max?: number) {
+    const maxOnScreen = max ?? 50;
+
+    let sortedList = this.groupListItems(this.queriesArray[this.currentTab].list);
+    let itemCount: number[] = sortedList.map(item => {
+      return item.value.length;
+    });
+    // console.log("determinedShortendList", sortedList, "itemCount", itemCount);
+    let simpleShortenedList: Array<Array<Group>> = [[]];
+    
+    let currentCount = 0;
+    let currentIndex = 0;
+
+    for (let i = 0; i < itemCount.length; i++) {
+      // console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
+      if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
+        // console.log("fits within maxOnScreen or is greater by iteself");
+        currentCount += itemCount[i];
+        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
+        simpleShortenedList[currentIndex].push(sortedList[i]);
+      } else {
+        currentIndex ++;
+        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
+        simpleShortenedList[currentIndex].push(sortedList[i]);
+        currentCount = 0;
+      }
+    }
+    this.numOfPages = simpleShortenedList.length;
+    return simpleShortenedList;
+  }
+
+  
+
+  calculateDanielsMotorPrice(quantity: number) { return (350 * quantity); }
   calculateInstallmentCost(quantity: number) { return this.installmentCost * quantity; }
   calculatePrice(cost: number) { return Math.round((cost + this.installmentCost) * this.profitMargin); }
   calculateSqrFt(width: number, height: number, quantity: number) { return (((width * height) / 144) * quantity).toFixed(2); }
-
+  calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number { return ((retailPrice * (discount / 100)) * (discount2 / 100)) * quantity; }
+  calculateFasciaCost(fasciaRetail: number, discount: number, discount2: number, quantity: number) { return ((fasciaRetail * (discount / 100)) * (discount2 / 100)) * quantity; }
+  
   calculateRetailPrice(valWidth: number, valHeight: number, groupType: string): number {
     // console.log("calculateRetailPrice", valWidth, valHeight, groupType);
     let width = 0; 
@@ -420,8 +563,21 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  calculateCost(retailPrice: number, discount: number = this.discount, discount2: number = this.discount2, quantity: number ): number { return ((retailPrice * (discount / 100)) * (discount2 / 100)) * quantity; }
+  calculateFasciaRetail(valWidth: number, groupType: string) {
+    let width = 0; 
+    
+    this.Widths.forEach((x, i) => {
+      if ( valWidth == 0 || valWidth == undefined) return;
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
+        
+        width = x;
+      }
+    });
 
+    const widthIndex = this.Widths.indexOf(width);
+    const fasciaTable: Array<number> = data.tables[0].table.fascia;
+    return fasciaTable[widthIndex];
+  }
 
   getGroupNames() {
     this.queriesArray[this.currentTab].list.forEach((element, index) => {
@@ -441,80 +597,6 @@ export class DashboardComponent implements OnInit {
 
   // this is run after the user enters a new value, every new value, the application will recalculate
   // all the values that are needed
-  updateInputs() {
-    // console.log("updateInputs", this.valWidth, this.valHeight, this.groupType);
-    
-    this.retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight, this.groupType);
-    
-    this.sqrFt = this.calculateSqrFt(this.valWidth, this.valHeight, this.quantity);
-
-    this.valCost = this.calculateCost(this.retailPrice, this.discount, this.discount2, this.quantity);
-    this.installmentCost = this.quantity * this.costOfInstallation;
-    
-    this.valPrice = this.calculatePrice(this.valCost);
-    
-  }
-
-  addToList() {
-    if ((this.valWidth <= 0 || this.valWidth == null) ||
-        (this.valHeight <= 0 || this.valHeight == null) ||
-        (this.quantity <= 0 || this.quantity == null)) return;
-    console.log("addToList");
-    try { 
-      let item = this.updatePricing({
-        roomLabel: this.roomLabel,
-        groupName: this.groupName,
-        groupType: this.groupType,
-        width: this.valWidth,
-        height: this.valHeight,
-        quantity: this.quantity,
-        
-      } as QueryStore, null);
-
-      this.queriesArray[this.currentTab].list.push(item);
-      this.uploadToStorage() // check if you can add to LocalStorage
-      
-    } catch (error) {
-      console.log("error", error);
-      if (error instanceof TypeError) { // if the current tab does not exist
-        const timer = 2000; // number of ms before the modal closes
-        let dialogRef = this.dialog.open(WarningDialog, { // create a new modal dialog with the instance of Warning Dialog
-                                                      // which can be found in the dialog folder. this will just warn the user.
-          width: '50%', // width of the modal
-          data: {}
-        });
-        dialogRef.afterOpened().subscribe( _ => {
-          setTimeout(() => {
-            dialogRef.close();
-
-          }, timer); /* once the modal is opened, the app starts a timer, which will count down to 0.
-                      this is where the app will eventually closr the modal*/
-        });
-      }
-    }
-    
-    
-
-    this.uploadToStorage() // check if you can add to LocalStorage
-    this.resetValues(); // reset values
-    if (!this.groupNames.includes(this.groupName)) {
-      this.groupNames.push(this.groupName);
-    }
-
-    this.groupSort();
-  }
-
-  
-  removeFromList( id :string, event: any) {
-    if (!event.ctrlKey) { // check if the user is holding ctrl, which bypasses the warning
-      const dialogRef = this.dialog.open(RemoveItemDialog); // open dialog
-      dialogRef.afterClosed().subscribe(result => { // get data that was entered
-        if (!result) return;
-        this.queriesArray[this.currentTab].list = this.queriesArray[this.currentTab].list.filter(x => x.id != id); // remove item from list
-        this.uploadToStorage()
-      });
-    }
-  }
 
   groupSort () {
     let sortGroups = this.groupNames.sort((a, b) => {
@@ -565,7 +647,6 @@ export class DashboardComponent implements OnInit {
     return this.numericCommas(this.totalCost);
   }
 
-
   /* once the user clicks on the edit button, hide the button and show the input that contains changes the tab name */
   openEditPannel (event: any) {
       let button = event.target;
@@ -575,19 +656,7 @@ export class DashboardComponent implements OnInit {
       
   }
 
-  // once the user clicks on the checkmark, the tabs name is then changed, and added to the localstorage
-  updateTabName(event: any) {
-    let button = event.target;
-    let input = button.parentElement.childNodes[0];
-    let tabName = input.value;
-    this.queriesArray[this.currentTab].name = tabName;
-    
-    this.uploadToStorage()
 
-    button.parentElement.style.display = "none";
-    button.parentElement.parentElement.childNodes[0].childNodes[0].style.display = "flex";
-    
-  }
   // round the price to the nearest $50, then remove $0.01 from it to give it the american price feel
   getCleanPrice() {
     let value = this.totalCost;
@@ -652,49 +721,15 @@ export class DashboardComponent implements OnInit {
     
   }
 
-  uploadToStorage() {
-    if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat()));
-  }
-
   queriesArraySum() {
     return this.queriesArray[this.currentTab].list.length
-  }
-
-  determineShortenedList(max?: number) {
-    const maxOnScreen = max ?? 50;
-
-    let sortedList = this.groupListItems(this.queriesArray[this.currentTab].list);
-    let itemCount: number[] = sortedList.map(item => {
-      return item.value.length;
-    });
-    // console.log("determinedShortendList", sortedList, "itemCount", itemCount);
-    let simpleShortenedList: Array<Array<Group>> = [[]];
-    
-    let currentCount = 0;
-    let currentIndex = 0;
-
-    for (let i = 0; i < itemCount.length; i++) {
-      // console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
-      if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
-        // console.log("fits within maxOnScreen or is greater by iteself");
-        currentCount += itemCount[i];
-        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
-        simpleShortenedList[currentIndex].push(sortedList[i]);
-      } else {
-        currentIndex ++;
-        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
-        simpleShortenedList[currentIndex].push(sortedList[i]);
-        currentCount = 0;
-      }
-    }
-    this.numOfPages = simpleShortenedList.length;
-    return simpleShortenedList;
   }
 
   nextPage() {
     this.currentPagination++;
     if (this.currentPagination >= this.numOfPages) this.currentPagination = 0;
   }
+
   lastPage() {
     this.currentPagination--;
     if (this.currentPagination < 0) this.currentPagination = this.numOfPages-1;

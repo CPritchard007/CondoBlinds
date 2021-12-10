@@ -174,9 +174,7 @@
       </div>
     </mat-card-content>
   </mat-card>
-
 </div>
-
 
 <div class="container">
   <mat-card class="calcCard">
@@ -264,7 +262,7 @@
                       [selected]="mat.tag == group.value[0].groupType" [value]="mat.tag">{{mat.name}}</option>
                   </select>
                 </div>
-                <div class="row" *ngFor="let query of group.value; index as itemIndex">
+                <div #tableItems class="row" *ngFor="let query of group.value; index as itemIndex">
                   <div>
                     <span>{{query.roomLabel}}</span>
                   </div>
@@ -309,14 +307,10 @@
                   <div>
                     <span>{{query.price}}</span>
                   </div>
-                  <div class="icon-container" (click)="removeFromList(query.id, $event)">
-                    <mat-icon>remove_circle</mat-icon>
+                  <div class="icon-container" (click)="editFromList(query.id, $event)">
+                    <mat-icon>edit</mat-icon>
                   </div>
                 </div>
-
-                <!-- <div style="position: relative;"><hr><span>Total</span></div> -->
-
-
                 <div class=" of_4" style="border-width: 1px 0; border-style: solid; border-color: white">
                   <div>
                     <span>Total Price</span>
@@ -332,10 +326,58 @@
                 </div>
               </div>
               <div class="pagination"><span *ngIf="numOfPages > 1">Page {{currentPagination + 1}}/{{numOfPages}}</span><div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div></div>
+            
             </div>
           </div>
         </mat-tab>
       </mat-tab-group>
     </mat-card-content>
   </mat-card>
+</div>
+
+<div #editElement class="editElement">
+  <div>
+    <input [(ngModel)]="editorItems_RoomLabel" type="text">
+  </div>
+  <div>
+    <select>
+      <option *ngFor="let mat of MaterialGroups; index as i" [value]="mat.tag" >{{mat.tag}}</option>
+    </select>
+  </div>
+  <div>
+    <input [(ngModel)]="editorItems_Quantity" style="text-align: right;" type="number">
+  </div>
+  <div>
+    <input [(ngModel)]="editorItems_Width" style="text-align: right;" type="number">
+  </div>
+  <div>
+    <input [(ngModel)]="editorItems_Height" style="text-align: right;" type="number">
+  </div>
+  <div>
+    <span>GroupName</span>
+  </div>
+  <div>
+    <select>
+      <option *ngFor="let name of groupNames; index as i" [value]="name">{{name ?? "default"}}</option>
+    </select>
+  </div>
+  <div>
+  </div>
+  <div>
+  </div>
+  <div>
+  </div>
+  <div>
+  </div>
+  <div>
+  </div>
+  <div>
+  </div>
+  <div>
+  </div>
+  <div>
+    <div class="icon-container" (click)="confirmEditFromList()">
+      <mat-icon>check</mat-icon>
+    </div>
+  </div>
 </div>

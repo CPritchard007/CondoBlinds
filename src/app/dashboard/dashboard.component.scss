@@ -52,18 +52,26 @@ hr + mat-icon {
     display: none !important;
 }
 
-.table header, .table .content .row {
+.row {
+    &:hover .icon-container {
+        display: block !important;
+    }
+}
+
+.table header, .table .content .row{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
     position: relative;
+    
    
     .icon-container {
         width: 10px;
         height: 10px;
         position: absolute;
-        top: 5px;
+        top: 3px;
         right: 5px;
         border: none;
+        display: none;
 
         mat-icon {
             font-size: 15px;
@@ -75,9 +83,10 @@ hr + mat-icon {
         
         text-align: center;
 
-        & + div {
+        & + div:not(.icon-container) {
             border-left: 1px solid rgba(243, 243, 243, 0.12);
         }
+        
     }
 }
 
@@ -259,3 +268,41 @@ mat-card.calcCard {
 }
 
 
+
+div.editElement {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: none;
+    background-color: steelblue;   
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    padding: 0!important;
+    z-index: 999;
+
+    div {
+        padding: 3px;
+        width: 100%;
+        box-sizing: border-box;
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    .icon-container {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        background-color: seagreen;
+        border-radius: 2px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+        margin: 0 0 0 auto;
+        
+        mat-icon {
+
+
+        }
+    }
+}
