@@ -131,7 +131,7 @@ div.editElement {
   left: 0;
   width: 100%;
   display: none;
-  background-color: steelblue;   
+  background-color: #5c1879;   
   grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
   padding: 0!important;
   z-index: 999;
@@ -150,7 +150,7 @@ div.editElement {
       width: 20px;
       height: 20px;
       display: flex;
-      background-color: seagreen;
+      background-color: #7b1fa2;
       border-radius: 2px;
       border: 1px solid #ddd;
       box-sizing: border-box;

@@ -80,7 +80,7 @@ export class DashboardComponent implements OnInit {
   groupNames: Array<string> = [];  // names of each row group in the table (groups items together to get total calculations).
   queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
 
-  
+  shortenedArray?: Array<Array<Group>> = undefined; // used to store the items that are shorted
 
   // allow for itteration through the groupTypes for selector
   MaterialGroups: Array<MaterialGroup> = [
@@ -402,7 +402,7 @@ export class DashboardComponent implements OnInit {
 
       this.queriesArray[this.currentTab].list.push(item);
       this.uploadToStorage() // check if you can add to LocalStorage
-      
+      this.shortenedArray = undefined;
     } catch (error) {
       console.log("error", error);
       if (error instanceof TypeError) { // if the current tab does not exist
@@ -432,18 +432,21 @@ export class DashboardComponent implements OnInit {
   }
 
   editFromList( id :string, event: any) {
-  
-    let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == id);
-    console.log("editFromList", currentItem);
+    let currentItem: number = this.queriesArray[this.currentTab].list.findIndex((index) => {
+      return index.id == id;
+    });
+
+    let element = this.queriesArray[this.currentTab].list[currentItem];
+    
     this.editItem = id;
 
     this.editorItems_ID = id;
-    this.editorItems_GroupType = this.queriesArray[this.currentTab].list[currentItem].groupType;
-    this.editorItems_GroupName = this.queriesArray[this.currentTab].list[currentItem].groupName;
-    this.editorItems_RoomLabel = this.queriesArray[this.currentTab].list[currentItem].roomLabel;
-    this.editorItems_Width = this.queriesArray[this.currentTab].list[currentItem].width;
-    this.editorItems_Height = this.queriesArray[this.currentTab].list[currentItem].height;
-    this.editorItems_Quantity = this.queriesArray[this.currentTab].list[currentItem].quantity;
+    this.editorItems_GroupType = element.groupType;
+    this.editorItems_GroupName = element.groupName;
+    this.editorItems_RoomLabel = element.roomLabel;
+    this.editorItems_Width = element.width;
+    this.editorItems_Height = element.height;
+    this.editorItems_Quantity = element.quantity;
     
     if (currentItem == -1) {
       console.error("editFromList", "item not found");  
@@ -451,9 +454,11 @@ export class DashboardComponent implements OnInit {
     }
     
     let elm = this.editor;
-    let item = this.tableItems.toArray()[currentItem];
-    console.log("item", item);
+    let item = this.tableItems.toArray().find(i => i.nativeElement.id == id);
+    console.log("editFromList", item);
+    console.log("currentItem", currentItem, "item", this.tableItems.toArray()[currentItem]);
 
+    if (!item) return;
     let itemRect = item.nativeElement.getBoundingClientRect();
     
     console.log("itemRect", itemRect, item);
@@ -469,21 +474,27 @@ export class DashboardComponent implements OnInit {
     this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
     let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == this.editorItems_ID);
     let item = this.queriesArray[this.currentTab].list[currentItem];
+
+    const itemGroupName = item.groupName
+    const editorGroupName = this.editorItems_GroupName; 
+
     console.log("confirmEditFromList", currentItem, item);
     let newPrice = this.updatePricing({
       roomLabel: this.editorItems_RoomLabel,
-      groupName: this.editorItems_GroupName,
+      groupName: this.editorItems_GroupName ?? "",
       groupType: this.editorItems_GroupType,
       width: this.editorItems_Width,
       height: this.editorItems_Height,
       quantity: this.editorItems_Quantity,
     } as QueryStore, null);
+
+
     newPrice.id = this.editorItems_ID;
     this.queriesArray[this.currentTab].list[currentItem] = newPrice;
     
   }
 
-  determineShortenedList(max?: number) {
+  determineShortenedList(max?: number, update: boolean = false) {
     const maxOnScreen = max ?? 50;
 
     let sortedList = this.groupListItems(this.queriesArray[this.currentTab].list);
@@ -491,27 +502,31 @@ export class DashboardComponent implements OnInit {
       return item.value.length;
     });
     // console.log("determinedShortendList", sortedList, "itemCount", itemCount);
-    let simpleShortenedList: Array<Array<Group>> = [[]];
-    
-    let currentCount = 0;
-    let currentIndex = 0;
+    if (!this.shortenedArray || update) {
+      let simpleShortenedList: Array<Array<Group>> = [[]];
+      let currentCount = 0;
+      let currentIndex = 0;
 
-    for (let i = 0; i < itemCount.length; i++) {
-      // console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
-      if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
-        // console.log("fits within maxOnScreen or is greater by iteself");
-        currentCount += itemCount[i];
-        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
-        simpleShortenedList[currentIndex].push(sortedList[i]);
-      } else {
-        currentIndex ++;
-        if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
-        simpleShortenedList[currentIndex].push(sortedList[i]);
-        currentCount = 0;
+      for (let i = 0; i < itemCount.length; i++) {
+        // console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
+        if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
+          // console.log("fits within maxOnScreen or is greater by iteself");
+          currentCount += itemCount[i];
+          if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
+          simpleShortenedList[currentIndex].push(sortedList[i]);
+        } else {
+          currentIndex ++;
+          if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
+          simpleShortenedList[currentIndex].push(sortedList[i]);
+          currentCount = 0;
+        }
       }
+      this.numOfPages = simpleShortenedList.length;
+
+      this.shortenedArray = simpleShortenedList;
     }
-    this.numOfPages = simpleShortenedList.length;
-    return simpleShortenedList;
+    return this.shortenedArray;
+  
   }
 
   
