@@ -1,1 +1,15 @@
-<p>notes-component works!</p>
+<return-to-dash-button></return-to-dash-button>
+<div class="container">
+    <div class="masonryChart of_auto">
+        <div #notes class="masonryChartItem"  *ngFor="let note of notes; index as noteIndex" ng-style="{'background-color': note.color}">
+            <h2 contenteditable="true" (focusout)="onUnfocus($event, noteIndex)">{{note.title}}</h2>
+            <hr>
+            <div style="white-space: pre" contenteditable="true" (focusout)="onUnfocus($event, noteIndex)">
+                {{note.document}}
+            </div>
+        </div>
+        <div style="margin: 0 auto auto 0; background-color: indianred; border-radius: 50%;" class="icon-container" (click)="addNote()">
+            <mat-icon class="add-icon">add</mat-icon>
+        </div>
+    </div>
+</div>

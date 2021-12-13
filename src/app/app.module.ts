@@ -25,15 +25,17 @@ import { FormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { NumericCommasPipe } from './numeric-commas.pipe';
-import { HelpBarComponent } from './help-bar/help-bar.component';
+import { HelpBarComponent } from './buttons/help-bar/help-bar.component';
 import { RemoveItemDialog } from './Dialog/RemoveItemDialog';
 import { EditItemDialog } from './Dialog/EditItemDialog';
-import { FileUploadComponent } from './file-upload/file-upload.component';
-import { FileExportComponent } from './file-export/file-export.component';
-import { RefreshStorageComponent } from './refresh-storage/refresh-storage.component';
+import { FileUploadComponent } from './buttons/file-upload/file-upload.component';
+import { FileExportComponent } from './buttons/file-export/file-export.component';
+import { RefreshStorageComponent } from './buttons/refresh-storage/refresh-storage.component';
+import { NotesButtonComponent } from './buttons/notes/notes.component';
 
 import { RouterModule } from '@angular/router';
 import { NotesComponent } from './notes-component/notes-component.component';
+import { ReturnToDashButtonComponent } from './buttons/return-to-dash-button/return-to-dash-button.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,10 @@ import { NotesComponent } from './notes-component/notes-component.component';
     EditItemDialog,
     FileUploadComponent,
     FileExportComponent,
-    RefreshStorageComponent
+    RefreshStorageComponent,
+    NotesComponent,
+    NotesButtonComponent,
+    ReturnToDashButtonComponent
   ],
   imports: [
     FormsModule,
@@ -73,7 +78,7 @@ import { NotesComponent } from './notes-component/notes-component.component';
     }),
     RouterModule.forRoot([
       { path: '', component: DashboardComponent },
-      { path: 'file-upload', component: NotesComponent },
+      { path: 'notes', component: NotesComponent },
     ]),
   ],
   providers: [],
