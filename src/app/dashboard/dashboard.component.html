@@ -326,7 +326,7 @@
                   <div>
                     <span>Roll Over Price</span>
                     <mat-form-field>
-                      <input id="HERE" matInput type="text">
+                      <input matInput type="text" [value]="getCleanPrice()">
                     </mat-form-field>
                   </div>
                 </div>
@@ -380,8 +380,12 @@
   <div>
   </div>
   <div>
+    
   </div>
   <div>
+    <div class="icon-container" (click)="deleteFromList()">
+      <mat-icon>delete</mat-icon>
+    </div>
     <div class="icon-container" (click)="confirmEditFromList()">
       <mat-icon>check</mat-icon>
     </div>

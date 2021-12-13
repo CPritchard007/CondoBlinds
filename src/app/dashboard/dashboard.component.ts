@@ -441,7 +441,7 @@ export class DashboardComponent implements OnInit {
     this.editItem = id;
 
     this.editorItems_ID = id;
-    this.editorItems_GroupType = element.groupType;
+    this.editorItems_GroupType = element.groupType ?? "";
     this.editorItems_GroupName = element.groupName;
     this.editorItems_RoomLabel = element.roomLabel;
     this.editorItems_Width = element.width;
@@ -452,6 +452,8 @@ export class DashboardComponent implements OnInit {
       console.error("editFromList", "item not found");  
       return;
     }
+
+    
     
     let elm = this.editor;
     let item = this.tableItems.toArray().find(i => i.nativeElement.id == id);
@@ -467,6 +469,7 @@ export class DashboardComponent implements OnInit {
     this.renderer.setStyle(elm.nativeElement, 'width', itemRect.width + 'px');
     this.renderer.setStyle(elm.nativeElement, 'height', itemRect.height + 'px');
     this.renderer.setStyle(elm.nativeElement, 'display', "grid");
+    
     
   }
 
@@ -491,7 +494,8 @@ export class DashboardComponent implements OnInit {
 
     newPrice.id = this.editorItems_ID;
     this.queriesArray[this.currentTab].list[currentItem] = newPrice;
-    
+    console.log(newPrice);
+    this.uploadToStorage()
   }
 
   determineShortenedList(max?: number, update: boolean = false) {
@@ -529,6 +533,15 @@ export class DashboardComponent implements OnInit {
   
   }
 
+  deleteFromList() {
+    this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
+
+    let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == this.editorItems_ID);
+    this.queriesArray[this.currentTab].list.splice(currentItem, 1);
+    this.uploadToStorage();
+    this.resetValues();
+    this.determineShortenedList(this.maxItemsInList, true);
+  }
   
 
   calculateDanielsMotorPrice(quantity: number) { return (350 * quantity); }

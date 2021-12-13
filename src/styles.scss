@@ -144,6 +144,11 @@ div.editElement {
           width: 100%;
           box-sizing: border-box;
       }
+
+      &:last-of-type {
+        display: flex;
+        justify-content: flex-end;
+      }
   }
 
   .icon-container {
@@ -154,7 +159,14 @@ div.editElement {
       border-radius: 2px;
       border: 1px solid #ddd;
       box-sizing: border-box;
-      margin: 0 0 0 auto;
+      margin: 0 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      mat-icon {
+        font-size: 16px;
+      }
       
   }
 }
