@@ -42,9 +42,9 @@ export class NotesComponent implements OnInit {
   }
 
   onUnfocus(event: any, index: number) {
-    console.log(event.target.innerText);
+    console.log(index);
     if (event.target.localName === 'h2') this.notes[index].title = event.target.innerText.trim();
-    if (event.target.localName === 'div') this.notes[index].document = event.target.innerText.triim();
+    if (event.target.localName === 'div') this.notes[index].document = event.target.innerText.trim();
     localStorage.setItem('notes', JSON.stringify(this.notes));
 
   }

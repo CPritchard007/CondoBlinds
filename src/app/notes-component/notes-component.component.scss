@@ -7,10 +7,14 @@
             box-sizing: border-box;
             border-radius: 10px;
             min-height: 250px;
-
-
+            box-shadow: 2px 2px 3px #00000077;
+            background-color: rgb(41, 41, 41);
             h2 {
                 margin: 0;
+                padding: 0 6px;
+            }
+            div {
+                padding: 0 6px;
             }
         }
     }
