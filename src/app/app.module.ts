@@ -15,10 +15,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import {MatSelectModule} from '@angular/material/select';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatTabsModule} from '@angular/material/tabs';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
@@ -31,6 +31,10 @@ import { EditItemDialog } from './Dialog/EditItemDialog';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { FileExportComponent } from './file-export/file-export.component';
 import { RefreshStorageComponent } from './refresh-storage/refresh-storage.component';
+
+import { RouterModule } from '@angular/router';
+import { NotesComponent } from './notes-component/notes-component.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,7 +70,11 @@ import { RefreshStorageComponent } from './refresh-storage/refresh-storage.compo
       // Register the ServiceWorker as soon as the app is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
-    })
+    }),
+    RouterModule.forRoot([
+      { path: '', component: DashboardComponent },
+      { path: 'file-upload', component: NotesComponent },
+    ]),
   ],
   providers: [],
   bootstrap: [AppComponent]

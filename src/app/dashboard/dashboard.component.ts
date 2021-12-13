@@ -1,10 +1,9 @@
 import { Component, Input, OnInit, Output, SimpleChanges, EventEmitter, ViewChild, NgZone, ElementRef, Directive, QueryList, ViewChildren, Renderer2 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
 import { WarningDialog } from '../Dialog/warningDialog';
-import { MatPaginator } from '@angular/material/paginator';
 import { EditItemDialog } from '../Dialog/EditItemDialog';
 
 /* Interfaces */
@@ -69,7 +68,7 @@ interface MaterialGroup {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  @Input() onFinalDataInport: any = []; // import data from other components, allowing the user to upload a CSV file
+  
   @ViewChild('editElement') editor!: ElementRef;
   @ViewChildren('tableItems') tableItems!: QueryList<ElementRef>;
 
@@ -137,6 +136,9 @@ export class DashboardComponent implements OnInit {
   costOfInstallation = 47;
   profitMargin = 1.35;
 
+  // inport items
+  
+
   /* Variables */
   /* ngModels */
   valWidth = 0; 
@@ -170,51 +172,7 @@ export class DashboardComponent implements OnInit {
   editorItems_Quantity: number = 0;
 
 
-  ngOnInit() { }  // is required but is never used
-
-  // when the user uploads a CSV file, this function is called to update the table
-  ngOnChanges(changes: SimpleChanges) {
-    console.log("change");
-    setTimeout(() => { // since this only shows that the file is being uploaded, it is necessary to wait for the file to be uploaded
-      //(there is no calculation for the time to wait, so one second is needed at the moment) TODO: find a better way to do this
-      if (this.onFinalDataInport) { // only on file change can enter
-        if(this.onFinalDataInport.type == "csv") {
-          let items: QueryStore[] = this.onFinalDataInport.data ?? []; // if the file is empty, the array will be undefined, so this will prevent that
-          
-          items.shift(); // remove the first item, which is the header
-              
-          let itemsArray: query[] = items.map((x, i) => {
-            return this.updatePricing(x,i);
-          })
-          
-          this.queriesArray[this.currentTab].list.push(...itemsArray) // add the new items to the current tab
-
-        } else if (this.onFinalDataInport.type == "json") {
-          let tables = JSON.parse(this.onFinalDataInport.data);
-          for (let tableIndex in tables) {
-            let table = tables[tableIndex];
-            let isCurrentTable = this.queriesArray.findIndex(x => x.name == table.name);
-            let items: query[] = (table.list as QueryStore[]).map((x, i) => {
-              return this.updatePricing(x,i);
-            });
-            if (isCurrentTable == -1) {
-              this.queriesArray.push({
-                name: table.name,
-                list: items
-              })
-            } else {
-              
-              this.queriesArray[isCurrentTable].list.push(...items);
-            }
-          }
-        }
-
-        this.uploadToStorage() // update local storage
-
-        console.log(this.queriesArray, JSON.parse(localStorage.getItem("queries") ?? "[]"));
-      }
-    }, 1000);
-  }
+  ngOnInit() {}
 
   constructor(public dialog: MatDialog, private renderer: Renderer2) {
     console.log("constructor");
@@ -767,5 +725,43 @@ export class DashboardComponent implements OnInit {
   lastPage() {
     this.currentPagination--;
     if (this.currentPagination < 0) this.currentPagination = this.numOfPages-1;
+  }
+
+  itemIsAvailable(value: any) {
+    console.log("items abailable", value);
+    let items = value ?? '{}';
+    let data;
+    if (items.type == 'json') {
+      data = JSON.parse(items.data);
+      for (let tableIndex in data) {
+        let table = data[tableIndex];
+        let isCurrentTable = this.queriesArray.findIndex(x => x.name == table.name);
+        let items: query[] = (table.list as QueryStore[]).map((x, i) => {
+          return this.updatePricing(x,i);
+        });
+        if (isCurrentTable == -1) {
+          this.queriesArray.push({
+            name: table.name,
+            list: items
+          })
+        } else {
+          
+          this.queriesArray[isCurrentTable].list.push(...items);
+        }
+      }
+    } else if (items.type == 'csv') {
+      setTimeout(() => {
+        data = items.data;
+        data.shift();
+        let itemsArray: query[] = data.map((x: any, i: number) => {
+          console.log(x.roomLabel, x.width, x.height, x.quantity, x.groupName, x.groupType);
+          return this.updatePricing(x,i);
+        })
+        
+        this.queriesArray[this.currentTab].list.push(...itemsArray) // add the new items to the current tab
+      }, 1000);
+    }
+    
+    this.uploadToStorage()
   }
 }

@@ -19,15 +19,9 @@ export interface Task {
 })
 export class AppComponent {
   title = 'calculatorApp';
-  items!: any[];
   isUpdate: boolean = false;
-  fileHref?: SafeHtml;
   
   constructor(updates: SwUpdate, private sanitizer: DomSanitizer) {}
-
-  itemIsAvailable(value: any) {
-    this.items = value ?? '{}';
-  }
   
 }
 

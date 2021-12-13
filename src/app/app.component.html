@@ -1,11 +1,4 @@
 <app-header-bar></app-header-bar>
 
-<app-dashboard [onFinalDataInport]="items"></app-dashboard>
+<router-outlet></router-outlet>
 
-<app-help-bar></app-help-bar>
-
-<file-upload  (onFinalData)="itemIsAvailable($event)"></file-upload>
-
-<file-export ></file-export>
-
-<refresh-storage></refresh-storage>

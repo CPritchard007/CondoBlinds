@@ -38,6 +38,7 @@ export class FileUploadComponent implements OnInit {
         
         reader.readAsText(file);
         reader.onload = (e: any) => {
+          console.log(reader.result);
           let csv: string = reader.result as string;
           let lineArray: string[] = csv.split(/\r\n|\n/);
           if (lineArray) {
@@ -64,6 +65,7 @@ export class FileUploadComponent implements OnInit {
       if (file.type == "application/json") {
         reader.readAsText(file);
         reader.onload = (e: any) => {
+          console.log(reader.result);
           let json: string = reader.result as string;
           this.dataJson = JSON.parse(json);
           this.onFinalData.emit({type: "json", data: this.dataJson});
