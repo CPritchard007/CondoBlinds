@@ -42,16 +42,18 @@ export class NotesComponent implements OnInit {
   }
 
   onUnfocus(event: any, index: number) {
+    console.log(event);
     console.log(event.target);
-    
-    if (event.target.localName === 'h2') {
-      this.notes[index].title = "";  
-      this.notes[index].title = event.target.innerText.trim();}
-    if (event.target.localName === 'div') {
-      this.notes[index].document = "";
-      this.notes[index].document = event.target.innerText.trim()};
-    localStorage.setItem('notes', JSON.stringify(this.notes));
+    let notes = this.notes;
 
+    if (event.target.localName === 'h2') {
+      notes[index].title = "";
+      notes[index].title = event.target.innerText.trim();}
+    if (event.target.localName === 'div') {
+      notes[index].document = "";
+      notes[index].document = event.target.innerText.trim();}
+
+    localStorage.setItem('notes', JSON.stringify(notes));
   }
 
   addNote() {

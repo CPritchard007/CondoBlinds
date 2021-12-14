@@ -238,7 +238,7 @@ export class DashboardComponent implements OnInit {
     console.log(this.queriesArray, i);
     if (this.currentTab == i ) { this.currentTab = 0; }
     this.queriesArray.splice(i, 1);
-
+    if (this.queriesArray.length == 0) this.queriesArray.push({name: "table 1", list: []});
     this.uploadToStorage()
   }
     // once the user clicks on the checkmark, the tabs name is then changed, and added to the localstorage
@@ -643,9 +643,9 @@ export class DashboardComponent implements OnInit {
     this.queriesArray[this.currentTab].list.forEach((element, index) => {
       if (index === 0) { this.groupName = element.groupName; }
       if (!this.groupNames.includes(element.groupName)) {
-        this.groupNames.push(element.groupName);
+        this.groupNames.push(element.groupName); 
       }
-    });
+    }); 
   }
 
   // use this to change a number (preferably dollar cents),

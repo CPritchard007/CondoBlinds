@@ -220,7 +220,7 @@
                 <span>Group Type</span>
               </div>
               <div>
-                <span>Quantity</span>
+                <span># of Blinds</span>
               </div>
               <div>
                 <span>Width</span>
@@ -229,10 +229,13 @@
                 <span>Height</span>
               </div>
               <div>
-                <span>Sqr.Ft</span>
+                <span>Total Sq Ft</span>
               </div>
               <div>
                 <span>Retail Price</span>
+              </div>
+              <div>
+                <span>Fascia Retail</span>
               </div>
               <div>
                 <span>Discount</span>
@@ -244,16 +247,14 @@
                 <span>Cost</span>
               </div>
               <div>
-                <span>Install Cost</span>
+                <span>Installation + $12 New Hold Down</span>
               </div>
-              <div>
-                <span>Fascia Retail</span>
-              </div>
+              
               <div>
                 <span>Fascia Cost</span>
               </div>
               <div>
-                <span>Motor Cost</span>
+                <span>Motor Price</span>
               </div>
               <div>
                 <span>Price</span>
@@ -292,30 +293,31 @@
                     <span>{{query.sqrFt}}</span>
                   </div>
                   <div>
-                    <span>{{query.retailPrice}}</span>
+                    <span>{{query.retailPrice | numericCommas}}</span>
                   </div>
                   <div>
-                    <span>{{query.discount}}</span>
-                  </div>
-                  <div> <span>{{query.discount2}}</span>
+                    <span>{{query.fasciaRetail | numericCommas}}</span>
                   </div>
                   <div>
-                    <span>{{query.cost}}</span>
+                    <span>{{query.discount + " %"}}</span>
+                  </div>
+                  <div> <span>{{query.discount2 + " %"}}</span>
                   </div>
                   <div>
-                    <span>{{query.installmentCost}}</span>
+                    <span>{{query.cost | numericCommas}}</span>
                   </div>
                   <div>
-                    <span>{{query.fasciaRetail}}</span>
+                    <span>{{query.installmentCost | numericCommas}}</span>
+                  </div>
+                  
+                  <div>
+                    <span>{{query.fasciaCost | numericCommas}}</span>
                   </div>
                   <div>
-                    <span>{{query.fasciaCost}}</span>
+                    <span>{{query.danielsMotorPrice | numericCommas}}</span>
                   </div>
                   <div>
-                    <span>{{query.danielsMotorPrice}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.price}}</span>
+                    <span>{{query.price | numericCommas}}</span>
                   </div>
                   <div class="icon-container" (click)="editFromList(query.id, $event)">
                     <mat-icon>edit</mat-icon>
@@ -342,12 +344,12 @@
                   <div>
                   </div>
                   <div>
+                  </div>
+                  <div>
                     <span>{{totalCostSum(group.value) | numericCommas}}</span> <!-- total cost -->
                   </div>
                   <div>
                     <span>{{totalInstallmentCostSum(group.value) | numericCommas}}</span> <!-- total installment cost -->
-                  </div>
-                  <div>
                   </div>
                   <div>
                     <span>{{totalFasciaSum(group.value) | numericCommas}}</span> <!-- total fascia cost -->
@@ -367,7 +369,7 @@
                   </div>
                   <div>
                     <span>Final Open Roll Price</span>
-                    <div style="margin-left: 10px;">{{getCleanPrice()}}</div>
+                    <div style="margin-left: 10px;">{{getCleanPrice() | numericCommas}}</div>
                   </div>
                   <div>
                     <span>Retail Price</span>
@@ -422,7 +424,6 @@
     <input [(ngModel)]="editorItems_Height" style="text-align: right;" type="number">
   </div>
   <div>
-    <span style="text-align: right;">Group</span>
   </div>
   <div>
     <select [(ngModel)]="editorItems_GroupName">
