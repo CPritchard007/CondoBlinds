@@ -17,16 +17,7 @@
         transition: background-color 0.5s ease;
         overflow: hidden;
 
-        &:hover {
-            background-color: rgba(255, 255, 255);
-            
-            mat-icon:nth-of-type(1) {
-                transform: translateY(-25px) translateX(-25%);
-            }
-            mat-icon:nth-of-type(2) {
-                transform: translateY(-25%) translateX(-25%); 
-            }
-        }
+        &:hover { background-color: rgba(255, 255, 255) }
 
         mat-icon:nth-of-type(1) {
             position: absolute;
@@ -59,6 +50,4 @@
     }
 }
 
-input[type=file] {
-    display: none;
-}
+input[type=file] { display: none; }

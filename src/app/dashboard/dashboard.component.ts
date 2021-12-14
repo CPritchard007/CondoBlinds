@@ -161,6 +161,8 @@ export class DashboardComponent implements OnInit {
 
   // this value is specifically used to pass a value through the table, do not change
   cleanCost = 0;
+  finalFasciaCost = 0;
+  finalMotorPrice = 0;
   
   editItem: string = '';
   editorItems_ID: string = '';
@@ -570,6 +572,72 @@ export class DashboardComponent implements OnInit {
     const fasciaTable: Array<number> = data.tables[0].table.fascia;
     return fasciaTable[widthIndex];
   }
+  calculateFinalRetailPrice() {
+    return this.numericCommas((this.cleanCost * 1.2).toFixed(2));
+  }
+
+  calculateFinalFasciaPrice(group:any[]) {
+    this.finalFasciaCost = ((this.totalFasciaSum(group) * this.profitMargin) + this.cleanCost);
+    return this.numericCommas(this.finalFasciaCost.toFixed(2));
+  }
+  calculatePriceWithFascia(group:any[]) {
+    return this.numericCommas((this.finalFasciaCost * 1.2).toFixed(2));
+  }
+
+  calculateFinalMotorPrice(group:any[]) {
+    this.finalMotorPrice = this.totalMotorPriceSum(group) + this.finalFasciaCost;
+    return this.numericCommas(this.finalMotorPrice.toFixed(2));
+  }
+
+  calculatePriceWithMotor(group:any[]) {
+    return this.numericCommas((this.finalMotorPrice * 1.2).toFixed(2));
+  }
+
+  totalProfit(group: any[]) {
+    return this.totalPriceSum(group) - this.totalCostSum(group) - this.totalInstallmentCostSum(group);
+
+  }
+
+  totalCostSum(group: any[]) {
+    let sum = 0;
+    group.forEach((item) => {
+      sum += item.cost;
+    });
+    return sum;
+  }
+  
+  totalPriceSum(group: any[]) {
+    let sum = 0;
+    group.forEach((item) => {
+      sum += item.price;
+    });
+    this.totalCost = sum;
+    return sum;
+  }
+
+  totalMotorPriceSum(group: any[]) {
+    let sum = 0;
+    group.forEach((item) => {
+      sum += item.danielsMotorPrice;
+    });
+    return sum;
+  }
+  
+  totalInstallmentCostSum(group: any[]) {
+    let sum = 0;
+    group.forEach((item) => {
+      sum += item.installmentCost;
+    });
+    return sum;
+  }
+
+  totalFasciaSum(group: any[]){
+    let sum = 0;
+    group.forEach((item) => {
+      sum += item.fasciaCost;
+    });
+    return sum;
+  }
 
   getGroupNames() {
     this.queriesArray[this.currentTab].list.forEach((element, index) => {
@@ -582,7 +650,13 @@ export class DashboardComponent implements OnInit {
 
   // use this to change a number (preferably dollar cents),
   //this will allow the value to be decorated with commas, making the numbers easier to read
-  numericCommas(x: number) {
+  numericCommas(x: number | string) {
+    let str;
+    if (typeof x !== 'string') 
+      str = x.toString();
+    else
+      str = x
+
     let cost = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return "$ " + cost;
   }
@@ -616,28 +690,7 @@ export class DashboardComponent implements OnInit {
     this.updateInputs(); // calculate the dynamic variables from the reset values
   }
   /* calculate the sum of each item in the array */
-  getFullSum(list: query[]) {
-    let price = 0;
-
-    /* if there is no items in the array, than the query is out of date, and will be automatically reset */
-    try { 
-      list.forEach(element => {
-        
-        price += element.price;
-      });
-    } catch (error) {
-      console.log(error);
-      if (error instanceof TypeError) {
-        window.localStorage.removeItem('queries')
-        window.location.reload();
-      }
-    }
-    // save total cost to a accessable variable
-    this.totalCost = price;
-
-    // return number in numeric form
-    return this.numericCommas(this.totalCost);
-  }
+  
 
   /* once the user clicks on the edit button, hide the button and show the input that contains changes the tab name */
   openEditPannel (event: any) {
@@ -661,7 +714,7 @@ export class DashboardComponent implements OnInit {
       cleanValue = value - closestValue;
     }
     this.cleanCost = Math.max(cleanValue - 0.01,0);
-    return this.numericCommas(this.cleanCost);
+    return this.cleanCost
   }
 
   groupListItems(list: query[]) {

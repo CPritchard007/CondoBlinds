@@ -111,7 +111,7 @@ mat-card.calcCard {
             .total {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    
+                
                 & div {
                     padding: 3px 5px;
                     text-align: center;
@@ -229,4 +229,12 @@ mat-card.calcCard {
 }
 .groupName .mat-select {
     width: 20px;
+}
+
+.rollOverInput {
+    background-color: transparent;
+    color: white;
+    text-align: left !important;
+    margin: 10px 8px;
+    width: 20% !important;
 }

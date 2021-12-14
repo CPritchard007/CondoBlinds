@@ -75,7 +75,7 @@
         <div>
           <span>Quantity</span>
           <mat-form-field appearance="outline">
-            <input matInput type="decimal" [(ngModel)]="quantity" (input)="updateInputs()">
+            <input matInput type="decimal" [(ngModel)]="quantity" (focusout)="updateInputs()">
           </mat-form-field>
           <br>
           <i [ngClass]="{hidden: quantity > 0 && quantity !== null}">insiffucuent value: {{quantity}}</i>
@@ -83,7 +83,7 @@
         <div>
           <span>Width</span>
           <mat-form-field appearance="outline">
-            <input matInput type="number" [(ngModel)]="valWidth" (input)="updateInputs()" />
+            <input matInput type="number" [(ngModel)]="valWidth" (focusout)="updateInputs()" />
           </mat-form-field>
           <br>
           <i [ngClass]="{hidden: valWidth > 0 && valWidth !== null}">Width Must Be Filled</i>
@@ -91,7 +91,7 @@
         <div>
           <span>Height</span>
           <mat-form-field appearance="outline">
-            <input matInput type="number" [(ngModel)]="valHeight" (input)="updateInputs()" />
+            <input matInput type="number" [(ngModel)]="valHeight" (focusout)="updateInputs()" />
           </mat-form-field>
           <br>
           <i [ngClass]="{hidden: valHeight > 0 && valHeight !== null}">Height Must Be Filled</i>
@@ -125,13 +125,13 @@
             <span>Retail Price</span>
           </abbr>
           <mat-form-field appearance="standard">
-            <input matInput type="decimal" [(ngModel)]="retailPrice" (input)="updateInputs()" disabled>
+            <input matInput type="decimal" [(ngModel)]="retailPrice" (focusout)="updateInputs()" disabled>
           </mat-form-field>
         </div>
         <div>
           <span>Discount (%)</span>
           <mat-form-field appearance="outline">
-            <input matInput type="number" [(ngModel)]="discount" (input)="updateInputs()">
+            <input matInput type="number" [(ngModel)]="discount" (focusout)="updateInputs()">
           </mat-form-field>
           <br>
           <i [ngClass]="{hidden: discount !== null }">Discount cannot be a null value</i>
@@ -148,7 +148,7 @@
         <div>
           <span>Discount 2 (%)</span>
           <mat-form-field appearance="outline">
-            <input matInput type="number" [(ngModel)]="discount2" (input)="updateInputs()">
+            <input matInput type="number" [(ngModel)]="discount2" (focusout)="updateInputs()">
           </mat-form-field>
           <br>
           <i [ngClass]="{hidden: discount2 !== null }">Discount cannot be a null value</i>
@@ -180,7 +180,6 @@
           <mat-form-field appearance="standard">
             <input matInput type="decimal" disabled [(ngModel)]="installmentCost">
           </mat-form-field>
-          
         </div>
       </div>
     </mat-card-content>
@@ -206,7 +205,7 @@
 
             <a><i class="editName" (click)="openEditPannel($event)">edit tab name</i></a>
             <div>
-              <input [(ngModel)]="queryItem.name" (input)="updateInputs()">
+              <input [(ngModel)]="queryItem.name" (focusout)="updateInputs()">
               <div class="icon-container checkmark" (click)="updateTabName($event)">
                 <mat-icon>checkmark</mat-icon>
               </div>
@@ -322,22 +321,80 @@
                     <mat-icon>edit</mat-icon>
                   </div>
                 </div>
-                <div class=" of_4" style="border-width: 1px 0; border-style: solid; border-color: white">
+                <!-- sums -->
+                <div class="row" style="border-top: 3px solid white;">
                   <div>
-                    <span>Total Price</span>
-                    <div style="margin-left: 10px;">{{getFullSum(group.value)}}</div>
                   </div>
+                  <div>
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                    <span>{{totalCostSum(group.value) | numericCommas}}</span> <!-- total cost -->
+                  </div>
+                  <div>
+                    <span>{{totalInstallmentCostSum(group.value) | numericCommas}}</span> <!-- total installment cost -->
+                  </div>
+                  <div>
+                  </div>
+                  <div>
+                    <span>{{totalFasciaSum(group.value) | numericCommas}}</span> <!-- total fascia cost -->
+                  </div>
+                  <div>
+                    <span>{{totalMotorPriceSum(group.value) | numericCommas}}</span> <!-- total motor cost -->
+                  </div>
+                  <div>
+                    <span>{{totalPriceSum(group.value) | numericCommas}}</span> <!-- total price -->
+                  </div>
+                </div>
+                <div class=" of_4" style="border-width: 1px 0; border-style: solid; border-color: white">
 
                   <div>
-                    <span>Roll Over Price</span>
-                    <mat-form-field>
-                      <input matInput type="text" [value]="getCleanPrice()">
-                    </mat-form-field>
+                    <span>Profit</span>
+                    <div style="margin-left: 10px;">{{totalProfit(group.value) | numericCommas}}</div>
+                  </div>
+                  <div>
+                    <span>Final Open Roll Price</span>
+                    <div style="margin-left: 10px;">{{getCleanPrice()}}</div>
+                  </div>
+                  <div>
+                    <span>Retail Price</span>
+                    <div style="margin-left: 10px;">{{calculateFinalRetailPrice()}}</div>
+                  </div>
+                  <div>
+                    <span>Final Fascia Price</span>
+                    <div style="margin-left: 10px;">{{calculateFinalFasciaPrice(group.value)}}</div>
+                  </div>
+                  <div>
+                    <span>Price with Fascia</span>
+                    <div style="margin-left: 10px;">{{calculatePriceWithFascia(group.value)}}</div>
+                  </div>
+                  <div>
+                    <span>Final Motor Price</span>
+                    <div style="margin-left: 10px;">{{calculateFinalMotorPrice(group.value)}}</div>
+                  </div>
+                  <div>
+                    <span>Price with Motors</span>
+                    <div style="margin-left: 10px;">{{calculatePriceWithMotor(group.value)}}</div>
                   </div>
                 </div>
               </div>
+              <!-- <mat-form-field>
+                <input matInput type="text">
+                </mat-form-field> -->
               <div class="pagination"><span *ngIf="numOfPages > 1">Page {{currentPagination + 1}}/{{numOfPages}}</span><div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div></div>
-            
             </div>
           </div>
         </mat-tab>
