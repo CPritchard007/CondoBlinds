@@ -4,7 +4,10 @@
         <div #notes class="masonryChartItem"  *ngFor="let note of notes; index as noteIndex" ng-style="{'background-color': note.color}">
             <h2 contenteditable="true" (focusout)="onUnfocus($event, noteIndex)">{{note.title}}</h2>
             <hr>
-            <div contenteditable="true" (focusout)="onUnfocus($event, noteIndex)">{{note.document}}</div>
+            <textarea (focusout)="onUnfocus($event, noteIndex)">{{note.document}}</textarea>
+            <div class="icon-container" (click)="deleteNote(noteIndex)">
+                <mat-icon class="add-icon">close</mat-icon>
+            </div>
         </div>
         <div style="margin: 0 auto auto 0; background-color: indianred; border-radius: 50%;" class="icon-container" (click)="addNote()">
             <mat-icon class="add-icon">add</mat-icon>

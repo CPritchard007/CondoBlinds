@@ -48,10 +48,10 @@ export class NotesComponent implements OnInit {
 
     if (event.target.localName === 'h2') {
       notes[index].title = "";
-      notes[index].title = event.target.innerText.trim();}
-    if (event.target.localName === 'div') {
+      notes[index].title = event.target.value;}
+    if (event.target.localName === 'textarea') {
       notes[index].document = "";
-      notes[index].document = event.target.innerText.trim();}
+      notes[index].document = event.target.value;}
 
     localStorage.setItem('notes', JSON.stringify(notes));
   }
@@ -62,6 +62,11 @@ export class NotesComponent implements OnInit {
       document: 'No Content',
       color: this.colors[Math.floor(Math.random() * this.colors.length)]
     });
+    localStorage.setItem('notes', JSON.stringify(this.notes));
+  }
+
+  deleteNote(index: number) {
+    this.notes.splice(index, 1);
     localStorage.setItem('notes', JSON.stringify(this.notes));
   }
 }

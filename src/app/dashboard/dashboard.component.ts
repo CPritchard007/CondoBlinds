@@ -203,7 +203,6 @@ export class DashboardComponent implements OnInit {
         this.queriesArray = this.convertToLocalFormat(JSON.parse(localStorageData));
       }
     }
-    /* TODO: create retail price, sqrFt, fascia price, clean price */
 
     // non reset items, such as our static variables, will not be reset, so they will be added here
     this.profitMargin = data.startingVars.profitMargin; // 
