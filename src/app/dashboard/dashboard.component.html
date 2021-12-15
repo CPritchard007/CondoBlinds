@@ -237,9 +237,6 @@
               <div> <span>Price with Motors</span> </div>
             </header>
             <div class="content">
-              <div class="pagination" >
-                <div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div>
-              </div>
               <div class="group" *ngFor="let group of determineShortenedList(maxItemsInList, true)[currentPagination]; index as groupIndex">
                 <div class="groupHeader">
                   <span>{{group.name || "Default"}}</span>
@@ -250,51 +247,21 @@
                   </select>
                 </div>
                 <div #tableItems class="row" *ngFor="let query of group.value; index as itemIndex" [id]="query.id">
-                  <div>
-                    <span>{{query.roomLabel}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.groupType}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.quantity}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.width}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.height}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.sqrFt}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.retailPrice | numericCommas}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.fasciaRetail | numericCommas}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.discount + " %"}}</span>
-                  </div>
-                  <div> <span>{{query.discount2 + " %"}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.cost | numericCommas}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.installmentCost | numericCommas}}</span>
-                  </div>
-                  
-                  <div>
-                    <span>{{query.fasciaCost | numericCommas}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.danielsMotorPrice | numericCommas}}</span>
-                  </div>
-                  <div>
-                    <span>{{query.price | numericCommas}}</span>
-                  </div>
+                  <div> <span>{{query.roomLabel}}</span> </div>
+                  <div> <span>{{query.groupType}}</span> </div>
+                  <div> <span>{{query.quantity}}</span> </div>
+                  <div> <span>{{query.width}}</span> </div>
+                  <div> <span>{{query.height}}</span> </div>
+                  <div> <span>{{query.sqrFt}}</span> </div>
+                  <div> <span>{{query.retailPrice | numericCommas}}</span> </div>
+                  <div> <span>{{query.fasciaRetail | numericCommas}}</span> </div>
+                  <div> <span>{{query.discount + " %"}}</span> </div>
+                  <div> <span>{{query.discount2 + " %"}}</span> </div>
+                  <div> <span>{{query.cost | numericCommas}}</span> </div>
+                  <div> <span>{{query.installmentCost | numericCommas}}</span> </div>
+                  <div> <span>{{query.fasciaCost | numericCommas}}</span> </div>
+                  <div> <span>{{query.danielsMotorPrice | numericCommas}}</span> </div>
+                  <div> <span>{{query.price | numericCommas}}</span> </div>
                   <div></div>
                   <div></div>
                   <div></div>
@@ -336,63 +303,12 @@
               <!-- <mat-form-field>
                 <input matInput type="text">
                 </mat-form-field> -->
-              <div class="pagination"><span *ngIf="numOfPages > 1">Page {{currentPagination + 1}}/{{numOfPages}}</span><div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div></div>
             </div>
           </div>
+          <div class="pagination"><span *ngIf="numOfPages > 1">Page {{currentPagination + 1}}/{{numOfPages}}</span><div class="iconContainer left" (click)="lastPage()"><mat-icon>chevron_left</mat-icon></div><div class="iconContainer right" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></div></div>
         </mat-tab>
       </mat-tab-group>
     </mat-card-content>
   </mat-card>
 </div>
-
-<div #editElement class="editElement">
-  <div>
-    <input [(ngModel)]="editorItems_RoomLabel" type="text">
-  </div>
-  <div>
-    <select [(ngModel)]="editorItems_GroupType">
-      <option [selected]="mat.tag == editorItems_GroupType" *ngFor="let mat of MaterialGroups; index as i" [value]="mat.tag" >{{mat.tag}}</option>
-    </select>
-  </div>
-  <div>
-    <input [(ngModel)]="editorItems_Quantity" style="text-align: right;" type="number">
-  </div>
-  <div>
-    <input [(ngModel)]="editorItems_Width" style="text-align: right;" type="number">
-  </div>
-  <div>
-    <input [(ngModel)]="editorItems_Height" style="text-align: right;" type="number">
-  </div>
-  <div>
-  </div>
-  <div>
-    <select [(ngModel)]="editorItems_GroupName">
-      <option [selected]="name == editorItems_GroupName" *ngFor="let name of groupNames; index as i" [value]="name">{{name ?? "default"}}</option>
-    </select>
-  </div>
-  <div>
-  </div>
-  <div>
-  </div>
-  <div>
-  </div>
-  <div>
-  </div>
-  <div>
-  </div>
-  <div>
-  </div>
-  <div>
-    
-  </div>
-  <div>
-    <div class="icon-container" (click)="deleteFromList()">
-      <mat-icon>delete</mat-icon>
-    </div>
-    <div class="icon-container" (click)="confirmEditFromList()">
-      <mat-icon>check</mat-icon>
-    </div>
-  </div>
-</div>
-
 
