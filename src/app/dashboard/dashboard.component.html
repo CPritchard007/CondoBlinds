@@ -213,52 +213,28 @@
           </div>
           <div class="table">
             <header>
-              <div>
-                <span>Room</span>
-              </div>
-              <div>
-                <span>Group Type</span>
-              </div>
-              <div>
-                <span># of Blinds</span>
-              </div>
-              <div>
-                <span>Width</span>
-              </div>
-              <div>
-                <span>Height</span>
-              </div>
-              <div>
-                <span>Total Sq Ft</span>
-              </div>
-              <div>
-                <span>Retail Price</span>
-              </div>
-              <div>
-                <span>Fascia Retail</span>
-              </div>
-              <div>
-                <span>Discount</span>
-              </div>
-              <div>
-                <span>Discount 2</span>
-              </div>
-              <div>
-                <span>Cost</span>
-              </div>
-              <div>
-                <span>Installation + $12 New Hold Down</span>
-              </div>
-              
-              <div>
-                <span>Fascia Cost</span>
-              </div>
-              <div>
-                <span>Motor Price</span>
-              </div>
-              <div>
-                <span>Price</span>
-              </div>
+              <div> <span>Room</span> </div>
+              <div> <span>Group Type</span> </div>
+              <div> <span># of Blinds</span> </div>
+              <div> <span>Width</span> </div>
+              <div> <span>Height</span> </div>
+              <div> <span>Total Sq Ft</span> </div>
+              <div> <span>Retail Price</span> </div>
+              <div> <span>Fascia Retail</span> </div>
+              <div> <span>Discount</span> </div>
+              <div> <span>Discount 2</span> </div>
+              <div> <span>Cost</span> </div>
+              <div> <span>Installation + $12 New Hold Down</span> </div>
+              <div> <span>Fascia Cost</span> </div>
+              <div> <span>Motor Price</span> </div>
+              <div> <span>Price</span> </div>
+              <div> <span>Profit</span> </div>
+              <div> <span>Final Open Roll Price</span> </div>
+              <div> <span>Retail Price</span> </div>
+              <div> <span>Final Fascia Price</span> </div>
+              <div> <span>Price with Fascia</span> </div>
+              <div> <span>Final Motor Price</span> </div>
+              <div> <span>Price with Motors</span> </div>
             </header>
             <div class="content">
               <div class="pagination" >
@@ -319,79 +295,43 @@
                   <div>
                     <span>{{query.price | numericCommas}}</span>
                   </div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
                   <div class="icon-container" (click)="editFromList(query.id, $event)">
                     <mat-icon>edit</mat-icon>
                   </div>
                 </div>
                 <!-- sums -->
                 <div class="row" style="border-top: 3px solid white;">
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                  <div>
-                    <span>{{totalCostSum(group.value) | numericCommas}}</span> <!-- total cost -->
-                  </div>
-                  <div>
-                    <span>{{totalInstallmentCostSum(group.value) | numericCommas}}</span> <!-- total installment cost -->
-                  </div>
-                  <div>
-                    <span>{{totalFasciaSum(group.value) | numericCommas}}</span> <!-- total fascia cost -->
-                  </div>
-                  <div>
-                    <span>{{totalMotorPriceSum(group.value) | numericCommas}}</span> <!-- total motor cost -->
-                  </div>
-                  <div>
-                    <span>{{totalPriceSum(group.value) | numericCommas}}</span> <!-- total price -->
-                  </div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div> <span>{{totalCostSum(group.value) | numericCommas}}</span> <!-- total cost --> </div>
+                  <div> <span>{{totalInstallmentCostSum(group.value) | numericCommas}}</span> <!-- total installment cost --> </div>
+                  <div> <span>{{totalFasciaSum(group.value) | numericCommas}}</span> <!-- total fascia cost --> </div>
+                  <div> <span>{{totalMotorPriceSum(group.value) | numericCommas}}</span> <!-- total motor cost --> </div>
+                  <div> <span>{{totalPriceSum(group.value) | numericCommas}}</span> <!-- total price --> </div>
+                  <div> <span>{{totalProfit(group.value) | numericCommas}}</span> </div>
+                  <div> <span>{{getCleanPrice() | numericCommas}}</span> </div>
+                  <div> <span>{{calculateFinalRetailPrice()}}</span> </div>
+                  <div> <span>{{calculateFinalFasciaPrice(group.value)}}</span> </div>
+                  <div> <span>{{calculatePriceWithFascia(group.value)}}</span> </div>
+                  <div> <span>{{calculateFinalMotorPrice(group.value)}}</span> </div>
+                  <div> <span>{{calculatePriceWithMotor(group.value)}}</span> </div>
                 </div>
-                <div class=" of_4" style="border-width: 1px 0; border-style: solid; border-color: white">
-
-                  <div>
-                    <span>Profit</span>
-                    <div style="margin-left: 10px;">{{totalProfit(group.value) | numericCommas}}</div>
-                  </div>
-                  <div>
-                    <span>Final Open Roll Price</span>
-                    <div style="margin-left: 10px;">{{getCleanPrice() | numericCommas}}</div>
-                  </div>
-                  <div>
-                    <span>Retail Price</span>
-                    <div style="margin-left: 10px;">{{calculateFinalRetailPrice()}}</div>
-                  </div>
-                  <div>
-                    <span>Final Fascia Price</span>
-                    <div style="margin-left: 10px;">{{calculateFinalFasciaPrice(group.value)}}</div>
-                  </div>
-                  <div>
-                    <span>Price with Fascia</span>
-                    <div style="margin-left: 10px;">{{calculatePriceWithFascia(group.value)}}</div>
-                  </div>
-                  <div>
-                    <span>Final Motor Price</span>
-                    <div style="margin-left: 10px;">{{calculateFinalMotorPrice(group.value)}}</div>
-                  </div>
-                  <div>
-                    <span>Price with Motors</span>
-                    <div style="margin-left: 10px;">{{calculatePriceWithMotor(group.value)}}</div>
-                  </div>
-                </div>
+                
               </div>
               <!-- <mat-form-field>
                 <input matInput type="text">

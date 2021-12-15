@@ -20,6 +20,7 @@
     &:hover .icon-container {
         display: block !important;
     }
+    
 }
 
 .table header, .table .content .row{
@@ -27,6 +28,9 @@
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
     position: relative;
     
+    div:nth-of-type(16), div:nth-of-type(17), div:nth-of-type(18), div:nth-of-type(19), div:nth-of-type(20), div:nth-of-type(21), div:nth-of-type(22) { 
+        background-color: #8d3548;
+    }
    
     .icon-container {
         width: 10px;
@@ -58,7 +62,8 @@ mat-card.calcCard {
     
     .table {
         margin-top: 30px;
-
+        width: 148%;
+        overflow-x: scroll;
         header {
             font-weight: bold;
             border-bottom: 4px solid #ddd;
@@ -71,7 +76,7 @@ mat-card.calcCard {
 
         .content {
             position: relative;
-            
+            width: 100%;
             .group {
                 
                 border-width: 0 0 0 1px;
