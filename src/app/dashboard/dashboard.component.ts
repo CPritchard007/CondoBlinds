@@ -5,6 +5,7 @@ import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/d
 import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
 import { WarningDialog } from '../Dialog/warningDialog';
 import { EditItemDialog } from '../Dialog/EditItemDialog';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 /* Interfaces */
 
@@ -69,7 +70,6 @@ interface MaterialGroup {
 })
 export class DashboardComponent implements OnInit {
   
-  @ViewChild('editElement') editor!: ElementRef;
   @ViewChildren('tableItems') tableItems!: QueryList<ElementRef>;
 
   /* Arrays */
@@ -172,6 +172,8 @@ export class DashboardComponent implements OnInit {
   editorItems_Width: number = 0;
   editorItems_Height: number = 0;
   editorItems_Quantity: number = 0;
+  editorItems_Profit: number = 0;
+  editorItems_OpenRollPrice: number = 0;
 
 
   ngOnInit() {}
@@ -203,6 +205,7 @@ export class DashboardComponent implements OnInit {
         this.queriesArray = this.convertToLocalFormat(JSON.parse(localStorageData));
       }
     }
+    /* TODO: create retail price, sqrFt, fascia price, clean price */
 
     // non reset items, such as our static variables, will not be reset, so they will be added here
     this.profitMargin = data.startingVars.profitMargin; // 
@@ -237,7 +240,7 @@ export class DashboardComponent implements OnInit {
     console.log(this.queriesArray, i);
     if (this.currentTab == i ) { this.currentTab = 0; }
     this.queriesArray.splice(i, 1);
-    if (this.queriesArray.length == 0) this.queriesArray.push({name: "table 1", list: []});
+    if (this.queriesArray.length == 0) this.queriesArray.push({name: "Table 1", list: []} as Tables)
     this.uploadToStorage()
   }
     // once the user clicks on the checkmark, the tabs name is then changed, and added to the localstorage
@@ -412,50 +415,62 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
+    let editElement = document.createElement('div');
+    editElement.classList.add('editElement', 'row');
+
+    editElement.innerHTML = `
+      <div><input type="text"/></div>
+    `.repeat(23);
     
+    let elm = this.tableItems.toArray();
     
-    let elm = this.editor;
-    let item = this.tableItems.toArray().find(i => i.nativeElement.id == id);
+    let itemIndex = this.tableItems.toArray().findIndex(i => i.nativeElement.id == id);
+    let item = this.tableItems.toArray()[itemIndex];
+    
+    if (item) {
+      console.log("parent", item.nativeElement);
+      item.nativeElement.insertAdjacentElement('afterend', editElement);
+      
+    }
     console.log("editFromList", item);
-    console.log("currentItem", currentItem, "item", this.tableItems.toArray()[currentItem]);
-
-    if (!item) return;
-    let itemRect = item.nativeElement.getBoundingClientRect();
+    this.dialog.open(EditItemDialog, {width: '90%', data: {
+      'room' : this.editorItems_RoomLabel,
+      'groupType': this.editorItems_GroupType,
+      'groupName': this.editorItems_GroupName,
+      'width': this.editorItems_Width,
+      'height': this.editorItems_Height,
+      'quantity': this.editorItems_Quantity,
+      'profit': this.editorItems_Profit,
+      'openRollPrice': this.editorItems_OpenRollPrice,
+      'groupNames': this.groupNames,
     
-    console.log("itemRect", itemRect, item);
-    this.renderer.setStyle(elm.nativeElement, 'top', itemRect.top + 'px');
-    this.renderer.setStyle(elm.nativeElement, 'left', itemRect.left + 'px');
-    this.renderer.setStyle(elm.nativeElement, 'width', itemRect.width + 'px');
-    this.renderer.setStyle(elm.nativeElement, 'height', itemRect.height + 'px');
-    this.renderer.setStyle(elm.nativeElement, 'display', "grid");
-    
-    
+    }}).afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+        if (result) {
+          console.log("result", this.updatePricing({
+            id: id,
+            roomLabel: result.room,
+            groupName: result.groupName,
+            groupType: result.groupType,
+            width: result.width,
+            height: result.height,
+            quantity: result.quantity,
+          } as QueryStore, null));
+          this.queriesArray[this.currentTab].list[currentItem] = this.updatePricing({
+            id: id,
+            roomLabel: result.room,
+            groupName: result.groupName,
+            groupType: result.groupType,
+            width: result.width,
+            height: result.height,
+            quantity: result.quantity,
+          } as QueryStore, null);
+        }
+        this.uploadToStorage();
+    });    
   }
 
-  confirmEditFromList() {
-    this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
-    let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == this.editorItems_ID);
-    let item = this.queriesArray[this.currentTab].list[currentItem];
 
-    const itemGroupName = item.groupName
-    const editorGroupName = this.editorItems_GroupName; 
-
-    console.log("confirmEditFromList", currentItem, item);
-    let newPrice = this.updatePricing({
-      roomLabel: this.editorItems_RoomLabel,
-      groupName: this.editorItems_GroupName ?? "",
-      groupType: this.editorItems_GroupType,
-      width: this.editorItems_Width,
-      height: this.editorItems_Height,
-      quantity: this.editorItems_Quantity,
-    } as QueryStore, null);
-
-
-    newPrice.id = this.editorItems_ID;
-    this.queriesArray[this.currentTab].list[currentItem] = newPrice;
-    console.log(newPrice);
-    this.uploadToStorage()
-  }
 
   determineShortenedList(max?: number, update: boolean = false) {
     const maxOnScreen = max ?? 50;
@@ -493,7 +508,7 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteFromList() {
-    this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
+    // this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
 
     let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == this.editorItems_ID);
     this.queriesArray[this.currentTab].list.splice(currentItem, 1);

@@ -1,0 +1,36 @@
+
+.container {
+    
+    background-color: whitesmoke;
+    margin-left: -24px;
+    margin-right: -24px;
+    color: black !important;
+    overflow-x: scroll;
+    .row, header {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+        width: 220%;
+        
+        div {
+            outline: 1px solid rgba(0, 0, 0, 0.12);
+            input, select {
+                width: 100%;
+                height: 100%;
+                box-sizing: border-box;
+            }
+            mat-form-field input {
+                font-size: 12px;
+
+            }
+
+            &:empty {
+                background-color: lightgrey;
+            }
+        }
+        
+    }
+    header {
+        font-weight: bold;
+        text-align: center;
+    }
+}

@@ -1,0 +1,66 @@
+<h1>Edit Items</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <header>
+                <div> <span>Room</span> </div>
+                <div> <span>Group Name</span> </div>
+                <div> <span>Group Type</span> </div>
+                <div> <span># of Blinds</span> </div>
+                <div> <span>Width</span> </div>
+                <div> <span>Height</span> </div>
+                <div> <span>Total Sq Ft</span> </div>
+                <div> <span>Retail Price</span> </div>
+                <div> <span>Fascia Retail</span> </div>
+                <div> <span>Discount</span> </div>
+                <div> <span>Discount 2</span> </div>
+                <div> <span>Cost</span> </div>
+                <div> <span>Installation + $12 New Hold Down</span> </div>
+                <div> <span>Fascia Cost</span> </div>
+                <div> <span>Motor Price</span> </div>
+                <div> <span>Price</span> </div>
+                <div> <span>Profit</span> </div>
+                <div> <span>Final Open Roll Price</span> </div>
+                <div> <span>Retail Price</span> </div>
+                <div> <span>Final Fascia Price</span> </div>
+                <div> <span>Price with Fascia</span> </div>
+                <div> <span>Final Motor Price</span> </div>
+                <div> <span>Price with Motors</span> </div>
+            </header>
+            <div class="row">
+                <div> <input type="text" [(ngModel)]="data.room"> </div>
+                <div> <select [(ngModel)]="data.groupName">
+                    <option *ngFor="let item of data.groupNames; index as i" [selected]="">{{item}}</option>
+                </select> </div>
+                <div> <select [(ngModel)]="data.groupType">
+                    <option *ngFor="let mat of MaterialGroups; index as matIndex" [selected]="data.groupType !== mat.tag" [value]="mat.tag">{{mat.name}}</option>
+                </select> </div>
+                <div> <mat-form-field appearance="standard"><input matInput type="number" [(ngModel)]="data.quantity"></mat-form-field></div>
+                <div> <mat-form-field appearance="standard"><input matInput type="number" [(ngModel)]="data.width"></mat-form-field></div>
+                <div> <mat-form-field appearance="standard"><input matInput type="number" [(ngModel)]="data.height"></mat-form-field></div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <!-- <div> <input [(ngModel)]="data.profit"> </div>
+                <div> <input [(ngModel)]="data.openRollPrice" > </div> -->
+                <div> </div>
+                <div> </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+                <div>  </div>
+            </div>
+        </div>
+    </div>
+    <mat-form-field appearamce="standard">
+        <button mat-railsed-button color="accent">(submit)=""</button>
+    </mat-form-field>
+</div>
