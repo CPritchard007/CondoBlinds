@@ -37,10 +37,12 @@
             <div class="groupName" style="display: flex;">
               <input matInput type="text" [(ngModel)]="groupName">
               <mat-select style="height: 0;" [(ngModel)]="groupName">
-                <mat-option *ngFor="let group of groupNames" [value]="group">{{group || "default"}}</mat-option>
+                <mat-option *ngFor="let group of groupNames" [value]="group">{{group}}</mat-option>
               </mat-select>
             </div>
           </mat-form-field>
+          <br>
+          <i [ngClass]="{hidden: groupName != '' || groupName != undefined }">Discount cannot be a null value</i>
         </div>
         <div>
           <span>Group Type</span>
@@ -237,31 +239,31 @@
               <div> <span>Price with Motors</span> </div>
             </header>
             <div class="content">
-              <div class="group" *ngFor="let group of determineShortenedList(maxItemsInList, true)[currentPagination]; index as groupIndex">
+              <div class="group" *ngFor="let group of determineShortenedList(maxItemsInList, false)[currentPagination]; index as groupIndex">
                 <div class="groupHeader">
-                  <span>{{group.name || "Default"}}</span>
+                  <span>{{group.Group || "Default"}}</span>
 
                   <select style="margin-left: 16px;" (change)="groupTypeChange(groupIndex, $event)">
                     <option *ngFor="let mat of MaterialGroups; index as i"
-                      [selected]="mat.tag == group.value[0].groupType" [value]="mat.tag">{{mat.name}}</option>
+                      [selected]="mat.tag == group.GroupItems[0].groupType" [value]="mat.tag">{{mat.name}}</option>
                   </select>
                 </div>
-                <div #tableItems class="row" *ngFor="let query of group.value; index as itemIndex" [id]="query.id">
-                  <div> <span>{{query.roomLabel}}</span> </div>
-                  <div> <span>{{query.groupType}}</span> </div>
-                  <div> <span>{{query.quantity}}</span> </div>
-                  <div> <span>{{query.width}}</span> </div>
-                  <div> <span>{{query.height}}</span> </div>
-                  <div> <span>{{query.sqrFt}}</span> </div>
-                  <div> <span>{{query.retailPrice | numericCommas}}</span> </div>
-                  <div> <span>{{query.fasciaRetail | numericCommas}}</span> </div>
-                  <div> <span>{{query.discount + " %"}}</span> </div>
-                  <div> <span>{{query.discount2 + " %"}}</span> </div>
-                  <div> <span>{{query.cost | numericCommas}}</span> </div>
-                  <div> <span>{{query.installmentCost | numericCommas}}</span> </div>
-                  <div> <span>{{query.fasciaCost | numericCommas}}</span> </div>
-                  <div> <span>{{query.danielsMotorPrice | numericCommas}}</span> </div>
-                  <div> <span>{{query.price | numericCommas}}</span> </div>
+                <div #tableItems class="row" *ngFor="let query of group.GroupItems; index as itemIndex" [id]="query.id">
+                  <div> <span>{{query.roomLabel }}</span> </div>
+                  <div> <span>{{query.groupType }}</span> </div>
+                  <div> <span>{{query.quantity }}</span> </div>
+                  <div> <span>{{query.width }}</span> </div>
+                  <div> <span>{{query.height }}</span> </div>
+                  <div> <span>{{query.sqrFt }}</span> </div>
+                  <div> <span>{{query.retailPrice | numericCommas }}</span> </div>
+                  <div> <span>{{query.fasciaRetail | numericCommas }}</span> </div>
+                  <div> <span>{{query.discount + " %" }}</span> </div>
+                  <div> <span>{{query.discount2 + " %" }}</span> </div>
+                  <div> <span>{{query.cost | numericCommas }}</span> </div>
+                  <div> <span>{{query.installmentCost | numericCommas }}</span> </div>
+                  <div> <span>{{query.fasciaCost | numericCommas }}</span> </div>
+                  <div> <span>{{query.danielsMotorPrice | numericCommas }}</span> </div>
+                  <div> <span>{{query.price | numericCommas }}</span> </div>
                   <div></div>
                   <div></div>
                   <div></div>
@@ -269,7 +271,7 @@
                   <div></div>
                   <div></div>
                   <div></div>
-                  <div class="icon-container" (click)="editFromList(query.id, $event)">
+                  <div class="icon-container" (click)="editFromList(query.groupName, query.id, $event)">
                     <mat-icon>edit</mat-icon>
                   </div>
                 </div>
@@ -285,18 +287,21 @@
                   <div></div>
                   <div></div>
                   <div></div>
-                  <div> <span>{{totalCostSum(group.value) | numericCommas}}</span> <!-- total cost --> </div>
-                  <div> <span>{{totalInstallmentCostSum(group.value) | numericCommas}}</span> <!-- total installment cost --> </div>
-                  <div> <span>{{totalFasciaSum(group.value) | numericCommas}}</span> <!-- total fascia cost --> </div>
-                  <div> <span>{{totalMotorPriceSum(group.value) | numericCommas}}</span> <!-- total motor cost --> </div>
-                  <div> <span>{{totalPriceSum(group.value) | numericCommas}}</span> <!-- total price --> </div>
-                  <div> <span>{{totalProfit(group.value) | numericCommas}}</span> </div>
+                  <div> <span>{{totalCostSum(group.GroupItems) | numericCommas}}</span> <!-- total cost --> </div>
+                  <div> <span>{{totalInstallmentCostSum(group.GroupItems) | numericCommas}}</span> <!-- total installment cost --> </div>
+                  <div> <span>{{totalFasciaSum(group.GroupItems) | numericCommas}}</span> <!-- total fascia cost --> </div>
+                  <div> <span>{{totalMotorPriceSum(group.GroupItems) | numericCommas}}</span> <!-- total motor cost --> </div>
+                  <div> <span>{{totalPriceSum(group.GroupItems) | numericCommas}}</span> <!-- total price --> </div>
+                  <div> <span>{{totalProfit(group.GroupItems) | numericCommas}}</span> </div>
                   <div> <span>{{getCleanPrice() | numericCommas}}</span> </div>
                   <div> <span>{{calculateFinalRetailPrice()}}</span> </div>
-                  <div> <span>{{calculateFinalFasciaPrice(group.value)}}</span> </div>
-                  <div> <span>{{calculatePriceWithFascia(group.value)}}</span> </div>
-                  <div> <span>{{calculateFinalMotorPrice(group.value)}}</span> </div>
-                  <div> <span>{{calculatePriceWithMotor(group.value)}}</span> </div>
+                  <div> <span>{{calculateFinalFasciaPrice(group.GroupItems)}}</span> </div>
+                  <div> <span>{{calculatePriceWithFascia(group.GroupItems)}}</span> </div>
+                  <div> <span>{{calculateFinalMotorPrice(group.GroupItems)}}</span> </div>
+                  <div> <span>{{calculatePriceWithMotor(group.GroupItems)}}</span> </div>
+                  <div class="icon-container">
+                    <mat-icon>manage</mat-icon>
+                  </div>
                 </div>
                 
               </div>

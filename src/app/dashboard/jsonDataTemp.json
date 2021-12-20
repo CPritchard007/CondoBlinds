@@ -1,0 +1,49 @@
+[
+    {
+        "name":"table 1",
+        "list":[{
+            "Group":"Hello World",
+            "GroupItems":[{
+                "id":"1640030293106_0",
+                "roomLabel":"",
+                "groupName":"Hello World",
+                "groupType":"GroupC",
+                "quantity":1,
+                "width":100,
+                "height":100,
+                "discount":50,
+                "discount2":50
+            }],
+            "GroupAlterations":{}
+            },{
+            "Group":"Hell",
+            "GroupItems":[{
+                "id":"1640030305347_0",
+                "roomLabel":"",
+                "groupName":"Hell",
+                "groupType":"GroupC",
+                "quantity":1,
+                "width":50,
+                "height":50,
+                "discount":50,
+                "discount2":50
+            },{
+                "id":"1640030324958_0",
+                "roomLabel":"",
+                "groupName":"Hell",
+                "groupType":"GroupC",
+                "quantity":1,
+                "width":120,
+                "height":120,
+                "discount":50,
+                "discount2":50
+            }],
+            "GroupAlterations":{}
+        },
+        {
+            "Group":"HERE",
+            "GroupItems":[],
+            "GroupAlterations":{}
+        }
+    ]
+}]

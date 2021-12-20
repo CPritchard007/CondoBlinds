@@ -1,66 +1,58 @@
-import { Component, Input, OnInit, Output, SimpleChanges, EventEmitter, ViewChild, NgZone, ElementRef, Directive, QueryList, ViewChildren, Renderer2 } from '@angular/core';
+  import { Component, OnInit, ElementRef, QueryList, ViewChildren, Renderer2 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
-import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { RemoveItemDialog } from '../Dialog/RemoveItemDialog';
-import { WarningDialog } from '../Dialog/warningDialog';
+import { MatDialog} from '@angular/material/dialog';
 import { EditItemDialog } from '../Dialog/EditItemDialog';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 /* Interfaces */
 
 
 
 // items seperated into different groups labeled by room name
-interface Group {
-  name: string;
-  value: query[];
-}
+
 // items pulled from storage with caluclated values
 interface query {
     id: string;
     roomLabel: string;
     groupName: string;
     groupType: string;
+    quantity: number;
     width: number;
     height: number;
-    cost: number;
-    price: number;
-    quantity: number;
-    sqrFt: string;
-    retailPrice: number;
     discount: number;
     discount2: number;
-    installmentCost: number;
-    fasciaRetail: number;
-    fasciaCost: number;
-    danielsMotorPrice: number;
-}
-// itens pulled from storage without caluclated values
-interface QueryStore {
-    groupName: string;
-    groupType: string;
-    roomLabel: string;
-    quantity: number;
-    width: number;
-    height: number;
-}
-// get items that are contained in certain tab
-interface Tables {
-  name: string;
-  list: query[];
+    cost?: number;
+    price?: number;
+    
+    sqrFt?: string;
+    retailPrice?: number;
+    installmentCost?: number;
+    fasciaRetail?: number;
+    fasciaCost?: number;
+    danielsMotorPrice?: number;
 }
 
-// get tabs related to queries without calculated values
-interface StorageTables {
-  name: string;
-  list: QueryStore[];
-}
 
 // used for GroupType selector
 interface MaterialGroup {
   tag: string;
   name: string;
+}
+
+interface Tables {
+  name: string;
+  list: Groups[];
+}
+
+interface Groups {
+  Group: string;
+  GroupItems: query[];
+  GroupAlterations: ManualCalculations
+}
+
+interface ManualCalculations {
+  openRollPrice?: number,
+  profit?: number
 }
 
 @Component({
@@ -79,7 +71,7 @@ export class DashboardComponent implements OnInit {
   groupNames: Array<string> = [];  // names of each row group in the table (groups items together to get total calculations).
   queriesArray: Array<Tables> = []; // stores all local data to be used as JSON
 
-  shortenedArray?: Array<Array<Group>> = undefined; // used to store the items that are shorted
+  shortenedArray?: Array<Array<Groups>> = undefined; // used to store the items that are shorted
 
   // allow for itteration through the groupTypes for selector
   MaterialGroups: Array<MaterialGroup> = [
@@ -165,16 +157,17 @@ export class DashboardComponent implements OnInit {
   finalMotorPrice = 0;
   
   editItem: string = '';
-  editorItems_ID: string = '';
-  editorItems_GroupName: string = "";
-  editorItems_GroupType: string = "";
-  editorItems_RoomLabel: string = "";
-  editorItems_Width: number = 0;
-  editorItems_Height: number = 0;
-  editorItems_Quantity: number = 0;
-  editorItems_Profit: number = 0;
-  editorItems_OpenRollPrice: number = 0;
-
+  editorItems_ID?: string = '';
+  editorItems_GroupName?: string = "";
+  editorItems_GroupType?: string = "";
+  editorItems_RoomLabel?: string = "";
+  editorItems_Width?: number = 0;
+  editorItems_Height?: number = 0;
+  editorItems_Quantity?: number = 0;
+  editorItems_Profit?: number = 0;
+  editorItems_OpenRollPrice?: number = 0;
+  editorItems_Discount?: number = 0;
+  editorItems_Discount2?: number = 0;
 
   ngOnInit() {}
 
@@ -211,14 +204,16 @@ export class DashboardComponent implements OnInit {
     this.profitMargin = data.startingVars.profitMargin; // 
     this.costOfInstallation = data.startingVars.costOfInstallation
     
-    this.groupNames =[]
+    this.groupNames = []
     
     this.getGroupNames();
     this.groupSort();
     this.groupName = this.groupNames[0]
 
-    // console.log(this.queriesArray[this.currentTab].list)
+    // console.log(this.queriesArray)
     // console.log(this.determineShortenedList())
+
+
   }
     /* this is triggered when the tab is changed, this will assure the user cannot change to the same tab */
   tabChange(tabChangeEvent: MatTabChangeEvent) {
@@ -256,77 +251,93 @@ export class DashboardComponent implements OnInit {
     button.parentElement.parentElement.childNodes[0].childNodes[0].style.display = "flex";    
   }
 
-  convertToLocalFormat(storageItems: Array<StorageTables>): Tables[] {
+  convertToLocalFormat(storageItems: Tables[]): Tables[] {
     console.log("convertToLocalFormat");
-    let polishedTab = []
-    let polishedItems: Tables[] = storageItems.map((tab) => {
-      polishedTab = this.updateTable(tab.list);
-      
-      return {name: tab.name, list: polishedTab};
+
+    console.log(storageItems);
+    let tables: Tables[] = storageItems.map((tab) => {
+      return {
+        name: tab.name,
+        list: tab.list.map((groups: Groups) => {
+          return {
+            Group: groups.Group,
+            GroupItems: groups.GroupItems.map((items: query, itemIndex: number) => {
+              return this.updatePricing(items, itemIndex)
+            }),
+            
+            GroupAlterations: {
+              openRollPrice: groups.GroupAlterations.openRollPrice,
+              profit: groups.GroupAlterations.profit,
+            } as ManualCalculations
+          } as Groups
+        })
+      } as Tables;
     });
-    return polishedItems;
+    return tables;
   }
 
   convertToStorageFormat() {
-    let storageTypeItems = this.queriesArray.map(x => {
+    let tables: Tables[] = this.queriesArray.map((tab: Tables) => {
       return {
-        name: x.name,
-        list: x.list.map(listItem => {
+        name: tab.name,
+        list: tab.list.map((groups: Groups) => {
           return {
-            "groupName": listItem.groupName,
-            "groupType": listItem.groupType,
-            "roomLabel": listItem.roomLabel,
-            "quantity": listItem.quantity,
-            "width": listItem.width,
-            "height": listItem.height,
-          }
+            Group: groups.Group,
+            GroupItems: groups.GroupItems.map((items: query) => {
+              return {
+                id: items.id,
+                roomLabel: items.roomLabel,
+                groupName: items.groupName,
+                groupType: items.groupType,
+                quantity: items.quantity,
+                width: items.width,
+                height: items.height,
+                discount: items.discount,
+                discount2: items.discount2,
+              } as query
+            }),
+            GroupAlterations: {
+
+            } as ManualCalculations
+          } as Groups
         })
       }
     });
-    return storageTypeItems;
+
+    return tables;
   }
 
-  updateTable(tabList: QueryStore[] | null): query[] {
-    console.log("updateTable");
-    let updatedTabList: query[] = [];
-    if (tabList) {
-      updatedTabList = tabList.map((item, itemIndex )=> {
-        return this.updatePricing(item, itemIndex);
-      });
-    }
-    return updatedTabList;
-  }
 
-  updatePricing(item:QueryStore, index: number | null): query {
-      let sqrFt = this.calculateSqrFt(item.width, item.height, item.quantity);
-      let retailPrice = this.calculateRetailPrice(item.width, item.height, item.groupType);
-      let cost = this.calculateCost(retailPrice, this.discount, this.discount2, item.quantity);
-      let price = this.calculatePrice(cost);
-      let installmentCost = this.calculateInstallmentCost(item.quantity);
+  updatePricing(item:query, index: number | null): query {
+    let sqrFt = this.calculateSqrFt(item.width, item.height, item.quantity);
+    let retailPrice = this.calculateRetailPrice(item.width, item.height, item.groupType);
+    let cost = this.calculateCost(retailPrice, this.discount, this.discount2, item.quantity);
+    let price = this.calculatePrice(cost);
+    let installmentCost = this.calculateInstallmentCost(item.quantity);
       
-      let fasciaRetail = this.calculateFasciaRetail(item.width, item.groupType);
-      let fasciaCost = this.calculateFasciaCost(fasciaRetail, this.discount, this.discount2, item.quantity);
-      let danielsMotorPrice = this.calculateDanielsMotorPrice(item.quantity);
+    let fasciaRetail = this.calculateFasciaRetail(item.width, item.groupType);
+    let fasciaCost = this.calculateFasciaCost(fasciaRetail, this.discount, this.discount2, item.quantity);
+    let danielsMotorPrice = this.calculateDanielsMotorPrice(item.quantity);
 
-      return {
-        id: Date.now() + "_" + index,
-        roomLabel: item.roomLabel,
-        groupName: item.groupName,
-        groupType: item.groupType,
-        width: item.width,
-        height: item.height,
-        sqrFt: sqrFt,
-        retailPrice: retailPrice,
-        cost: cost,
-        quantity: item.quantity,
-        price: price,
-        discount: this.discount,
-        discount2: this.discount2,
-        installmentCost: installmentCost,
-        fasciaRetail: fasciaRetail, 
-        fasciaCost: fasciaCost,
-        danielsMotorPrice: danielsMotorPrice
-      }
+    return {
+      id: Date.now() + "_" + index,
+      roomLabel: item.roomLabel,
+      groupName: item.groupName,
+      groupType: item.groupType,
+      width: item.width,
+      height: item.height,
+      sqrFt: sqrFt,
+      retailPrice: retailPrice,
+      cost: cost,
+      quantity: item.quantity,
+      price: price,
+      discount: item.discount,
+      discount2: item.discount2,
+      installmentCost: installmentCost,
+      fasciaRetail: fasciaRetail, 
+      fasciaCost: fasciaCost,
+      danielsMotorPrice: danielsMotorPrice
+    }
   }
 
   uploadToStorage() { if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); }
@@ -349,90 +360,74 @@ export class DashboardComponent implements OnInit {
   addToList() {
     if ((this.valWidth <= 0 || this.valWidth == null) ||
         (this.valHeight <= 0 || this.valHeight == null) ||
-        (this.quantity <= 0 || this.quantity == null)) return;
-    console.log("addToList");
-    try { 
-      let item = this.updatePricing({
+        (this.quantity <= 0 || this.quantity == null) || 
+        (this.groupName == undefined || this.groupName == "")) return;
+    
+    let groupIndex = this.queriesArray[this.currentTab].list.findIndex((group: Groups) => group.Group == this.groupName);
+
+    if (groupIndex == -1) {
+      this.queriesArray[this.currentTab].list.push({
+        Group: this.groupName,
+        GroupItems: [this.updatePricing(({
+          id: Date.now() + "_" + 0,
+          roomLabel: this.roomLabel,
+          groupName: this.groupName,
+          groupType: this.groupType,
+          width: this.valWidth,
+          height: this.valHeight,
+          quantity: this.quantity,
+          discount: this.discount,
+          discount2: this.discount2,
+        } as query), 0)],
+      } as Groups);
+
+    } else {
+      this.queriesArray[this.currentTab].list[groupIndex].GroupItems = [...this.queriesArray[this.currentTab].list[groupIndex].GroupItems, 
+      this.updatePricing(({
+        id: Date.now() + "_" + 0,
         roomLabel: this.roomLabel,
         groupName: this.groupName,
         groupType: this.groupType,
         width: this.valWidth,
         height: this.valHeight,
         quantity: this.quantity,
-        
-      } as QueryStore, null);
-
-      this.queriesArray[this.currentTab].list.push(item);
-      this.uploadToStorage() // check if you can add to LocalStorage
-      this.shortenedArray = undefined;
-    } catch (error) {
-      console.log("error", error);
-      if (error instanceof TypeError) { // if the current tab does not exist
-        const timer = 2000; // number of ms before the modal closes
-        let dialogRef = this.dialog.open(WarningDialog, { // create a new modal dialog with the instance of Warning Dialog
-                                                      // which can be found in the dialog folder. this will just warn the user.
-          width: '50%', // width of the modal
-          data: {}
-        });
-        dialogRef.afterOpened().subscribe( _ => {
-          setTimeout(() => {
-            dialogRef.close();
-
-          }, timer); /* once the modal is opened, the app starts a timer, which will count down to 0.
-                      this is where the app will eventually closr the modal*/
-        });
-      }
+        discount: this.discount,
+        discount2: this.discount2,
+      } as query), 0)];
     }
-    
     this.uploadToStorage() // check if you can add to LocalStorage
     this.resetValues(); // reset values
     if (!this.groupNames.includes(this.groupName)) {
       this.groupNames.push(this.groupName);
     }
 
-    this.groupSort();
+    this.determineShortenedList(undefined, true);
   }
 
-  editFromList( id :string, event: any) {
-    let currentItem: number = this.queriesArray[this.currentTab].list.findIndex((index) => {
-      return index.id == id;
-    });
 
-    let element = this.queriesArray[this.currentTab].list[currentItem];
+
+  editFromList(groupName: string, id :string, event: any) {
+    let currentTable = this.currentTab;
+    let currentGroup = this.queriesArray[currentTable].list.findIndex((group) => group.Group == groupName);
+    let currentItem = this.queriesArray[currentTable].list[currentGroup].GroupItems.findIndex((item) => item.id == id);
+    
+    let element = this.queriesArray[this.currentTab].list[currentGroup].GroupItems[currentItem];
     
     this.editItem = id;
 
     this.editorItems_ID = id;
-    this.editorItems_GroupType = element.groupType ?? "";
-    this.editorItems_GroupName = element.groupName;
+    this.editorItems_GroupType = element.groupType;
+    this.editorItems_GroupName = groupName;
     this.editorItems_RoomLabel = element.roomLabel;
     this.editorItems_Width = element.width;
     this.editorItems_Height = element.height;
     this.editorItems_Quantity = element.quantity;
+    this.editorItems_Discount = element.discount;
+    this.editorItems_Discount2 = element.discount2;
     
-    if (currentItem == -1) {
-      console.error("editFromList", "item not found");  
-      return;
-    }
-
-    let editElement = document.createElement('div');
-    editElement.classList.add('editElement', 'row');
-
-    editElement.innerHTML = `
-      <div><input type="text"/></div>
-    `.repeat(23);
-    
-    let elm = this.tableItems.toArray();
-    
-    let itemIndex = this.tableItems.toArray().findIndex(i => i.nativeElement.id == id);
-    let item = this.tableItems.toArray()[itemIndex];
-    
-    if (item) {
-      console.log("parent", item.nativeElement);
-      item.nativeElement.insertAdjacentElement('afterend', editElement);
+    if (currentItem == -1) return;
       
-    }
-    console.log("editFromList", item);
+
     this.dialog.open(EditItemDialog, {width: '90%', data: {
       'room' : this.editorItems_RoomLabel,
       'groupType': this.editorItems_GroupType,
@@ -443,11 +438,13 @@ export class DashboardComponent implements OnInit {
       'profit': this.editorItems_Profit,
       'openRollPrice': this.editorItems_OpenRollPrice,
       'groupNames': this.groupNames,
+      'discount': this.discount,
+      'discount2': this.discount2,
     
     }}).afterClosed().subscribe(result => {
         console.log('The dialog was closed', result);
         if (result) {
-          console.log("result", this.updatePricing({
+          let calculateItem = this.updatePricing({
             id: id,
             roomLabel: result.room,
             groupName: result.groupName,
@@ -455,62 +452,83 @@ export class DashboardComponent implements OnInit {
             width: result.width,
             height: result.height,
             quantity: result.quantity,
-          } as QueryStore, null));
-          this.queriesArray[this.currentTab].list[currentItem] = this.updatePricing({
-            id: id,
-            roomLabel: result.room,
-            groupName: result.groupName,
-            groupType: result.groupType,
-            width: result.width,
-            height: result.height,
-            quantity: result.quantity,
-          } as QueryStore, null);
+            discount: result.discount,
+            discount2: result.discount2,
+          } as query, 0);
+          this.queriesArray[this.currentTab].list[currentGroup].GroupItems[currentItem] = calculateItem;
+
+          if((result.groupName || "default") != (this.editorItems_GroupName || "default")) {
+            let item = this.queriesArray[this.currentTab].list[currentGroup].GroupItems.findIndex((item) => item.id == id);
+            let nextGroup = this.queriesArray[this.currentTab].list.findIndex((group) => group.Group == result.groupName);
+            this.queriesArray[this.currentTab].list[nextGroup].GroupItems.push(calculateItem);            
+
+            this.queriesArray[this.currentTab].list[currentGroup].GroupItems.splice(item, 1);
+
+            if (this.queriesArray[this.currentTab].list[currentGroup].GroupItems.length == 0) {
+              console.log("remove group");
+              this.queriesArray[this.currentTab].list.splice(currentGroup, 1);
+              this.groupNames.splice(this.groupNames.indexOf(groupName), 1);
+            }
+            
+          } 
         }
+        
+        this.determineShortenedList(undefined, true);
         this.uploadToStorage();
     });    
+
+    this.editorItems_ID = undefined;
+    this.editorItems_GroupType = undefined;
+    this.editorItems_GroupName = undefined;
+    this.editorItems_RoomLabel = undefined;
+    this.editorItems_Width = undefined;
+    this.editorItems_Height = undefined;
+    this.editorItems_Quantity = undefined;
   }
 
 
 
   determineShortenedList(max?: number, update: boolean = false) {
     const maxOnScreen = max ?? 50;
-
-    let sortedList = this.groupListItems(this.queriesArray[this.currentTab].list);
-    let itemCount: number[] = sortedList.map(item => {
-      return item.value.length;
+    let list = this.queriesArray[this.currentTab].list;
+    let itemCount: number[] = this.queriesArray[this.currentTab].list.map(item => {
+      return item.GroupItems.length;
     });
-    // console.log("determinedShortendList", sortedList, "itemCount", itemCount);
-    if (!this.shortenedArray || update) {
-      let simpleShortenedList: Array<Array<Group>> = [[]];
+    if (typeof this.shortenedArray == 'undefined' || update) {
+      console.log("test if stop", this.shortenedArray)
+
+      let simpleShortenedList: Array<Array<Groups>> = [[]];
       let currentCount = 0;
       let currentIndex = 0;
 
       for (let i = 0; i < itemCount.length; i++) {
-        // console.log("currentCount", currentCount,"currentIndex", currentIndex, "itemCount[i]", itemCount[i], "maxOnScreen", maxOnScreen);
+
         if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
-          // console.log("fits within maxOnScreen or is greater by iteself");
+
           currentCount += itemCount[i];
           if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
-          simpleShortenedList[currentIndex].push(sortedList[i]);
+          simpleShortenedList[currentIndex].push(list[i]);
+
         } else {
           currentIndex ++;
           if (simpleShortenedList[currentIndex] == null) simpleShortenedList[currentIndex] = [];
-          simpleShortenedList[currentIndex].push(sortedList[i]);
+          simpleShortenedList[currentIndex].push(list[i]);
           currentCount = 0;
         }
       }
       this.numOfPages = simpleShortenedList.length;
-
       this.shortenedArray = simpleShortenedList;
     }
-    return this.shortenedArray;
-  
+    
+    return this.shortenedArray;    
   }
 
   deleteFromList() {
     // this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
+    let groupIndex = this.queriesArray[this.currentTab].list.findIndex((group) => group.Group == this.editorItems_GroupName);
+    this.queriesArray[this.currentTab].list[groupIndex]
 
-    let currentItem = this.queriesArray[this.currentTab].list.findIndex((x) => x.id == this.editorItems_ID);
+    let currentItem = this.queriesArray[this.currentTab].list[groupIndex].GroupItems.findIndex((x) => x.id == this.editorItems_ID);
     this.queriesArray[this.currentTab].list.splice(currentItem, 1);
     this.uploadToStorage();
     this.resetValues();
@@ -655,9 +673,9 @@ export class DashboardComponent implements OnInit {
 
   getGroupNames() {
     this.queriesArray[this.currentTab].list.forEach((element, index) => {
-      if (index === 0) { this.groupName = element.groupName; }
-      if (!this.groupNames.includes(element.groupName)) {
-        this.groupNames.push(element.groupName); 
+      if (index === 0) { this.groupName = element.Group; }
+      if (!this.groupNames.includes(element.Group)) {
+        this.groupNames.push(element.Group); 
       }
     }); 
   }
@@ -731,37 +749,13 @@ export class DashboardComponent implements OnInit {
     return this.cleanCost
   }
 
-  groupListItems(list: query[]) {
-    let listGroups: Group[] = [];
-    list.forEach( (li, index) => {
-      if (listGroups.length === 0) {
-        listGroups.push({name: li.groupName, value: [li]});
-      } else {
-        let found = false;
-        listGroups.forEach( (group, i) => {
-          if (group.name === li.groupName) {
-            group.value.push(li);
-            found = true;
-          }
-        });
-        if (!found) {
-          listGroups.push({name: li.groupName, value: [li]});
-        }
-      }
-    });
-    let sortedList = listGroups.sort((a,b) => {
-      if (a.name == '') return '_' > b.name? 1: -1;
-      if (b.name == '') return a.name > '_'? 1: -1;
-      return a.name > b.name ? 1 : -1;
-    });
-    return sortedList;
-  }
-
   groupTypeChange(groupIndex: number, event: any) {
    let value = event.target.value;
-   let sortedArray = this.groupListItems(this.queriesArray[this.currentTab].list);
-   let idArray = sortedArray[groupIndex].value.map(x => x.id);
-   let polishedItems = this.queriesArray[this.currentTab].list.map((item) => {
+   let list = this.queriesArray[this.currentTab].list;
+   
+   let idArray = list[groupIndex].GroupItems.map(x => x.id);
+   let polishedItems = this.queriesArray[this.currentTab].list[groupIndex].GroupItems.map((item) => {
+
       if (idArray.includes(item.id)) {
         item.groupType = value;
         return this.updatePricing({
@@ -771,11 +765,13 @@ export class DashboardComponent implements OnInit {
           height: item.height,
           roomLabel: item.roomLabel,
           quantity: item.quantity,
-        } as QueryStore, null);
+          discount: item.discount,
+          discount2: item.discount2,
+        } as query, null);
       }
       return item;
     });
-    if (polishedItems) this.queriesArray[this.currentTab].list = polishedItems;
+    if (polishedItems) this.queriesArray[this.currentTab].list[groupIndex].GroupItems = polishedItems;
     this.uploadToStorage() // check if you can add to LocalStorage
     
   }
@@ -800,27 +796,25 @@ export class DashboardComponent implements OnInit {
     let data;
     if (items.type == 'json') {
       data = JSON.parse(items.data);
+      console.log("items abailable", data);
       for (let tableIndex in data) {
         let table = data[tableIndex];
         let isCurrentTable = this.queriesArray.findIndex(x => x.name == table.name);
-        let items: query[] = (table.list as QueryStore[]).map((x, i) => {
-          return this.updatePricing(x,i);
+        let items: Groups[] = (table.list as Groups[]).map((x, i) => {
+          return {
+            Group: x.Group,
+            GroupItems: x.GroupItems.map((y, j) => {
+              return this.updatePricing(y,j)
+            }),
+            GroupAlterations: x.GroupAlterations,
+          }
         });
-        if (isCurrentTable == -1) {
-          this.queriesArray.push({
-            name: table.name,
-            list: items
-          })
-        } else {
-          
-          this.queriesArray[isCurrentTable].list.push(...items);
-        }
       }
     } else if (items.type == 'csv') {
       setTimeout(() => {
         data = items.data;
         data.shift();
-        let itemsArray: query[] = data.map((x: any, i: number) => {
+        let itemsArray: Groups[] = data.map((x: any, i: number) => {
           console.log(x.roomLabel, x.width, x.height, x.quantity, x.groupName, x.groupType);
           return this.updatePricing(x,i);
         })

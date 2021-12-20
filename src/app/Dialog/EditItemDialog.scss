@@ -9,7 +9,7 @@
     .row, header {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-        width: 220%;
+        width: 100%;
         
         div {
             outline: 1px solid rgba(0, 0, 0, 0.12);

@@ -46,6 +46,6 @@ export class EditItemDialog {
         }
       ];
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: {room: string, groupType: string, groupName: string, quantity: number, width: number, height: number, profit: number, openRollPrice: number, groupNames: string[]}) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: {room: string, groupType: string, groupName: string, quantity: number, width: number, height: number, groupNames: string[], discount: number, discount2: number}) { }
 
 }
