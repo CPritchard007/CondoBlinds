@@ -5,7 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class NumericCommasPipe implements PipeTransform {
 
-  transform(value: number | string, ...args: unknown[]): unknown {
+  transform(value: number | string | undefined, ...args: unknown[]): unknown {
+    if (value === undefined) return value;
     let str;
     if (typeof value === 'number') str = value.toString();
     else str = value;
