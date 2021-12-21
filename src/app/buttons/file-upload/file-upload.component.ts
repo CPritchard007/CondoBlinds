@@ -7,6 +7,8 @@ interface FileItem {
   quantity: number;
   width: number;
   height: number;
+  discount: number;
+  discount2: number;
 }
 
 @Component({
@@ -53,6 +55,8 @@ export class FileUploadComponent implements OnInit {
                   quantity: parseInt(row[3]),
                   width: parseInt(row[4]),
                   height: parseInt(row[5]),
+                  discount: parseInt(row[6]),
+                  discount2: parseInt(row[7]),
                 }
                 this.dataJson.push(json);
               }
@@ -65,7 +69,6 @@ export class FileUploadComponent implements OnInit {
       if (file.type == "application/json") {
         reader.readAsText(file);
         reader.onload = (e: any) => {
-          console.log(reader.result);
           let json: string = reader.result as string;
           this.dataJson = JSON.parse(json);
           this.onFinalData.emit({type: "json", data: this.dataJson});

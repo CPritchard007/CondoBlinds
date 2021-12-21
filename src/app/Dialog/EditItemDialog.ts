@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 interface DialogData {
     animal: string;
@@ -46,6 +46,6 @@ export class EditItemDialog {
         }
       ];
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: {room: string, groupType: string, groupName: string, quantity: number, width: number, height: number, groupNames: string[], discount: number, discount2: number}) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: {room: string, groupType: string, groupName: string, quantity: number, width: number, height: number, groupNames: string[], discount: number, discount2: number, delete?: boolean}) { }
 
 }

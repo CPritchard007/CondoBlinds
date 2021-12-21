@@ -36,6 +36,7 @@ import { NotesButtonComponent } from './buttons/notes/notes.component';
 import { RouterModule } from '@angular/router';
 import { NotesComponent } from './notes-component/notes-component.component';
 import { ReturnToDashButtonComponent } from './buttons/return-to-dash-button/return-to-dash-button.component';
+import { EditCalculationDialog } from './Dialog/EditCalculationDialog';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { ReturnToDashButtonComponent } from './buttons/return-to-dash-button/ret
     HelpBarComponent,
     RemoveItemDialog,
     EditItemDialog,
+    EditCalculationDialog,
     FileUploadComponent,
     FileExportComponent,
     RefreshStorageComponent,

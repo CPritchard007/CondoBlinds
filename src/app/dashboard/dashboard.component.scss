@@ -32,6 +32,10 @@
     div:nth-of-type(16), div:nth-of-type(17), div:nth-of-type(18), div:nth-of-type(19), div:nth-of-type(20), div:nth-of-type(21), div:nth-of-type(22) { 
         background-color: #8d8c3585;
     }
+
+    div {
+        
+    }
    
     .icon-container {
         width: 10px;
@@ -49,9 +53,9 @@
 
     & div {
         padding: 3px 5px;
-        
-        text-align: center;
 
+        text-align: center;
+        width: 1fr;
         & + div:not(.icon-container) {
             border-left: 1px solid rgba(243, 243, 243, 0.12);
         }
@@ -64,7 +68,7 @@ mat-card.calcCard {
     .table {
         margin-top: 30px;
         overflow-x: scroll;
-        header, .content { width: 148%;}
+        header, .content { width: 200%;}
         header {
             font-weight: bold;
             border-bottom: 4px solid #ddd;
@@ -72,6 +76,7 @@ mat-card.calcCard {
     
             & div {
                 padding-bottom: 4px;
+                
             }
         }
 

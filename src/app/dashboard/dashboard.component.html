@@ -2,7 +2,7 @@
 
 <file-upload (onFinalData)="itemIsAvailable($event)"></file-upload>
 
-<file-export ></file-export>
+<file-export></file-export>
 
 <refresh-storage></refresh-storage>
 
@@ -271,7 +271,7 @@
                   <div></div>
                   <div></div>
                   <div></div>
-                  <div class="icon-container" (click)="editFromList(query.groupName, query.id, $event)">
+                  <div class="icon-container" (click)="editFromList(query.groupName, query.id)">
                     <mat-icon>edit</mat-icon>
                   </div>
                 </div>
@@ -287,19 +287,19 @@
                   <div></div>
                   <div></div>
                   <div></div>
-                  <div> <span>{{totalCostSum(group.GroupItems) | numericCommas}}</span> <!-- total cost --> </div>
-                  <div> <span>{{totalInstallmentCostSum(group.GroupItems) | numericCommas}}</span> <!-- total installment cost --> </div>
-                  <div> <span>{{totalFasciaSum(group.GroupItems) | numericCommas}}</span> <!-- total fascia cost --> </div>
-                  <div> <span>{{totalMotorPriceSum(group.GroupItems) | numericCommas}}</span> <!-- total motor cost --> </div>
-                  <div> <span>{{totalPriceSum(group.GroupItems) | numericCommas}}</span> <!-- total price --> </div>
-                  <div> <span>{{totalProfit(group.GroupItems) | numericCommas}}</span> </div>
-                  <div> <span>{{getCleanPrice() | numericCommas}}</span> </div>
-                  <div> <span>{{calculateFinalRetailPrice()}}</span> </div>
-                  <div> <span>{{calculateFinalFasciaPrice(group.GroupItems)}}</span> </div>
-                  <div> <span>{{calculatePriceWithFascia(group.GroupItems)}}</span> </div>
-                  <div> <span>{{calculateFinalMotorPrice(group.GroupItems)}}</span> </div>
-                  <div> <span>{{calculatePriceWithMotor(group.GroupItems)}}</span> </div>
-                  <div class="icon-container">
+                  <div> <span>{{totalCostSum(group) | numericCommas}}</span> <!-- total cost --> </div>
+                  <div> <span>{{totalInstallmentCostSum(group) | numericCommas}}</span> <!-- total installment cost --> </div>
+                  <div> <span>{{totalFasciaSum(group) | numericCommas}}</span> <!-- total fascia cost --> </div>
+                  <div> <span>{{totalMotorPriceSum(group) | numericCommas}}</span> <!-- total motor cost --> </div>
+                  <div> <span>{{totalPriceSum(group) | numericCommas}}</span> <!-- total price --> </div>
+                  <div> <span>{{totalProfit(group) | numericCommas}}</span> </div>
+                  <div> <span>{{getCleanPrice(group) | numericCommas}}</span> </div>
+                  <div> <span>{{calculateFinalRetailPrice(group) | numericCommas}}</span> </div>
+                  <div> <span>{{calculateFinalFasciaPrice(group) | numericCommas}}</span> </div>
+                  <div> <span>{{calculatePriceWithFascia(group) | numericCommas}}</span> </div>
+                  <div> <span>{{calculateFinalMotorPrice(group) | numericCommas}}</span> </div>
+                  <div> <span>{{calculatePriceWithMotor(group) | numericCommas}}</span> </div>
+                  <div (click)="editCustomCalculation(group)" class="icon-container">
                     <mat-icon>manage</mat-icon>
                   </div>
                 </div>

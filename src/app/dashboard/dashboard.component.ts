@@ -1,35 +1,32 @@
-  import { Component, OnInit, ElementRef, QueryList, ViewChildren, Renderer2 } from '@angular/core';
+import { Component, OnInit, ElementRef, QueryList, ViewChildren, Renderer2 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import data from '../../content.json'
 import { MatDialog} from '@angular/material/dialog';
 import { EditItemDialog } from '../Dialog/EditItemDialog';
+import { EditCalculationDialog } from '../Dialog/EditCalculationDialog';
 
 /* Interfaces */
-
-
-
 // items seperated into different groups labeled by room name
-
 // items pulled from storage with caluclated values
 interface query {
-    id: string;
-    roomLabel: string;
-    groupName: string;
-    groupType: string;
-    quantity: number;
-    width: number;
-    height: number;
-    discount: number;
-    discount2: number;
-    cost?: number;
-    price?: number;
+  id: string;
+  roomLabel: string;
+  groupName: string;
+  groupType: string;
+  quantity: number;
+  width: number;
+  height: number;
+  discount: number;
+  discount2: number;
+  cost?: number;
+  price?: number;
     
-    sqrFt?: string;
-    retailPrice?: number;
-    installmentCost?: number;
-    fasciaRetail?: number;
-    fasciaCost?: number;
-    danielsMotorPrice?: number;
+  sqrFt?: string;
+  retailPrice?: number;
+  installmentCost?: number;
+  fasciaRetail?: number;
+  fasciaCost?: number;
+  danielsMotorPrice?: number;
 }
 
 
@@ -152,22 +149,10 @@ export class DashboardComponent implements OnInit {
   currentTab = 0; // unlike other models, this one is updated with a function, allowing for the switching of tabs
 
   // this value is specifically used to pass a value through the table, do not change
-  cleanCost = 0;
   finalFasciaCost = 0;
   finalMotorPrice = 0;
   
-  editItem: string = '';
-  editorItems_ID?: string = '';
-  editorItems_GroupName?: string = "";
-  editorItems_GroupType?: string = "";
-  editorItems_RoomLabel?: string = "";
-  editorItems_Width?: number = 0;
-  editorItems_Height?: number = 0;
-  editorItems_Quantity?: number = 0;
-  editorItems_Profit?: number = 0;
-  editorItems_OpenRollPrice?: number = 0;
-  editorItems_Discount?: number = 0;
-  editorItems_Discount2?: number = 0;
+  
 
   ngOnInit() {}
 
@@ -198,7 +183,6 @@ export class DashboardComponent implements OnInit {
         this.queriesArray = this.convertToLocalFormat(JSON.parse(localStorageData));
       }
     }
-    /* TODO: create retail price, sqrFt, fascia price, clean price */
 
     // non reset items, such as our static variables, will not be reset, so they will be added here
     this.profitMargin = data.startingVars.profitMargin; // 
@@ -284,6 +268,7 @@ export class DashboardComponent implements OnInit {
           return {
             Group: groups.Group,
             GroupItems: groups.GroupItems.map((items: query) => {
+              console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", items)
               return {
                 id: items.id,
                 roomLabel: items.roomLabel,
@@ -297,7 +282,8 @@ export class DashboardComponent implements OnInit {
               } as query
             }),
             GroupAlterations: {
-
+              openRollPrice: groups.GroupAlterations.openRollPrice,
+              profit: groups.GroupAlterations.profit,
             } as ManualCalculations
           } as Groups
         })
@@ -379,6 +365,10 @@ export class DashboardComponent implements OnInit {
           discount: this.discount,
           discount2: this.discount2,
         } as query), 0)],
+        GroupAlterations: {
+          openRollPrice: undefined,
+          profit: undefined,
+        } as ManualCalculations
       } as Groups);
 
     } else {
@@ -406,43 +396,40 @@ export class DashboardComponent implements OnInit {
 
 
 
-  editFromList(groupName: string, id :string, event: any) {
-    let currentTable = this.currentTab;
-    let currentGroup = this.queriesArray[currentTable].list.findIndex((group) => group.Group == groupName);
-    let currentItem = this.queriesArray[currentTable].list[currentGroup].GroupItems.findIndex((item) => item.id == id);
-    
-    let element = this.queriesArray[this.currentTab].list[currentGroup].GroupItems[currentItem];
-    
-    this.editItem = id;
+  editFromList(groupName: string, id :string) {
+    let currentGroup = this.queriesArray[this.currentTab].list.findIndex((group) => group.Group == groupName);
+    let currentItem = this.queriesArray[this.currentTab].list[currentGroup].GroupItems.findIndex((item) => item.id == id);
 
-    this.editorItems_ID = id;
-    this.editorItems_GroupType = element.groupType;
-    this.editorItems_GroupName = groupName;
-    this.editorItems_RoomLabel = element.roomLabel;
-    this.editorItems_Width = element.width;
-    this.editorItems_Height = element.height;
-    this.editorItems_Quantity = element.quantity;
-    this.editorItems_Discount = element.discount;
-    this.editorItems_Discount2 = element.discount2;
-    
+    console.log("editing item", groupName, id);
+
+    let item = this.queriesArray[this.currentTab].list[currentGroup].GroupItems[currentItem];
+  
     if (currentItem == -1) return;
-      
-
+    
     this.dialog.open(EditItemDialog, {width: '90%', data: {
-      'room' : this.editorItems_RoomLabel,
-      'groupType': this.editorItems_GroupType,
-      'groupName': this.editorItems_GroupName,
-      'width': this.editorItems_Width,
-      'height': this.editorItems_Height,
-      'quantity': this.editorItems_Quantity,
-      'profit': this.editorItems_Profit,
-      'openRollPrice': this.editorItems_OpenRollPrice,
+      'room' : item.roomLabel,
+      'groupType': item.groupType,
+      'groupName': item.groupName,
+      'width': item.width,
+      'height': item.height,
+      'quantity': item.quantity,
       'groupNames': this.groupNames,
-      'discount': this.discount,
-      'discount2': this.discount2,
+      'discount': item.discount,
+      'discount2': item.discount2,
     
     }}).afterClosed().subscribe(result => {
         console.log('The dialog was closed', result);
+        if (result == true) {
+          this.queriesArray[this.currentTab].list[currentGroup].GroupItems.splice(currentItem, 1)
+          if (this.queriesArray[this.currentTab].list[currentGroup].GroupItems.length == 0) {
+            console.log('remove group', this.queriesArray[this.currentTab].list[currentGroup])
+            this.queriesArray[this.currentTab].list.splice(currentGroup, 1);
+            this.determineShortenedList(undefined, true);
+            this.uploadToStorage();
+          }
+          
+          return
+        }
         if (result) {
           let calculateItem = this.updatePricing({
             id: id,
@@ -456,44 +443,47 @@ export class DashboardComponent implements OnInit {
             discount2: result.discount2,
           } as query, 0);
           this.queriesArray[this.currentTab].list[currentGroup].GroupItems[currentItem] = calculateItem;
+          
+          let nextGroup = this.queriesArray[this.currentTab].list.findIndex((group) => group.Group == result.groupName);
+          this.queriesArray[this.currentTab].list[nextGroup].GroupItems.push(calculateItem);
+          this.queriesArray[this.currentTab].list[currentGroup].GroupItems.splice(currentItem, 1)
 
-          if((result.groupName || "default") != (this.editorItems_GroupName || "default")) {
-            let item = this.queriesArray[this.currentTab].list[currentGroup].GroupItems.findIndex((item) => item.id == id);
-            let nextGroup = this.queriesArray[this.currentTab].list.findIndex((group) => group.Group == result.groupName);
-            this.queriesArray[this.currentTab].list[nextGroup].GroupItems.push(calculateItem);            
-
-            this.queriesArray[this.currentTab].list[currentGroup].GroupItems.splice(item, 1);
-
-            if (this.queriesArray[this.currentTab].list[currentGroup].GroupItems.length == 0) {
-              console.log("remove group");
-              this.queriesArray[this.currentTab].list.splice(currentGroup, 1);
-              this.groupNames.splice(this.groupNames.indexOf(groupName), 1);
-            }
-            
-          } 
+          console.log('will remove group')
+          if (this.queriesArray[this.currentTab].list[currentGroup].GroupItems.length == 0) {
+            console.log('removing group', this.queriesArray[this.currentTab].list[currentGroup].Group);
+            this.queriesArray[this.currentTab].list.splice(currentGroup, 1);
+          }
         }
-        
+
         this.determineShortenedList(undefined, true);
         this.uploadToStorage();
-    });    
-
-    this.editorItems_ID = undefined;
-    this.editorItems_GroupType = undefined;
-    this.editorItems_GroupName = undefined;
-    this.editorItems_RoomLabel = undefined;
-    this.editorItems_Width = undefined;
-    this.editorItems_Height = undefined;
-    this.editorItems_Quantity = undefined;
+        
+    });
   }
 
+  editCustomCalculation(group: Groups) {
+    console.log("edit custom calculation", group);
+    
+    this.dialog.open(EditCalculationDialog, {width: '90%', data: {
+      profit: this.totalProfit(group),
+      openRollPrice: this.getCleanPrice(group),
+    }}).afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+        if (result && this.queriesArray[this.currentTab].list.find((item) => item.Group == group.Group)) {
+          this.queriesArray[this.currentTab].list.find((item) => item.Group == group.Group)!.GroupAlterations = result;
+          
+        }
+        this.determineShortenedList(undefined, true);
+        this.uploadToStorage();
+    });
+  }
 
 
   determineShortenedList(max?: number, update: boolean = false) {
     const maxOnScreen = max ?? 50;
     let list = this.queriesArray[this.currentTab].list;
-    let itemCount: number[] = this.queriesArray[this.currentTab].list.map(item => {
-      return item.GroupItems.length;
-    });
+    let itemCount: number[] = this.queriesArray[this.currentTab].list.map((group) => group.GroupItems.length);
+
     if (typeof this.shortenedArray == 'undefined' || update) {
       console.log("test if stop", this.shortenedArray)
 
@@ -502,7 +492,7 @@ export class DashboardComponent implements OnInit {
       let currentIndex = 0;
 
       for (let i = 0; i < itemCount.length; i++) {
-
+        
         if (currentCount + itemCount[i] <= maxOnScreen || (itemCount[i] > maxOnScreen && (i === 0 || currentCount === 0))) {
 
           currentCount += itemCount[i];
@@ -523,17 +513,6 @@ export class DashboardComponent implements OnInit {
     return this.shortenedArray;    
   }
 
-  deleteFromList() {
-    // this.renderer.setStyle(this.editor.nativeElement, 'display', "none");
-    let groupIndex = this.queriesArray[this.currentTab].list.findIndex((group) => group.Group == this.editorItems_GroupName);
-    this.queriesArray[this.currentTab].list[groupIndex]
-
-    let currentItem = this.queriesArray[this.currentTab].list[groupIndex].GroupItems.findIndex((x) => x.id == this.editorItems_ID);
-    this.queriesArray[this.currentTab].list.splice(currentItem, 1);
-    this.uploadToStorage();
-    this.resetValues();
-    this.determineShortenedList(this.maxItemsInList, true);
-  }
   
 
   calculateDanielsMotorPrice(quantity: number) { return (350 * quantity); }
@@ -574,10 +553,11 @@ export class DashboardComponent implements OnInit {
 
     const widthIndex = this.Widths.indexOf(width);
     const heightIndex = this.Heights.indexOf(height);
-
+    console.log("widthIndex", widthIndex, "heightIndex", heightIndex, data);
     // console.log("Widths", this.Widths, "Heights", this.Heights, "valWidth", valWidth, "valHeight", valHeight, "width", width, "height", height, "widthIndex", widthIndex, "heightIndex", heightIndex, "tables", this.pricingTables);
     let table = data.tables.find((item) => {
-      // console.log("item.tag ", item.tag, "groupType", groupType, "res", item.tag === groupType);
+      console.log("item.tag ", item.tag, "groupType", groupType, "res", item.tag === groupType);
+      
       return item.tag === groupType;
     });
     // console.log("table", table);
@@ -604,69 +584,69 @@ export class DashboardComponent implements OnInit {
     const fasciaTable: Array<number> = data.tables[0].table.fascia;
     return fasciaTable[widthIndex];
   }
-  calculateFinalRetailPrice() {
-    return this.numericCommas((this.cleanCost * 1.2).toFixed(2));
+  calculateFinalRetailPrice(group: Groups) {
+    return (this.getCleanPrice(group) * 1.2).toFixed(2);
   }
 
-  calculateFinalFasciaPrice(group:any[]) {
-    this.finalFasciaCost = ((this.totalFasciaSum(group) * this.profitMargin) + this.cleanCost);
-    return this.numericCommas(this.finalFasciaCost.toFixed(2));
+  calculateFinalFasciaPrice(group: Groups) {
+    this.finalFasciaCost = ((this.totalFasciaSum(group) * this.profitMargin) + this.getCleanPrice(group));
+    return this.finalFasciaCost.toFixed(2);
   }
-  calculatePriceWithFascia(group:any[]) {
-    return this.numericCommas((this.finalFasciaCost * 1.2).toFixed(2));
+  calculatePriceWithFascia(group: Groups) {
+    return (this.finalFasciaCost * 1.2).toFixed(2);
   }
 
-  calculateFinalMotorPrice(group:any[]) {
+  calculateFinalMotorPrice(group: Groups) {
     this.finalMotorPrice = this.totalMotorPriceSum(group) + this.finalFasciaCost;
-    return this.numericCommas(this.finalMotorPrice.toFixed(2));
+    return this.finalMotorPrice.toFixed(2);
   }
 
-  calculatePriceWithMotor(group:any[]) {
-    return this.numericCommas((this.finalMotorPrice * 1.2).toFixed(2));
+  calculatePriceWithMotor(group: Groups) {
+    return (this.finalMotorPrice * 1.2).toFixed(2);
   }
 
-  totalProfit(group: any[]) {
+  totalProfit(group: Groups) {
+    if (group.GroupAlterations.profit) return group.GroupAlterations.profit;
     return this.totalPriceSum(group) - this.totalCostSum(group) - this.totalInstallmentCostSum(group);
-
   }
 
-  totalCostSum(group: any[]) {
+  totalCostSum(group: Groups) {
     let sum = 0;
-    group.forEach((item) => {
-      sum += item.cost;
+    group.GroupItems.forEach((item) => {
+      sum += item.cost ?? 0;
     });
     return sum;
   }
   
-  totalPriceSum(group: any[]) {
+  totalPriceSum(group: Groups) {
     let sum = 0;
-    group.forEach((item) => {
-      sum += item.price;
+    group.GroupItems.forEach((item) => {
+      sum += item.price ?? 0;
     });
     this.totalCost = sum;
     return sum;
   }
 
-  totalMotorPriceSum(group: any[]) {
+  totalMotorPriceSum(group: Groups) {
     let sum = 0;
-    group.forEach((item) => {
-      sum += item.danielsMotorPrice;
+    group.GroupItems.forEach((item) => {
+      sum += item.danielsMotorPrice ?? 0;
     });
     return sum;
   }
   
-  totalInstallmentCostSum(group: any[]) {
+  totalInstallmentCostSum(group: Groups) {
     let sum = 0;
-    group.forEach((item) => {
-      sum += item.installmentCost;
+    group.GroupItems.forEach((item) => {
+      sum += item.installmentCost ?? 0;
     });
     return sum;
   }
 
-  totalFasciaSum(group: any[]){
+  totalFasciaSum(group: Groups){
     let sum = 0;
-    group.forEach((item) => {
-      sum += item.fasciaCost;
+    group.GroupItems.forEach((item) => {
+      sum += item.fasciaCost ?? 0;
     });
     return sum;
   }
@@ -680,7 +660,7 @@ export class DashboardComponent implements OnInit {
     }); 
   }
 
-  // use this to change a number (preferably dollar cents),
+  // use this to change a number (preferably  llar cents),
   //this will allow the value to be decorated with commas, making the numbers easier to read
   numericCommas(x: number | string) {
     let str;
@@ -735,9 +715,9 @@ export class DashboardComponent implements OnInit {
 
 
   // round the price to the nearest $50, then remove $0.01 from it to give it the american price feel
-  getCleanPrice() {
-    let value = this.totalCost;
-    let closestValue = value%50;
+  getCleanPrice(group: Groups) {
+    let value = this.totalPriceSum(group);
+    let closestValue = value %50;
     let cleanValue = 0.0;
     if (closestValue > 25) {
       cleanValue = value + (50 - closestValue);
@@ -745,8 +725,8 @@ export class DashboardComponent implements OnInit {
     } else {
       cleanValue = value - closestValue;
     }
-    this.cleanCost = Math.max(cleanValue - 0.01,0);
-    return this.cleanCost
+    if (group.GroupAlterations.openRollPrice) return group.GroupAlterations.openRollPrice;
+    return cleanValue;
   }
 
   groupTypeChange(groupIndex: number, event: any) {
@@ -791,38 +771,50 @@ export class DashboardComponent implements OnInit {
   }
 
   itemIsAvailable(value: any) {
-    console.log("items abailable", value);
     let items = value ?? '{}';
     let data;
-    if (items.type == 'json') {
-      data = JSON.parse(items.data);
-      console.log("items abailable", data);
-      for (let tableIndex in data) {
-        let table = data[tableIndex];
-        let isCurrentTable = this.queriesArray.findIndex(x => x.name == table.name);
-        let items: Groups[] = (table.list as Groups[]).map((x, i) => {
-          return {
-            Group: x.Group,
-            GroupItems: x.GroupItems.map((y, j) => {
-              return this.updatePricing(y,j)
-            }),
-            GroupAlterations: x.GroupAlterations,
-          }
-        });
-      }
-    } else if (items.type == 'csv') {
+    
+    if (items.type == 'csv') {
       setTimeout(() => {
         data = items.data;
         data.shift();
         let itemsArray: Groups[] = data.map((x: any, i: number) => {
           console.log(x.roomLabel, x.width, x.height, x.quantity, x.groupName, x.groupType);
-          return this.updatePricing(x,i);
+          return {
+            Group: x.groupName,
+            GroupItems: [{
+              id: Date.now() + "_" + i,
+              roomLabel: x.roomLabel,
+              groupType: x.groupType,
+              groupName: x.groupName,
+              width: x.width,
+              height: x.height,
+              quantity: x.quantity,
+              discount: x.discount,
+              discount2: x.discount2,
+            }],
+            GroupAlterations: {
+              openRollPrice: undefined,
+              profit: undefined,
+            }
+          } as Groups;
         })
         
-        this.queriesArray[this.currentTab].list.push(...itemsArray) // add the new items to the current tab
+        itemsArray.forEach(item => {
+          let itemIndex = this.queriesArray[this.currentTab].list.findIndex((x) => x.Group == item.Group);
+          if (itemIndex == -1) {
+            console.log("item does not exist");
+            this.queriesArray[this.currentTab].list.push(item);
+          } else {
+            console.log("item already exists");
+            this.queriesArray[this.currentTab].list[itemIndex].GroupItems.push(...item.GroupItems);
+          }
+        }) // add the new items to the current tab
+
+        this.determineShortenedList(undefined, true);
+        this.uploadToStorage()
+        location.reload();
       }, 1000);
     }
-    
-    this.uploadToStorage()
   }
 }
