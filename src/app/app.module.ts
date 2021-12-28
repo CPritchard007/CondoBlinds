@@ -37,6 +37,7 @@ import { RouterModule } from '@angular/router';
 import { NotesComponent } from './notes-component/notes-component.component';
 import { ReturnToDashButtonComponent } from './buttons/return-to-dash-button/return-to-dash-button.component';
 import { EditCalculationDialog } from './Dialog/EditCalculationDialog';
+import { TableComponent } from './table/table.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { EditCalculationDialog } from './Dialog/EditCalculationDialog';
     RefreshStorageComponent,
     NotesComponent,
     NotesButtonComponent,
-    ReturnToDashButtonComponent
+    ReturnToDashButtonComponent,
+    TableComponent
   ],
   imports: [
     FormsModule,
@@ -81,6 +83,7 @@ import { EditCalculationDialog } from './Dialog/EditCalculationDialog';
     RouterModule.forRoot([
       { path: '', component: DashboardComponent },
       { path: 'notes', component: NotesComponent },
+      { path: 'export', component: TableComponent },
     ]),
   ],
   providers: [],

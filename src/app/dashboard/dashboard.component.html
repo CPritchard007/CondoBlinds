@@ -2,7 +2,14 @@
 
 <file-upload (onFinalData)="itemIsAvailable($event)"></file-upload>
 
-<file-export></file-export>
+<div class="widget">
+  <label>
+      <div (click)="exportItems()" class="iconContainer" >
+          <mat-icon>download</mat-icon>
+      </div>
+  </label>
+</div>
+
 
 <refresh-storage></refresh-storage>
 

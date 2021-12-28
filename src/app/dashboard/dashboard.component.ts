@@ -4,6 +4,7 @@ import data from '../../content.json'
 import { MatDialog} from '@angular/material/dialog';
 import { EditItemDialog } from '../Dialog/EditItemDialog';
 import { EditCalculationDialog } from '../Dialog/EditCalculationDialog';
+import { NavigationExtras, Router } from '@angular/router';
 
 /* Interfaces */
 // items seperated into different groups labeled by room name
@@ -156,7 +157,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {}
 
-  constructor(public dialog: MatDialog, private renderer: Renderer2) {
+  constructor(public dialog: MatDialog, private renderer: Renderer2, private router: Router) {
     console.log("constructor");
     
     try {
@@ -816,5 +817,24 @@ export class DashboardComponent implements OnInit {
         location.reload();
       }, 1000);
     }
+  }
+
+  exportItems() {
+    let extras = this.queriesArray[this.currentTab].list.map(x => {
+      return {
+        modelName: x.Group,
+        material: "",
+        color: "",
+        reverseRollPrice: this.getCleanPrice(x),
+        withFasciaPrice: this.totalFasciaSum(x),
+        fasciaWithMotorPrice: this.totalMotorPriceSum(x),
+      }
+    });
+    console.log(extras);
+    this.router.navigate(['/export'], {
+      state: {
+        extras: extras,
+      }
+    } );
   }
 }

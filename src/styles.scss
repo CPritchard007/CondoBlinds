@@ -1,7 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 
+
+* {
+  --webkit-print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
 html, body, .app-frame {height: 100%;}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .hidden {display: none !important;}
 .align-right {text-align: right;}
@@ -125,58 +134,8 @@ mat-form-field + br + i {
     margin-left: auto;
 
   }
-  .right {
 
-  }
 }
-
-// div.editElement {
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   display: none;
-//   background-color: #5c1879;   
-//   grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-//   padding: 0!important;
-//   z-index: 999;
-
-//   div {
-//       padding: 3px;
-//       width: 100%;
-//       box-sizing: border-box;
-//       input, select {
-//           width: 100%;
-//           box-sizing: border-box;
-//       }
-
-//       &:last-of-type {
-//         display: flex;
-//         justify-content: flex-end;
-//       }
-//   }
-
-//   .icon-container {
-//       width: 20px;
-//       height: 20px;
-//       display: flex;
-//       background-color: #7b1fa2;
-//       border-radius: 2px;
-//       border: 1px solid #ddd;
-//       box-sizing: border-box;
-//       margin: 0 4px;
-//       display: flex;
-//       justify-content: center;
-//       align-items: center;
-
-//       mat-icon {
-//         font-size: 16px;
-//       }
-      
-//   }
-// }
-
-
 
 .constants {
   @media screen and (max-width: 1000px) {
@@ -204,6 +163,15 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.row {
+  &:hover .icon-container {
+      display: block !important;
+      left: 0;
+  }
+  
+}
+
 hr + mat-icon {
   position: absolute;
   bottom: 12px;
@@ -211,4 +179,16 @@ hr + mat-icon {
   transform: translateX(-50%);
   background-color: rgb(75, 75, 75);
   border-radius: 15px;
+}
+
+.icon-container.addTab {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 40px;
+  height: 45px;
+  
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.452);
+
 }

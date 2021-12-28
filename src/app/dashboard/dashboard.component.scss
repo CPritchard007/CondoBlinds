@@ -7,36 +7,80 @@
     margin: 3px 1px !important;
     text-transform: capitalize;    
 }
+::ng-deep.mat-tab-label:hover .icon-container {visibility: visible !important;}
 
-::ng-deep.mat-tab-label:hover .icon-container {
-    visibility: visible !important;
-}
+::ng-deep .mat-paginator-page-size {display: none !important;}
 
-::ng-deep .mat-paginator-page-size {
-    display: none !important;
-}
 
-.row {
-    &:hover .icon-container {
-        display: block !important;
-        left: 0;
+.widget {
+    position: absolute;
+    top: 18px;
+    right: 85px;
+    width: 25px;
+    height: 25px;
+
+    .iconContainer {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.404);
+        transition: background-color 0.5s ease;
+        overflow: hidden;
+
+        &:hover {
+            background-color: rgba(255, 255, 255);
+            
+        }
+
+        mat-icon:nth-of-type(1) {
+            position: absolute;
+            color: rgb(123, 23, 167);
+            font-size: 1.2rem;
+            display: flex;
+            width: 50%;
+            height: 50%;
+            transform: translate(-25%, -25%);
+            transition: transform .6s ease;
+
+        }
+        mat-icon:nth-of-type(2) {
+            position: absolute;
+            color: rgb(123, 23, 167);
+            font-size: 1.2rem;
+            width: 50%;
+            height: 50%;
+            transform: translateX(-25%) translateY(-25px);
+            transition: transform .6s ease;
+        }
+
+    }
+    span {
+        position: absolute;
+        right: 40px;
+        top: 8px;
+        width: 150px;
+        text-align: right;
+        text-transform: capitalize;
     }
     
+    [type=file] {
+        display: none;
+    }
 }
+
+
+
 
 .table header, .table .content .row{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
     position: relative;
     
-    div:nth-of-type(16), div:nth-of-type(17), div:nth-of-type(18), div:nth-of-type(19), div:nth-of-type(20), div:nth-of-type(21), div:nth-of-type(22) { 
-        background-color: #8d8c3585;
-    }
-
-    div {
-        
-    }
-   
+    div:nth-of-type(16), div:nth-of-type(17), div:nth-of-type(18), div:nth-of-type(19), div:nth-of-type(20), div:nth-of-type(21), div:nth-of-type(22) { background-color: #8d8c3585; }
     .icon-container {
         width: 10px;
         height: 10px;
@@ -46,19 +90,14 @@
         border: none;
         display: none;
 
-        mat-icon {
-            font-size: 15px;
-        }
+        mat-icon { font-size: 15px; }
     }
 
     & div {
         padding: 3px 5px;
-
         text-align: center;
         width: 1fr;
-        & + div:not(.icon-container) {
-            border-left: 1px solid rgba(243, 243, 243, 0.12);
-        }
+        & + div:not(.icon-container) { border-left: 1px solid rgba(243, 243, 243, 0.12); }
         
     }
 }
@@ -74,10 +113,7 @@ mat-card.calcCard {
             border-bottom: 4px solid #ddd;
             letter-spacing: 1.5px;
     
-            & div {
-                padding-bottom: 4px;
-                
-            }
+            & div { padding-bottom: 4px; }
         }
 
         .content {
@@ -101,12 +137,9 @@ mat-card.calcCard {
                     color: white;
                     box-sizing: border-box;
                     
-                    span {
-                        min-width: 70px;
-                    }
+                    span { min-width: 70px; }
                 }        
             }
-
             hr {
                 margin: 12px 0 0 0;
                 & + span {
@@ -131,17 +164,6 @@ mat-card.calcCard {
         }
     }
 
-    .icon-container.addTab {
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: 40px;
-        height: 45px;
-        
-        z-index: 10;
-        color: rgba(255, 255, 255, 0.452);
-
-    }
     .nameContainer {
         position: absolute;
         right: 0;
@@ -193,8 +215,7 @@ mat-card.calcCard {
         &[disabled] {
             background-color: transparent;
             border: none;
-            color: rgba(255, 255, 255);
-            
+            color: rgba(255, 255, 255); 
         }
     }
     
@@ -215,9 +236,7 @@ mat-card.calcCard {
         &:hover {
             cursor: pointer;
 
-            mat-icon {
-                color: rgba(255, 255, 255);
-            }
+            mat-icon { color: rgba(255, 255, 255); }
         }
     }
 
@@ -226,21 +245,13 @@ mat-card.calcCard {
         justify-content: center;
         align-items: center;
 
-        mat-form-field {
-            width: 100px;
-        }
+        mat-form-field { width: 100px; }
     }
 }
 
-.groupName ::ng-deep .mat-tab-header {
-    padding-right: 35px !important;
-}
-.groupName ::ng-deep .mat-select-value {
-    display: none !important;
-}
-.groupName .mat-select {
-    width: 20px;
-}
+.groupName ::ng-deep .mat-tab-header {padding-right: 35px !important;}
+.groupName ::ng-deep .mat-select-value {display: none !important;}
+.groupName .mat-select {width: 20px;}
 
 .rollOverInput {
     background-color: transparent;

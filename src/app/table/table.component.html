@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="align-center">
+        <div>Roller Blinds Pricing</div>
+        <div class="table">
+            <div class="tr header">
+                <div>Model Name</div>
+                <div>Material</div>
+                <div>Colors</div>
+                <div>Reverse Roll Price</div>
+                <div>With Fascia Price</div>
+                <div>Fascia with Motor Price</div>
+            </div>
+            <div class="tr" *ngFor="let tableItem of currentTable; index as tableItemIndex" >
+                <div>{{tableItem.modelName || "N/A"}}</div>
+                <div>{{tableItem.material || "N/A"}}</div>
+                <div>{{tableItem.color || "N/A"}}</div>
+                <div>{{tableItem.reverseRollPrice | numericCommas}}</div>
+                <div>{{tableItem.withFasciaPrice | numericCommas}}</div>
+                <div>{{tableItem.fasciaWithMotorPrice | numericCommas}}</div>
+            </div>
+        </div>
+        <div class="footer">
+            <ul>
+                <li>All Prices are plus HST</li>
+                <li>Installation included in the price</li>
+                <li>Number of blinds subject to pre-install assessment</li>
+                <li>Dual shades have a larger light gap then single shades</li>
+                <li>If fabric becomes discontinued Condo Blinds retains the right to replace the material with that of equal value</li>
+            </ul>
+        </div>
+    </div>
+</div>
