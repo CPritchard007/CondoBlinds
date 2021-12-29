@@ -1,5 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
+@media print
+{
+   @page {
+      margin: 0;
+      
+   }
+   
+   
+} 
 
 * {
   --webkit-print-color-adjust: exact !important;

@@ -136,6 +136,10 @@ mat-card.calcCard {
                     background-color: #7b1fa2;
                     color: white;
                     box-sizing: border-box;
+                    input { text-align: left; }
+                    input, select {
+                        margin-right: 5px;
+                    }
                     
                     span { min-width: 70px; }
                 }        

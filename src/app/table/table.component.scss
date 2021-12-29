@@ -1,8 +1,75 @@
 .container {
     @media print {
-        padding: 0;
-        margin: 10px 0 0 0;
+        padding: 10px;
+        
     }
+
+    .imageContainer {
+        @media print {
+            // padding: 0;
+            margin: 0;
+            border: none;
+
+            input {
+                display: none;
+            }
+        }
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        margin: 5px 20px;
+        padding: 10px;
+        border: 1px solid rgb(92, 92, 92);
+        .left {
+            display: flex;
+            
+            align-items: center;
+            svg {
+                width: 50%;
+                background-color: white;
+                color: black;
+                padding: 5px;
+            }
+        }
+        .right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            
+            div {
+            
+                label {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 70px;
+                    height: 70px;
+                    border-radius: 10px;
+                    border: 3px white dashed;
+                    box-sizing: border-box;
+                }
+
+                input[type='file'] {
+                    display: none;
+                }
+            }
+            .image {
+                width: 50%;
+                height: 70px;
+                
+                background-position: right;
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-image: url('https://media.wired.co.uk/photos/607d91994d40fbb952b6ad64/4:3/w_2664,h_1998,c_limit/wired-meme-nft-brian.jpg');
+                @media print {
+                    filter: grayscale(100%);
+                }
+            }
+
+        }
+    }
+
+
     .align-center {
         margin: 0 auto;
         width: 80%;
@@ -18,16 +85,35 @@
             background-color: #7a27a0;
             text-align: center;
             width: 100%;
-            font-size: 2em;
-            padding: 10px 0;
+            
+
+            input {
+                font-size: 1.6em;
+                margin: 4px 0;
+                text-align: center;
+                background-color: #fff3;
+                border: none;
+                border-bottom: 1px solid #fff3;
+                color: white;
+                &:focus {
+                    background-color: #fff;
+                    color: black;
+                }
+
+                @media print {
+                    background-color: transparent;
+                    border: none;
+                }
+            }
         }
         .table {
             @media print {
                 font-size: .8em;
+                background-color: white;
             }
             font-size: 1em;
             color: black;
-            background-color: rgb(255, 255, 255);
+            background-color: rgb(240, 240, 240);
             line-height: 1em;
             .tr {
                 display: grid;
@@ -55,6 +141,10 @@
 
 
                     &:nth-of-type(4) {
+                        @media print {
+                            border-color: rgb(117, 117, 117) !important;
+                        }
+
                         border-left: 5px solid #000 !important;
                     }
 
@@ -73,9 +163,12 @@
                    }
                 }
                 &:nth-of-type(1) { 
-                    // header
-                    background-color: rgb(189, 189, 189);
-                   
+                    @media print {
+                        background-color: rgb(189, 189, 189);
+                    }
+
+                    background-color: rgb(192, 192, 192);
+                    
                     
                     div:nth-of-type(4), div:nth-of-type(5), div:nth-of-type(6) {
                         @media print {
@@ -90,7 +183,7 @@
             }
         }
         .footer {
-            background-color: white;
+            background-color: rgb(240, 240, 240);
             font-size: .8em;
             color: black;
             margin: 0;

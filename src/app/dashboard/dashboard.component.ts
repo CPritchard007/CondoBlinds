@@ -45,7 +45,9 @@ interface Tables {
 interface Groups {
   Group: string;
   GroupItems: query[];
-  GroupAlterations: ManualCalculations
+  GroupAlterations: ManualCalculations;
+  Material: string;
+  Color: string;
 }
 
 interface ManualCalculations {
@@ -60,8 +62,6 @@ interface ManualCalculations {
 })
 export class DashboardComponent implements OnInit {
   
-  @ViewChildren('tableItems') tableItems!: QueryList<ElementRef>;
-
   /* Arrays */
   pricingTables: Array<Array<number>> = []; // get tables that are linked to each groupType (C, D, E, F, G, H)
   Widths: number[] = [];  // widths defined by the tables
@@ -141,6 +141,8 @@ export class DashboardComponent implements OnInit {
   valPrice = 0;
   quantity = 1;
   sqrFt = "";
+  material: string = "";
+  color: string = "";
   retailPrice = 0;
   discount = 50.0;
   discount2 = 50.0;
@@ -249,7 +251,8 @@ export class DashboardComponent implements OnInit {
             GroupItems: groups.GroupItems.map((items: query, itemIndex: number) => {
               return this.updatePricing(items, itemIndex)
             }),
-            
+            Material: groups.Material,
+            Color: groups.Color,
             GroupAlterations: {
               openRollPrice: groups.GroupAlterations.openRollPrice,
               profit: groups.GroupAlterations.profit,
@@ -282,6 +285,8 @@ export class DashboardComponent implements OnInit {
                 discount2: items.discount2,
               } as query
             }),
+            Material: groups.Material,
+            Color: groups.Color,
             GroupAlterations: {
               openRollPrice: groups.GroupAlterations.openRollPrice,
               profit: groups.GroupAlterations.profit,
@@ -348,7 +353,9 @@ export class DashboardComponent implements OnInit {
     if ((this.valWidth <= 0 || this.valWidth == null) ||
         (this.valHeight <= 0 || this.valHeight == null) ||
         (this.quantity <= 0 || this.quantity == null) || 
-        (this.groupName == undefined || this.groupName == "")) return;
+        (this.groupName == undefined || this.groupName == "")) {
+          console.log('ignore')
+          return};
     
     let groupIndex = this.queriesArray[this.currentTab].list.findIndex((group: Groups) => group.Group == this.groupName);
 
@@ -366,6 +373,8 @@ export class DashboardComponent implements OnInit {
           discount: this.discount,
           discount2: this.discount2,
         } as query), 0)],
+        Material: this.material,
+        Color: this.color,
         GroupAlterations: {
           openRollPrice: undefined,
           profit: undefined,
@@ -386,6 +395,8 @@ export class DashboardComponent implements OnInit {
         discount2: this.discount2,
       } as query), 0)];
     }
+
+
     this.uploadToStorage() // check if you can add to LocalStorage
     this.resetValues(); // reset values
     if (!this.groupNames.includes(this.groupName)) {
@@ -794,6 +805,8 @@ export class DashboardComponent implements OnInit {
               discount: x.discount,
               discount2: x.discount2,
             }],
+            Material: "",
+            Color: "",
             GroupAlterations: {
               openRollPrice: undefined,
               profit: undefined,
@@ -823,8 +836,8 @@ export class DashboardComponent implements OnInit {
     let extras = this.queriesArray[this.currentTab].list.map(x => {
       return {
         modelName: x.Group,
-        material: "",
-        color: "",
+        material: x.Material,
+        color: x.Color,
         reverseRollPrice: this.getCleanPrice(x),
         withFasciaPrice: this.totalFasciaSum(x),
         fasciaWithMotorPrice: this.totalMotorPriceSum(x),
@@ -836,5 +849,14 @@ export class DashboardComponent implements OnInit {
         extras: extras,
       }
     } );
+  }
+
+  updateGroupData(group: Groups, event: any) {
+    let groupIndex = this.queriesArray[this.currentTab].list.findIndex((x) => x.Group == group.Group);
+    if (groupIndex == -1) return;
+    if (event.target.name == "color") this.queriesArray[this.currentTab].list[groupIndex].Color = event.target.value;
+    if (event.target.name == "material") this.queriesArray[this.currentTab].list[groupIndex].Material = event.target.value;
+    this.uploadToStorage()
+
   }
 }

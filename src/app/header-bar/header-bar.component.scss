@@ -1,5 +1,10 @@
 mat-toolbar {
+    @media print {
+        display: none;
+    }
+    
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+
 }
 
 // .version::after {

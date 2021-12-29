@@ -52,6 +52,18 @@
           <i [ngClass]="{hidden: groupName != '' || groupName != undefined }">Discount cannot be a null value</i>
         </div>
         <div>
+          <span>Material</span>
+          <mat-form-field appearance="outline">
+            <input matInput name="material" type="text" [(ngModel)]="material">
+          </mat-form-field>
+        </div>
+        <div>
+          <span>Color</span>
+          <mat-form-field appearance="outline">
+            <input matInput name="color" type="text" [(ngModel)]="color">
+          </mat-form-field>
+        </div>
+        <div>
           <span>Group Type</span>
           <mat-form-field appearance="outline">
             <div>
@@ -254,6 +266,8 @@
                     <option *ngFor="let mat of MaterialGroups; index as i"
                       [selected]="mat.tag == group.GroupItems[0].groupType" [value]="mat.tag">{{mat.name}}</option>
                   </select>
+                  <input type="text" name="material" placeholder="Material" [value]="group.Material" (focusout)="updateGroupData(group, $event)">
+                  <input type="text" name="color" placeholder="Color" [value]="group.Color" (focusout)="updateGroupData(group, $event)">
                 </div>
                 <div #tableItems class="row" *ngFor="let query of group.GroupItems; index as itemIndex" [id]="query.id">
                   <div> <span>{{query.roomLabel }}</span> </div>
