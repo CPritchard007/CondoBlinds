@@ -1,31 +1,47 @@
 /* You can add global styles to this file, and also import other style files */
 
-@media print
-{
-   @page {
-      margin: 0;
-      
-   }
-   
-   
-} 
+@media print {
+  @page {
+    margin: 0;
+
+  }
+
+
+}
 
 * {
   --webkit-print-color-adjust: exact !important;
   color-adjust: exact !important;
 }
 
-html, body, .app-frame {height: 100%;}
+html,
+body,
+.app-frame {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.hidden {display: none !important;}
-.align-right {text-align: right;}
-.spacer {flex: 1 1 auto;}
-.container {padding: 10px;}
-mat-form-field + br + i {
+.hidden {
+  display: none !important;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.container {
+  padding: 10px;
+}
+
+mat-form-field+br+i {
   color: lightcoral;
 
   position: relative;
@@ -39,90 +55,99 @@ mat-form-field + br + i {
   justify-content: center;
 
   mat-icon {
-      width: auto;
-      height: auto;
-      pointer-events: none;
+    width: auto;
+    height: auto;
+    pointer-events: none;
   }
 }
 
 /* scrollbar base */
 ::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    
-    background:#5c1879;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    
-    
-    background:rgb(212, 212, 212);
-    
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
+  width: 3px;
+  height: 3px;
+}
 
-  /* display a keyboard key */
-  .keyboardKey {
-    border: white solid 2px;
-    border-radius: 5px;
-    display: inline-block;
-    padding: 0 6px;
-    margin: -5px 5px;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-  }
+/* Track */
+::-webkit-scrollbar-track {
 
-  :root {
-    --primary-color: #7b1fa2;
-    --secondary-color: #f1f1f1;
-  }
+  background: #5c1879;
+}
 
-  .of_auto, .of_2, .of_3, .of_4, .of_5 {
-    
-    @media screen and (max-width: 570px) {
-      grid-template-columns: 1fr !important;
-    }
+/* Handle */
+::-webkit-scrollbar-thumb {
+
+
+  background: rgb(212, 212, 212);
+
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* display a keyboard key */
+.keyboardKey {
+  border: white solid 2px;
+  border-radius: 5px;
+  display: inline-block;
+  padding: 0 6px;
+  margin: -5px 5px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+:root {
+  --primary-color: #7b1fa2;
+  --secondary-color: #f1f1f1;
+}
+
+.of_auto,
+.of_2,
+.of_3,
+.of_4,
+.of_5 {
+
+  @media screen and (max-width: 570px) {
+    grid-template-columns: 1fr !important;
   }
+}
 
 .of_auto {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(450px,auto));
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(450px, auto));
 }
 
 .of_2 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(2, 1fr);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .of_3 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(3, 1fr);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .of_4 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(4, 1fr);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .of_5 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(5, 1fr);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
 }
+
+
+
+
+//moved due to low budget
 
 .pagination {
   height: 25px;
@@ -130,8 +155,9 @@ mat-form-field + br + i {
   position: relative;
   display: flex;
   padding: 3px 10px;
-  
-  .left, .right {
+
+  .left,
+  .right {
     padding: 0 20px;
 
     &:hover {
@@ -139,6 +165,7 @@ mat-form-field + br + i {
       background-color: rgb(46, 46, 46);
     }
   }
+
   .left {
     margin-left: auto;
 
@@ -148,22 +175,25 @@ mat-form-field + br + i {
 
 .constants {
   @media screen and (max-width: 1000px) {
-      grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
+
   @media screen and (max-width: 900px) {
-      grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 .small_input {
   font-size: 12px;
+
   & mat-form-field {
-      width: calc(50% - 4px);
-      margin: 2px;
+    width: calc(50% - 4px);
+    margin: 2px;
   }
+
   span {
-      display: inline-block;
-      width: 80px;
+    display: inline-block;
+    width: 80px;
   }
 }
 
@@ -175,13 +205,13 @@ input::-webkit-inner-spin-button {
 
 .row {
   &:hover .icon-container {
-      display: block !important;
-      left: 0;
+    display: block !important;
+    left: 0;
   }
-  
+
 }
 
-hr + mat-icon {
+hr+mat-icon {
   position: absolute;
   bottom: 12px;
   left: 50%;
@@ -196,8 +226,178 @@ hr + mat-icon {
   top: 0;
   width: 40px;
   height: 45px;
-  
+
   z-index: 10;
   color: rgba(255, 255, 255, 0.452);
 
+}
+
+.groupName ::ng-deep .mat-tab-header {
+  padding-right: 35px !important;
+}
+
+.groupName ::ng-deep .mat-select-value {
+  display: none !important;
+}
+
+.groupName .mat-select {
+  width: 20px;
+}
+
+.rollOverInput {
+  background-color: transparent;
+  color: white;
+  text-align: left !important;
+  margin: 10px 8px;
+  width: 20% !important;
+}
+
+
+
+.table header,
+.table .content .row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  position: relative;
+
+  div:nth-of-type(16),
+  div:nth-of-type(17),
+  div:nth-of-type(18),
+  div:nth-of-type(19),
+  div:nth-of-type(20),
+  div:nth-of-type(21),
+  div:nth-of-type(22) {
+    background-color: #8d8c3585;
+  }
+
+  .icon-container {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    border: none;
+    display: none;
+
+    mat-icon {
+      font-size: 15px;
+    }
+  }
+
+  & div {
+    padding: 3px 5px;
+    text-align: center;
+    width: 1fr;
+
+    &+div:not(.icon-container) {
+      border-left: 1px solid rgba(243, 243, 243, 0.12);
+    }
+
+  }
+}
+
+
+//table low budget
+
+.container {
+  .imageContainer {
+    @media print {
+      // padding: 0;
+      margin: 0;
+      border: none;
+
+      input {
+        display: none;
+      }
+    }
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin: 5px 20px;
+    padding: 10px;
+    border: 1px solid rgb(92, 92, 92);
+
+    .left {
+      display: flex;
+
+      align-items: center;
+
+      svg {
+        width: 50%;
+        background-color: white;
+        color: black;
+        padding: 5px;
+      }
+    }
+
+    .right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      div {
+
+        label {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 70px;
+          height: 70px;
+          border-radius: 10px;
+          border: 3px white dashed;
+          box-sizing: border-box;
+        }
+
+        input[type='file'] {
+          display: none;
+        }
+      }
+
+      .image {
+        width: 50%;
+        height: 70px;
+
+        background-position: right;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-image: url('https://media.wired.co.uk/photos/607d91994d40fbb952b6ad64/4:3/w_2664,h_1998,c_limit/wired-meme-nft-brian.jpg');
+
+        @media print {
+          filter: grayscale(100%);
+        }
+      }
+    }
+  }
+  .buttonBar {
+    @media print {
+        display: none;
+    }
+
+    padding: 15px 30px 0 30px;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    // background-color: #fff;
+
+    .iconContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #7a27a0;
+        padding: 7px;
+        border-radius: 50%;
+        mat-icon {
+            color: rgb(45, 45, 45);
+
+
+        }
+
+        &:hover mat-icon{
+            color: #ffffff;
+        
+        }
+    }
+}
 }

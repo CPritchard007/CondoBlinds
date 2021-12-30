@@ -160,7 +160,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {}
 
   constructor(public dialog: MatDialog, private renderer: Renderer2, private router: Router) {
-    console.log("constructor");
     
     try {
       let tableType = data.tables.find(table => table.tag === "GroupC"); // set tableTyle to its default value. TODO: make this a variable, and add to constants page
@@ -171,7 +170,7 @@ export class DashboardComponent implements OnInit {
         this.Heights = tableType.table.Heights;  
       }
     } catch (error) {
-      console.log(error);
+      console.error("error finding tables: ", error);
     }
 
     // this.pricingTables = data.tables[this.defaultGroup]; // set the pricing tables
@@ -197,14 +196,11 @@ export class DashboardComponent implements OnInit {
     this.groupSort();
     this.groupName = this.groupNames[0]
 
-    // console.log(this.queriesArray)
-    // console.log(this.determineShortenedList())
-
-
   }
     /* this is triggered when the tab is changed, this will assure the user cannot change to the same tab */
   tabChange(tabChangeEvent: MatTabChangeEvent) {
     if (tabChangeEvent.index === this.currentTab) return;
+
     this.currentTab = tabChangeEvent.index;
     this.groupName = "";
     this.groupNames = [];
@@ -218,8 +214,6 @@ export class DashboardComponent implements OnInit {
     /* remove tab from list */
     /** TODO: add dialog */
   closeTab(i: number) {
-    // this.queriesArray.splice(i, 1);
-    console.log(this.queriesArray, i);
     if (this.currentTab == i ) { this.currentTab = 0; }
     this.queriesArray.splice(i, 1);
     if (this.queriesArray.length == 0) this.queriesArray.push({name: "Table 1", list: []} as Tables)
@@ -239,9 +233,7 @@ export class DashboardComponent implements OnInit {
   }
 
   convertToLocalFormat(storageItems: Tables[]): Tables[] {
-    console.log("convertToLocalFormat");
 
-    console.log(storageItems);
     let tables: Tables[] = storageItems.map((tab) => {
       return {
         name: tab.name,
@@ -272,7 +264,6 @@ export class DashboardComponent implements OnInit {
           return {
             Group: groups.Group,
             GroupItems: groups.GroupItems.map((items: query) => {
-              console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", items)
               return {
                 id: items.id,
                 roomLabel: items.roomLabel,
@@ -335,17 +326,11 @@ export class DashboardComponent implements OnInit {
   uploadToStorage() { if (this.USE_LOCAL_STORAGE) localStorage.setItem('queries', JSON.stringify(this.convertToStorageFormat())); }
 
   updateInputs() {
-    // console.log("updateInputs", this.valWidth, this.valHeight, this.groupType);
-    
     this.retailPrice = this.calculateRetailPrice(this.valWidth, this.valHeight, this.groupType);
-    
     this.sqrFt = this.calculateSqrFt(this.valWidth, this.valHeight, this.quantity);
-
     this.valCost = this.calculateCost(this.retailPrice, this.discount, this.discount2, this.quantity);
     this.installmentCost = this.quantity * this.costOfInstallation;
-    
     this.valPrice = this.calculatePrice(this.valCost);
-    
   }
 
   
@@ -353,9 +338,7 @@ export class DashboardComponent implements OnInit {
     if ((this.valWidth <= 0 || this.valWidth == null) ||
         (this.valHeight <= 0 || this.valHeight == null) ||
         (this.quantity <= 0 || this.quantity == null) || 
-        (this.groupName == undefined || this.groupName == "")) {
-          console.log('ignore')
-          return};
+        (this.groupName == undefined || this.groupName == "")) return;
     
     let groupIndex = this.queriesArray[this.currentTab].list.findIndex((group: Groups) => group.Group == this.groupName);
 
@@ -399,11 +382,9 @@ export class DashboardComponent implements OnInit {
 
     this.uploadToStorage() // check if you can add to LocalStorage
     this.resetValues(); // reset values
-    if (!this.groupNames.includes(this.groupName)) {
-      this.groupNames.push(this.groupName);
-    }
+    if (!this.groupNames.includes(this.groupName)) this.groupNames.push(this.groupName);
 
-    this.determineShortenedList(undefined, true);
+    this.determineShortenedList(this.currentTab, undefined, true);
   }
 
 
@@ -412,7 +393,7 @@ export class DashboardComponent implements OnInit {
     let currentGroup = this.queriesArray[this.currentTab].list.findIndex((group) => group.Group == groupName);
     let currentItem = this.queriesArray[this.currentTab].list[currentGroup].GroupItems.findIndex((item) => item.id == id);
 
-    console.log("editing item", groupName, id);
+    
 
     let item = this.queriesArray[this.currentTab].list[currentGroup].GroupItems[currentItem];
   
@@ -430,13 +411,11 @@ export class DashboardComponent implements OnInit {
       'discount2': item.discount2,
     
     }}).afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
         if (result == true) {
           this.queriesArray[this.currentTab].list[currentGroup].GroupItems.splice(currentItem, 1)
           if (this.queriesArray[this.currentTab].list[currentGroup].GroupItems.length == 0) {
-            console.log('remove group', this.queriesArray[this.currentTab].list[currentGroup])
             this.queriesArray[this.currentTab].list.splice(currentGroup, 1);
-            this.determineShortenedList(undefined, true);
+            this.determineShortenedList(this.currentTab, undefined, true);
             this.uploadToStorage();
           }
           
@@ -460,45 +439,37 @@ export class DashboardComponent implements OnInit {
           this.queriesArray[this.currentTab].list[nextGroup].GroupItems.push(calculateItem);
           this.queriesArray[this.currentTab].list[currentGroup].GroupItems.splice(currentItem, 1)
 
-          console.log('will remove group')
-          if (this.queriesArray[this.currentTab].list[currentGroup].GroupItems.length == 0) {
-            console.log('removing group', this.queriesArray[this.currentTab].list[currentGroup].Group);
-            this.queriesArray[this.currentTab].list.splice(currentGroup, 1);
-          }
+          if (this.queriesArray[this.currentTab].list[currentGroup].GroupItems.length == 0) this.queriesArray[this.currentTab].list.splice(currentGroup, 1);
         }
 
-        this.determineShortenedList(undefined, true);
+        this.determineShortenedList(this.currentTab, undefined, true);
         this.uploadToStorage();
         
     });
   }
 
   editCustomCalculation(group: Groups) {
-    console.log("edit custom calculation", group);
     
     this.dialog.open(EditCalculationDialog, {width: '90%', data: {
       profit: this.totalProfit(group),
       openRollPrice: this.getCleanPrice(group),
     }}).afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
         if (result && this.queriesArray[this.currentTab].list.find((item) => item.Group == group.Group)) {
           this.queriesArray[this.currentTab].list.find((item) => item.Group == group.Group)!.GroupAlterations = result;
           
         }
-        this.determineShortenedList(undefined, true);
+        this.determineShortenedList(this.currentTab, undefined, true);
         this.uploadToStorage();
     });
   }
 
 
-  determineShortenedList(max?: number, update: boolean = false) {
+  determineShortenedList(tab: number, max?: number, update: boolean = false) {
     const maxOnScreen = max ?? 50;
     let list = this.queriesArray[this.currentTab].list;
-    let itemCount: number[] = this.queriesArray[this.currentTab].list.map((group) => group.GroupItems.length);
-
+    let itemCount: number[] = this.queriesArray[tab].list.map((group) => group.GroupItems.length);
+    
     if (typeof this.shortenedArray == 'undefined' || update) {
-      console.log("test if stop", this.shortenedArray)
-
       let simpleShortenedList: Array<Array<Groups>> = [[]];
       let currentCount = 0;
       let currentIndex = 0;
@@ -525,8 +496,6 @@ export class DashboardComponent implements OnInit {
     return this.shortenedArray;    
   }
 
-  
-
   calculateDanielsMotorPrice(quantity: number) { return (350 * quantity); }
   calculateInstallmentCost(quantity: number) { return this.installmentCost * quantity; }
   calculatePrice(cost: number) { return Math.round((cost + this.installmentCost) * this.profitMargin); }
@@ -535,20 +504,15 @@ export class DashboardComponent implements OnInit {
   calculateFasciaCost(fasciaRetail: number, discount: number, discount2: number, quantity: number) { return ((fasciaRetail * (discount / 100)) * (discount2 / 100)) * quantity; }
   
   calculateRetailPrice(valWidth: number, valHeight: number, groupType: string): number {
-    // console.log("calculateRetailPrice", valWidth, valHeight, groupType);
     let width = 0; 
     let height = 0;
     
     this.Widths.forEach((x, i) => {
       if ( valWidth == 0 || valWidth == undefined) return;
-      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
-        width = x;
 
-      } else if (valWidth > this.Widths[this.Widths.length - 1]) {
-        width = this.Widths[this.Widths.length - 1];
-        // console.log("width", width);
-        
-      }
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))
+        width = x;
+      else if (valWidth > this.Widths[this.Widths.length - 1]) width = this.Widths[this.Widths.length - 1];
     });
 
     this.Heights.forEach((x, i) => {
@@ -558,27 +522,18 @@ export class DashboardComponent implements OnInit {
 
       } else if (valHeight > this.Heights[this.Heights.length - 1]) {
         height = this.Heights[this.Heights.length - 1];
-        // console.log("height", height);
         
       }
     });
 
     const widthIndex = this.Widths.indexOf(width);
     const heightIndex = this.Heights.indexOf(height);
-    console.log("widthIndex", widthIndex, "heightIndex", heightIndex, data);
-    // console.log("Widths", this.Widths, "Heights", this.Heights, "valWidth", valWidth, "valHeight", valHeight, "width", width, "height", height, "widthIndex", widthIndex, "heightIndex", heightIndex, "tables", this.pricingTables);
-    let table = data.tables.find((item) => {
-      console.log("item.tag ", item.tag, "groupType", groupType, "res", item.tag === groupType);
-      
-      return item.tag === groupType;
-    });
-    // console.log("table", table);
-    // console.log("table", table, "groupType", groupType);
-    if (table) {
+    let table = data.tables.find((item) => item.tag === groupType );
+
+    if (table)
       return table.table.calculations[heightIndex][widthIndex];
-    } else {
+    else 
       throw new Error("No table found");
-    }
   }
 
   calculateFasciaRetail(valWidth: number, groupType: string) {
@@ -586,26 +541,21 @@ export class DashboardComponent implements OnInit {
     
     this.Widths.forEach((x, i) => {
       if ( valWidth == 0 || valWidth == undefined) return;
-      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth))  {
-        
-        width = x;
-      }
+      if ( x  >= valWidth && ( i-1 <= 0 || this.Widths[i-1] < valWidth)) width = x;
     });
 
     const widthIndex = this.Widths.indexOf(width);
     const fasciaTable: Array<number> = data.tables[0].table.fascia;
     return fasciaTable[widthIndex];
   }
-  calculateFinalRetailPrice(group: Groups) {
-    return (this.getCleanPrice(group) * 1.2).toFixed(2);
-  }
+
+  calculateFinalRetailPrice(group: Groups) { return (this.getCleanPrice(group) * 1.2).toFixed(2); }
+  calculatePriceWithMotor(group: Groups) { return (this.finalMotorPrice * 1.2).toFixed(2); }
+  calculatePriceWithFascia(group: Groups) { return (this.finalFasciaCost * 1.2).toFixed(2); }
 
   calculateFinalFasciaPrice(group: Groups) {
     this.finalFasciaCost = ((this.totalFasciaSum(group) * this.profitMargin) + this.getCleanPrice(group));
     return this.finalFasciaCost.toFixed(2);
-  }
-  calculatePriceWithFascia(group: Groups) {
-    return (this.finalFasciaCost * 1.2).toFixed(2);
   }
 
   calculateFinalMotorPrice(group: Groups) {
@@ -613,9 +563,6 @@ export class DashboardComponent implements OnInit {
     return this.finalMotorPrice.toFixed(2);
   }
 
-  calculatePriceWithMotor(group: Groups) {
-    return (this.finalMotorPrice * 1.2).toFixed(2);
-  }
 
   totalProfit(group: Groups) {
     if (group.GroupAlterations.profit) return group.GroupAlterations.profit;
@@ -676,10 +623,8 @@ export class DashboardComponent implements OnInit {
   //this will allow the value to be decorated with commas, making the numbers easier to read
   numericCommas(x: number | string) {
     let str;
-    if (typeof x !== 'string') 
-      str = x.toString();
-    else
-      str = x
+    if (typeof x !== 'string') str = x.toString();
+    else str = x;
 
     let cost = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return "$ " + cost;
@@ -768,9 +713,7 @@ export class DashboardComponent implements OnInit {
     
   }
 
-  queriesArraySum() {
-    return this.queriesArray[this.currentTab].list.length
-  }
+  queriesArraySum() { return this.queriesArray[this.currentTab].list.length }
 
   nextPage() {
     this.currentPagination++;
@@ -787,11 +730,12 @@ export class DashboardComponent implements OnInit {
     let data;
     
     if (items.type == 'csv') {
+      console.log("CSV FILE FOUND: loading data")
       setTimeout(() => {
         data = items.data;
         data.shift();
         let itemsArray: Groups[] = data.map((x: any, i: number) => {
-          console.log(x.roomLabel, x.width, x.height, x.quantity, x.groupName, x.groupType);
+          console.log("=> seperating values")
           return {
             Group: x.groupName,
             GroupItems: [{
@@ -802,8 +746,8 @@ export class DashboardComponent implements OnInit {
               width: x.width,
               height: x.height,
               quantity: x.quantity,
-              discount: x.discount,
-              discount2: x.discount2,
+              discount: 50,
+              discount2: 50,
             }],
             Material: "",
             Color: "",
@@ -813,21 +757,21 @@ export class DashboardComponent implements OnInit {
             }
           } as Groups;
         })
-        
-        itemsArray.forEach(item => {
+        console.log("=> data loaded: " + itemsArray.length + " items available")
+        itemsArray.forEach((item,i) => {
+          console.log("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=> adding to array", i)
           let itemIndex = this.queriesArray[this.currentTab].list.findIndex((x) => x.Group == item.Group);
-          if (itemIndex == -1) {
-            console.log("item does not exist");
-            this.queriesArray[this.currentTab].list.push(item);
-          } else {
-            console.log("item already exists");
-            this.queriesArray[this.currentTab].list[itemIndex].GroupItems.push(...item.GroupItems);
-          }
-        }) // add the new items to the current tab
-
-        this.determineShortenedList(undefined, true);
+          
+          if (itemIndex == -1) this.queriesArray[this.currentTab].list.push(item);
+          else this.queriesArray[this.currentTab].list[itemIndex].GroupItems.push(...item.GroupItems);
+        }) 
+        console.log("=> determine shortened list")
+        this.determineShortenedList(this.currentTab, undefined, true);
+        console.log("=> push to local storage")
         this.uploadToStorage()
-        location.reload();
+        console.log("=> complete!")
+        // location.reload();
+
       }, 1000);
     }
   }
@@ -843,7 +787,7 @@ export class DashboardComponent implements OnInit {
         fasciaWithMotorPrice: this.totalMotorPriceSum(x),
       }
     });
-    console.log(extras);
+
     this.router.navigate(['/export'], {
       state: {
         extras: extras,

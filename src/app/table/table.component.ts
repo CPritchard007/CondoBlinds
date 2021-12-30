@@ -51,4 +51,8 @@ export class TableComponent implements OnInit {
     };
 
   }
+
+  print () {
+    window.print();
+  }
 }

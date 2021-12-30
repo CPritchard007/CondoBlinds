@@ -5,7 +5,7 @@
 <div class="widget">
   <label>
       <div (click)="exportItems()" class="iconContainer" >
-          <mat-icon>download</mat-icon>
+          <mat-icon>system_update_alt</mat-icon>
       </div>
   </label>
 </div>
@@ -258,7 +258,7 @@
               <div> <span>Price with Motors</span> </div>
             </header>
             <div class="content">
-              <div class="group" *ngFor="let group of determineShortenedList(maxItemsInList, false)[currentPagination]; index as groupIndex">
+              <div class="group" *ngFor="let group of determineShortenedList(currentTab, maxItemsInList, true)[currentPagination]; index as groupIndex">
                 <div class="groupHeader">
                   <span>{{group.Group || "Default"}}</span>
 

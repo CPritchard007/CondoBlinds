@@ -75,32 +75,6 @@
 
 
 
-.table header, .table .content .row{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    position: relative;
-    
-    div:nth-of-type(16), div:nth-of-type(17), div:nth-of-type(18), div:nth-of-type(19), div:nth-of-type(20), div:nth-of-type(21), div:nth-of-type(22) { background-color: #8d8c3585; }
-    .icon-container {
-        width: 10px;
-        height: 10px;
-        position: absolute;
-        top: 3px;
-        right: 5px;
-        border: none;
-        display: none;
-
-        mat-icon { font-size: 15px; }
-    }
-
-    & div {
-        padding: 3px 5px;
-        text-align: center;
-        width: 1fr;
-        & + div:not(.icon-container) { border-left: 1px solid rgba(243, 243, 243, 0.12); }
-        
-    }
-}
 
 mat-card.calcCard {
     
@@ -253,14 +227,3 @@ mat-card.calcCard {
     }
 }
 
-.groupName ::ng-deep .mat-tab-header {padding-right: 35px !important;}
-.groupName ::ng-deep .mat-select-value {display: none !important;}
-.groupName .mat-select {width: 20px;}
-
-.rollOverInput {
-    background-color: transparent;
-    color: white;
-    text-align: left !important;
-    margin: 10px 8px;
-    width: 20% !important;
-}

@@ -4,72 +4,6 @@
         
     }
 
-    .imageContainer {
-        @media print {
-            // padding: 0;
-            margin: 0;
-            border: none;
-
-            input {
-                display: none;
-            }
-        }
-
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        margin: 5px 20px;
-        padding: 10px;
-        border: 1px solid rgb(92, 92, 92);
-        .left {
-            display: flex;
-            
-            align-items: center;
-            svg {
-                width: 50%;
-                background-color: white;
-                color: black;
-                padding: 5px;
-            }
-        }
-        .right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            
-            div {
-            
-                label {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    width: 70px;
-                    height: 70px;
-                    border-radius: 10px;
-                    border: 3px white dashed;
-                    box-sizing: border-box;
-                }
-
-                input[type='file'] {
-                    display: none;
-                }
-            }
-            .image {
-                width: 50%;
-                height: 70px;
-                
-                background-position: right;
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-image: url('https://media.wired.co.uk/photos/607d91994d40fbb952b6ad64/4:3/w_2664,h_1998,c_limit/wired-meme-nft-brian.jpg');
-                @media print {
-                    filter: grayscale(100%);
-                }
-            }
-
-        }
-    }
-
-
     .align-center {
         margin: 0 auto;
         width: 80%;
@@ -166,7 +100,7 @@
                     @media print {
                         background-color: rgb(189, 189, 189);
                     }
-
+                    text-align: center;
                     background-color: rgb(192, 192, 192);
                     
                     
@@ -192,10 +126,9 @@
                 line-height: 1.5em;
                 padding: 0;
                 margin:50px 0 10px 15px;
-                li {
-                    
-                }
+                
             }
         }
     }
+    
 }
